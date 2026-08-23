@@ -1,0 +1,8 @@
+# dsh-version-display bundle patch.
+# Mounts this plugin into the profile layer stack. The loader then instantiates
+# the host half (lib/index.js) and the client-modules scan picks up the
+# `dsh.client` declaration, so /plugins/dsh-version-display/client.js is served
+# and loaded in the web page.
+- insert:
+    - id: dsh-version-display
+      name: 'dsh-version-display'
