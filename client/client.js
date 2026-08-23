@@ -6,6 +6,7 @@ window.__ModuleLoader__.load({
 		Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 		let react = require("react");
 		let react_jsx_runtime = require("react/jsx-runtime");
+		let _primitives = require("@deepseek-ai/dsh-client-ui-primitives");
 		//#region version card styles
 		/**
 		* Card + seat styles. The seat rule turns the footer-action outlet into a
@@ -14,7 +15,7 @@ window.__ModuleLoader__.load({
 		* Settings trigger). The outlet carries the stable data-slot attribute, so
 		* the override survives sidebar rebuilds.
 		*/
-		const css = "[data-slot=\"sidebar.footer.action\"]{display:block!important;flex:1 1 auto;min-width:0}.dvd_versionCard{box-sizing:border-box;width:100%;min-width:0;margin:2px 0 6px;padding:7px 10px;border:1px solid var(--dsw-alias-border-l2);border-radius:12px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px;text-align:left;overflow:hidden}.dvd_versionText{white-space:normal;overflow-wrap:anywhere;word-break:normal}.dvd_current{font-family:var(--ds-font-family-code);color:var(--dsw-alias-label-primary);font-weight:500}.dvd_meta{color:var(--dsw-alias-label-secondary)}";
+		const css = "[data-slot=\"sidebar.footer.action\"]{display:block!important;flex:1 1 auto;min-width:0}.dvd_versionCard{box-sizing:border-box;width:100%;min-width:0;margin:2px 0 6px;padding:7px 10px;border:1px solid var(--dsw-alias-border-l2);border-radius:12px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px;text-align:left;overflow:hidden}.dvd_versionText{white-space:normal;overflow-wrap:anywhere;word-break:normal}.dvd_current{font-family:var(--ds-font-family-code);color:var(--dsw-alias-label-primary);font-weight:500}.dvd_meta{color:var(--dsw-alias-label-secondary)}.dvd_railButton{box-sizing:border-box;cursor:pointer;width:36px;height:36px;color:var(--dsw-alias-label-primary);background:0 0;border:none;border-radius:50%;flex:none;justify-content:center;align-items:center;padding:0;display:inline-flex}.dvd_railButton:hover{background:var(--dsw-alias-interactive-bg-hover)}.dvd_tipName{font-weight:600}.dvd_tipVersion{white-space:nowrap}";
 		const tagId = "dsh-version-display/VersionCard.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -137,7 +138,6 @@ window.__ModuleLoader__.load({
 					document.removeEventListener("visibilitychange", onVisible);
 				};
 			}, [check]);
-			if (!wide) return null;
 			const current = typeof window !== "undefined" && typeof window.__DSH_VERSION__ === "string" && window.__DSH_VERSION__ !== "" ? window.__DSH_VERSION__ : FALLBACK_VERSION;
 			let meta;
 			if (typeof latest === "string" && compareVersions(latest, current) === 1) {
@@ -145,17 +145,47 @@ window.__ModuleLoader__.load({
 			} else {
 				meta = t("latest");
 			}
-			return (0, react_jsx_runtime.jsx)("div", {
-				className: "dvd_versionCard",
-				children: (0, react_jsx_runtime.jsxs)("span", {
-					className: "dvd_versionText",
-					children: [(0, react_jsx_runtime.jsx)("span", {
-						className: "dvd_current",
-						children: "v" + current
-					}), " (", (0, react_jsx_runtime.jsx)("span", {
-						className: "dvd_meta",
-						children: meta
-					}), ")"]
+			const display = "v" + current + " (" + meta + ")";
+			/** 悬浮提示：加粗插件英文全名 + 与卡片一致的版本文案。 */
+			const tooltipLabel = (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, {
+				children: [(0, react_jsx_runtime.jsx)("strong", {
+					className: "dvd_tipName",
+					children: "dsh-version-display"
+				}), (0, react_jsx_runtime.jsx)("br", {}), (0, react_jsx_runtime.jsx)("span", {
+					className: "dvd_tipVersion",
+					children: display
+				})]
+			});
+			if (!wide) {
+				// 折叠窄栏（rail）模式：显示 36px 圆形图标按钮，悬停同样弹出提示
+				return (0, react_jsx_runtime.jsx)(_primitives.Tooltip, {
+					label: tooltipLabel,
+					side: "right",
+					delayMs: 300,
+					children: (0, react_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: "dvd_railButton",
+						"aria-label": "dsh-version-display",
+						children: (0, react_jsx_runtime.jsx)(_primitives.IconCodeOutline16, { size: 18 })
+					})
+				});
+			}
+			return (0, react_jsx_runtime.jsx)(_primitives.Tooltip, {
+				label: tooltipLabel,
+				side: "right",
+				delayMs: 300,
+				children: (0, react_jsx_runtime.jsx)("div", {
+					className: "dvd_versionCard",
+					children: (0, react_jsx_runtime.jsxs)("span", {
+						className: "dvd_versionText",
+						children: [(0, react_jsx_runtime.jsx)("span", {
+							className: "dvd_current",
+							children: "v" + current
+						}), " (", (0, react_jsx_runtime.jsx)("span", {
+							className: "dvd_meta",
+							children: meta
+						}), ")"]
+					})
 				})
 			});
 		}
