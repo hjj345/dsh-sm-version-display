@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-	id: "dsh-version-display",
+	id: "sm-dsh-version-display",
 	factory: (require) => {
 		var module = { exports: {} };
 		var exports = module.exports;
@@ -16,10 +16,10 @@ window.__ModuleLoader__.load({
 		* the override survives sidebar rebuilds.
 		*/
 		const css = "[data-slot=\"sidebar.footer.action\"]{display:block!important;flex:1 1 auto;min-width:0}.dvd_versionCard{box-sizing:border-box;width:100%;min-width:0;margin:2px 0 6px;padding:7px 10px;border:1px solid var(--dsw-alias-border-l2);border-radius:12px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px;text-align:left;overflow:hidden}.dvd_versionText{white-space:normal;overflow-wrap:anywhere;word-break:normal}.dvd_current{font-family:var(--ds-font-family-code);color:var(--dsw-alias-label-primary);font-weight:500}.dvd_meta{color:var(--dsw-alias-label-secondary)}.dvd_railButton{box-sizing:border-box;cursor:pointer;width:36px;height:36px;color:var(--dsw-alias-label-primary);background:0 0;border:none;border-radius:50%;flex:none;justify-content:center;align-items:center;padding:0;display:inline-flex}.dvd_railButton:hover{background:var(--dsw-alias-interactive-bg-hover)}.dvd_tipName{font-weight:600}.dvd_tipVersion{white-space:nowrap}";
-		const tagId = "dsh-version-display/VersionCard.css";
+		const tagId = "sm-dsh-version-display/VersionCard.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
-			tag.dataset.plugin = "dsh-version-display";
+			tag.dataset.plugin = "sm-dsh-version-display";
 			tag.dataset.pluginCss = tagId;
 			tag.textContent = css;
 			document.head.appendChild(tag);
@@ -92,7 +92,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region locales
-		const NS = "dsh-version-display";
+		const NS = "sm-dsh-version-display";
 		const zh = {
 			"latest": "最新版",
 			"update": "有更新"
@@ -150,7 +150,7 @@ window.__ModuleLoader__.load({
 			const tooltipLabel = (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, {
 				children: [(0, react_jsx_runtime.jsx)("strong", {
 					className: "dvd_tipName",
-					children: "dsh-version-display"
+					children: "sm-dsh-version-display"
 				}), (0, react_jsx_runtime.jsx)("br", {}), (0, react_jsx_runtime.jsx)("span", {
 					className: "dvd_tipVersion",
 					children: display
@@ -165,7 +165,7 @@ window.__ModuleLoader__.load({
 					children: (0, react_jsx_runtime.jsx)("button", {
 						type: "button",
 						className: "dvd_railButton",
-						"aria-label": "dsh-version-display",
+						"aria-label": "sm-dsh-version-display",
 						children: (0, react_jsx_runtime.jsx)(_primitives.IconCodeOutline16, { size: 18 })
 					})
 				});
@@ -197,10 +197,10 @@ window.__ModuleLoader__.load({
 		* @param ctx - client root context.
 		*/
 		function apply(ctx) {
-			ctx.effect(() => ctx.locale.register(NS, { zh, en }), "dsh-version-display: dictionaries");
+			ctx.effect(() => ctx.locale.register(NS, { zh, en }), "sm-dsh-version-display: dictionaries");
 			ctx.slots.inject("sidebar.footer.action", () => ctx.slots.register({
 				name: "sidebar.footer.action",
-				id: "dsh-version-display",
+				id: "sm-dsh-version-display",
 				order: 100,
 				locale: NS
 			}, VersionCard));

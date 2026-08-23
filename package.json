@@ -1,5 +1,5 @@
 {
-  "name": "dsh-version-display",
+  "name": "sm-dsh-version-display",
   "version": "1.0.0",
   "description": "在 DeepSeek Harness Web GUI 侧边栏「设置」按钮上方显示 deepseek-harness 版本号的圆角卡片插件；内置 npm registry 更新检测（最新版 / 有更新 vX.Y.Z）。host 半区运行时读取已安装版本，dsh 升级后自动跟随，无需维护。",
   "keywords": [
