@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-	id: "sm-dsh-version-display",
+	id: "dsh-sm-version-display",
 	factory: (require) => {
 		var module = { exports: {} };
 		var exports = module.exports;
@@ -15,11 +15,11 @@ window.__ModuleLoader__.load({
 		* Settings trigger). The outlet carries the stable data-slot attribute, so
 		* the override survives sidebar rebuilds.
 		*/
-		const css = "[data-slot=\"sidebar.footer.action\"]{display:block!important;flex:1 1 auto;min-width:0}.dvd_versionCard{box-sizing:border-box;width:100%;min-width:0;margin:2px 0 6px;padding:7px 10px;border:1px solid var(--dsw-alias-border-l2);border-radius:12px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px;text-align:left;overflow:hidden}.dvd_versionText{white-space:normal;overflow-wrap:anywhere;word-break:normal}.dvd_current{font-family:var(--ds-font-family-code);color:var(--dsw-alias-label-primary);font-weight:500}.dvd_meta{color:var(--dsw-alias-label-secondary)}.dvd_railButton{box-sizing:border-box;cursor:pointer;width:36px;height:36px;color:var(--dsw-alias-label-primary);background:0 0;border:none;border-radius:50%;flex:none;justify-content:center;align-items:center;padding:0;display:inline-flex}.dvd_railButton:hover{background:var(--dsw-alias-interactive-bg-hover)}.dvd_tipName{font-weight:600}.dvd_tipVersion{white-space:nowrap}";
-		const tagId = "sm-dsh-version-display/VersionCard.css";
+		const css = "[data-slot=\"sidebar.footer.action\"]{display:block!important;flex:1 1 auto;min-width:0}.dvd_versionCard{box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;min-width:0;margin:2px 0 6px;padding:7px 10px;border:1px solid var(--dsw-alias-border-l2);border-radius:12px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px;overflow:hidden}.dvd_versionText{flex:1;min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal}.dvd_current{font-family:var(--ds-font-family-code);color:var(--dsw-alias-label-primary);font-weight:500}.dvd_meta{color:var(--dsw-alias-label-secondary)}.dvd_railButton{box-sizing:border-box;cursor:pointer;width:36px;height:36px;color:var(--dsw-alias-label-primary);background:0 0;border:none;border-radius:50%;flex:none;justify-content:center;align-items:center;padding:0;display:inline-flex}.dvd_railButton:hover{background:var(--dsw-alias-interactive-bg-hover)}.dvd_tipName{font-weight:600}.dvd_tipVersion{white-space:nowrap}.dvd_refreshBtn{flex:none}.dvd_spin{animation:dvd-spin .9s linear infinite}@keyframes dvd-spin{to{transform:rotate(360deg)}}.dvd_toastSuccess{color:var(--dsw-alias-state-success-primary)}.dvd_toastInfo{color:var(--dsw-alias-state-business-primary)}.dvd_toastError{color:var(--dsw-alias-state-error-primary)}";
+		const tagId = "dsh-sm-version-display/VersionCard.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
-			tag.dataset.plugin = "sm-dsh-version-display";
+			tag.dataset.plugin = "dsh-sm-version-display";
 			tag.dataset.pluginCss = tagId;
 			tag.textContent = css;
 			document.head.appendChild(tag);
@@ -92,14 +92,22 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region locales
-		const NS = "sm-dsh-version-display";
+		const NS = "dsh-sm-version-display";
 		const zh = {
 			"latest": "最新版",
-			"update": "有更新"
+			"update": "有更新",
+			"refresh": "刷新",
+			"toast.latest": "已是最新版本 {version}",
+			"toast.update": "发现新版本 {latest}，当前版本 {current}",
+			"toast.error": "版本检查失败，请稍后重试"
 		};
 		const en = {
 			"latest": "Latest",
-			"update": "Update available:"
+			"update": "Update available:",
+			"refresh": "Refresh",
+			"toast.latest": "You are on the latest version {version}",
+			"toast.update": "New version {latest} available (current: {current})",
+			"toast.error": "Version check failed, please try again later"
 		};
 		//#endregion
 		//#region VersionCard
@@ -108,27 +116,43 @@ window.__ModuleLoader__.load({
 		* @param props - composed slot props: `wide` (sidebar expanded flag) and `t` (locale binder).
 		* @returns the card element, or null in the collapsed rail.
 		*/
-		function VersionCard({ wide, t }) {
+				function VersionCard({ wide, t }) {
 			const [latest, setLatest] = react.useState(null);
 			const [checked, setChecked] = react.useState(false);
+			const [checking, setChecking] = react.useState(false);
+			const [toast, setToast] = react.useState(null);
 			const lastAttemptAt = react.useRef(0);
-			const check = react.useCallback(() => {
-				const now = Date.now();
-				if (now - lastAttemptAt.current < MIN_CHECK_GAP_MS) return;
-				lastAttemptAt.current = now;
-				fetchLatestVersion().then((version) => {
-					setLatest(version);
-					setChecked(true);
-				}, () => {
-					setChecked(true);
-				});
+			const dismissToast = react.useCallback(() => {
+				setToast(null);
 			}, []);
+			/**
+			* 实际执行一次版本检查（fetch registry + 比较）。
+			* @returns {Promise<{latest: string|null, current: string}|null>} null 表示检查失败。
+			*/
+			const runCheck = react.useCallback(async () => {
+				lastAttemptAt.current = Date.now();
+				try {
+					const latest = await fetchLatestVersion();
+					setLatest(latest);
+					setChecked(true);
+					const current = typeof window !== "undefined" && typeof window.__DSH_VERSION__ === "string" && window.__DSH_VERSION__ !== "" ? window.__DSH_VERSION__ : FALLBACK_VERSION;
+					return { latest, current };
+				} catch {
+					setChecked(true);
+					return null;
+				}
+			}, []);
+			/** 静默自动检查（挂载/定时/聚焦，不弹提示），带节流。 */
+			const silentCheck = react.useCallback(() => {
+				if (Date.now() - lastAttemptAt.current < MIN_CHECK_GAP_MS) return;
+				runCheck().catch(() => {});
+			}, [runCheck]);
 			react.useEffect(() => {
-				check();
-				const timer = window.setInterval(check, REFRESH_MS);
+				silentCheck();
+				const timer = window.setInterval(silentCheck, REFRESH_MS);
 				const onVisible = () => {
 					if (document.visibilityState !== "visible") return;
-					if (Date.now() - lastAttemptAt.current >= FOCUS_REFRESH_MIN_MS) check();
+					if (Date.now() - lastAttemptAt.current >= FOCUS_REFRESH_MIN_MS) silentCheck();
 				};
 				window.addEventListener("focus", onVisible);
 				document.addEventListener("visibilitychange", onVisible);
@@ -137,7 +161,25 @@ window.__ModuleLoader__.load({
 					window.removeEventListener("focus", onVisible);
 					document.removeEventListener("visibilitychange", onVisible);
 				};
-			}, [check]);
+			}, [silentCheck]);
+			/** 点击“刷新”按钮：真实检查 + 检查中状态 + 完成/失败 Toast 提示。 */
+			const handleRefresh = react.useCallback(() => {
+				if (checking) return;
+				setChecking(true);
+				runCheck().then((result) => {
+					if (result === null) {
+						setToast({ seq: Date.now(), kind: "error", text: t("toast.error") });
+					} else if (typeof result.latest === "string" && compareVersions(result.latest, result.current) === 1) {
+						setToast({ seq: Date.now(), kind: "update", text: t("toast.update", { latest: "v" + result.latest, current: "v" + result.current }) });
+					} else {
+						setToast({ seq: Date.now(), kind: "latest", text: t("toast.latest", { version: "v" + result.current }) });
+					}
+				}, () => {
+					setToast({ seq: Date.now(), kind: "error", text: t("toast.error") });
+				}).finally(() => {
+					setChecking(false);
+				});
+			}, [checking, runCheck, t]);
 			const current = typeof window !== "undefined" && typeof window.__DSH_VERSION__ === "string" && window.__DSH_VERSION__ !== "" ? window.__DSH_VERSION__ : FALLBACK_VERSION;
 			let meta;
 			if (typeof latest === "string" && compareVersions(latest, current) === 1) {
@@ -150,46 +192,70 @@ window.__ModuleLoader__.load({
 			const tooltipLabel = (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, {
 				children: [(0, react_jsx_runtime.jsx)("strong", {
 					className: "dvd_tipName",
-					children: "sm-dsh-version-display"
+					children: "dsh-sm-version-display"
 				}), (0, react_jsx_runtime.jsx)("br", {}), (0, react_jsx_runtime.jsx)("span", {
 					className: "dvd_tipVersion",
 					children: display
 				})]
 			});
+			/** Toast 元素：绿色成功 / 蓝色信息 / 红色错误（dsh 语义色令牌），仅手动检查后展示。 */
+			let toastElement = null;
+			if (toast !== null) {
+				const Icon = toast.kind === "latest" ? _primitives.IconCheckOutline16 : toast.kind === "update" ? _primitives.IconGlobeOutline14 : _primitives.IconWarningOutline16;
+				const colorClass = toast.kind === "latest" ? "dvd_toastSuccess" : toast.kind === "update" ? "dvd_toastInfo" : "dvd_toastError";
+				toastElement = (0, react_jsx_runtime.jsx)(_primitives.Toast, {
+					key: toast.seq,
+					text: toast.text,
+					icon: (0, react_jsx_runtime.jsx)(Icon, { size: 16, className: colorClass }),
+					onDone: dismissToast
+				});
+			}
 			if (!wide) {
 				// 折叠窄栏（rail）模式：显示 36px 圆形图标按钮，悬停同样弹出提示
-				return (0, react_jsx_runtime.jsx)(_primitives.Tooltip, {
+				return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, {
+					children: [(0, react_jsx_runtime.jsx)(_primitives.Tooltip, {
+						label: tooltipLabel,
+						side: "right",
+						delayMs: 300,
+						children: (0, react_jsx_runtime.jsx)("button", {
+							type: "button",
+							className: "dvd_railButton",
+							"aria-label": "dsh-sm-version-display",
+							children: (0, react_jsx_runtime.jsx)(_primitives.IconCodeOutline16, { size: 18 })
+						})
+					}), toastElement]
+				});
+			}
+			return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, {
+				children: [(0, react_jsx_runtime.jsx)(_primitives.Tooltip, {
 					label: tooltipLabel,
 					side: "right",
 					delayMs: 300,
-					children: (0, react_jsx_runtime.jsx)("button", {
-						type: "button",
-						className: "dvd_railButton",
-						"aria-label": "sm-dsh-version-display",
-						children: (0, react_jsx_runtime.jsx)(_primitives.IconCodeOutline16, { size: 18 })
+					children: (0, react_jsx_runtime.jsx)("div", {
+						className: "dvd_versionCard",
+						children: [(0, react_jsx_runtime.jsxs)("span", {
+							className: "dvd_versionText",
+							children: [(0, react_jsx_runtime.jsx)("span", {
+								className: "dvd_current",
+								children: "v" + current
+							}), " (", (0, react_jsx_runtime.jsx)("span", {
+								className: "dvd_meta",
+								children: meta
+							}), ")"]
+						}), (0, react_jsx_runtime.jsx)(_primitives.Button, {
+							variant: "primary",
+							size: "sm",
+							className: "dvd_refreshBtn",
+							onClick: handleRefresh,
+							disabled: checking,
+							icon: checking ? (0, react_jsx_runtime.jsx)(_primitives.IconLoadingOutline16, { size: 14, className: "dvd_spin" }) : (0, react_jsx_runtime.jsx)(_primitives.IconRefreshOutline16, { size: 14 }),
+							children: t("refresh")
+						})]
 					})
-				});
-			}
-			return (0, react_jsx_runtime.jsx)(_primitives.Tooltip, {
-				label: tooltipLabel,
-				side: "right",
-				delayMs: 300,
-				children: (0, react_jsx_runtime.jsx)("div", {
-					className: "dvd_versionCard",
-					children: (0, react_jsx_runtime.jsxs)("span", {
-						className: "dvd_versionText",
-						children: [(0, react_jsx_runtime.jsx)("span", {
-							className: "dvd_current",
-							children: "v" + current
-						}), " (", (0, react_jsx_runtime.jsx)("span", {
-							className: "dvd_meta",
-							children: meta
-						}), ")"]
-					})
-				})
+				}), toastElement]
 			});
 		}
-		//#endregion
+				//#endregion
 		/** Services required by the client half. */
 		const inject = ["slots", "locale"];
 		/**
@@ -197,10 +263,10 @@ window.__ModuleLoader__.load({
 		* @param ctx - client root context.
 		*/
 		function apply(ctx) {
-			ctx.effect(() => ctx.locale.register(NS, { zh, en }), "sm-dsh-version-display: dictionaries");
+			ctx.effect(() => ctx.locale.register(NS, { zh, en }), "dsh-sm-version-display: dictionaries");
 			ctx.slots.inject("sidebar.footer.action", () => ctx.slots.register({
 				name: "sidebar.footer.action",
-				id: "sm-dsh-version-display",
+				id: "dsh-sm-version-display",
 				order: 100,
 				locale: NS
 			}, VersionCard));

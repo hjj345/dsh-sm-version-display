@@ -1,4 +1,4 @@
-# sm-dsh-version-display — DeepSeek Harness 版本号显示插件
+# dsh-sm-version-display — DeepSeek Harness 版本号显示插件
 
 > 在 DeepSeek Harness Web GUI 侧边栏左下角「设置」按钮上方，以圆角卡片的形式实时显示 deepseek-harness 版本号，并自动检测 npm registry 上的最新版本。
 
@@ -13,7 +13,7 @@
 
 ## 简介
 
-`sm-dsh-version-display`（npm 包名 `sm-dsh-version-display`）是 DeepSeek Harness（dsh）Web 表面的一个 **客户端 + host 双半区插件**。它把「当前安装的 dsh 版本号」以一张圆角矩形卡片展示在侧边栏底部、设置按钮的上方：
+`dsh-sm-version-display`（npm 包名 `dsh-sm-version-display`）是 DeepSeek Harness（dsh）Web 表面的一个 **客户端 + host 双半区插件**。它把「当前安装的 dsh 版本号」以一张圆角矩形卡片展示在侧边栏底部、设置按钮的上方：
 
 - 无新版本：`v0.1.1-rc.2 (最新版)`
 - 有新版本：`v0.1.1-rc.2 (有更新 v0.1.1-rc.3)`
@@ -28,7 +28,9 @@
 - 自适应布局：卡片文本宽度不足时自动换行（`overflow-wrap: anywhere`）；侧边栏折叠为窄栏（56px rail）时显示圆形版本图标，不再空白；
 - 主题适配：全部使用 dsh 设计系统变量（`--dsw-alias-*`、`--ds-font-family-code`），自动适配浅色 / 深色主题；
 - 双语支持：简体中文 / English 随 dsh 界面语言自动切换；
-- 悬停提示：鼠标悬停卡片或窄栏图标时，弹出提示框显示**加粗**的插件英文全名 `sm-dsh-version-display` 与当前版本文案；
+- 悬停提示：鼠标悬停卡片或窄栏图标时，弹出提示框显示**加粗**的插件英文全名 `dsh-sm-version-display` 与当前版本文案；
+- 手动刷新：卡片最右侧内置 dsh 原生样式的「刷新」按钮（明亮模式=黑底白字，黑暗模式自动适配），点击后真正检查一次 npm registry；检查中按钮切换为旋转加载图标；
+- 结果提示：检查完成后弹出 dsh 原生 Toast（页面水平居中、靠上、4 秒自动消失）；无更新=绿色成功图标，有更新=蓝色信息图标并同时显示当前版本与最新版本，检查失败=红色错误提示；
 - 升级自动跟随：host 半区在每次页面渲染时读取已安装 `@deepseek-ai/dsh` 的版本，dsh 升级重启后卡片显示新版本，零维护。
 
 ## 效果示意
@@ -41,7 +43,7 @@
 │                            │
 │  [插件运行]                 │  ← sidebar.footer.action（cordis）
 │  ┌──────────────────────┐  │
-│  │ v0.1.1-rc.2 (最新版) │  │  ← 本插件卡片（独占一行）
+│  │ v0.1.1-rc.2 (最新版) [刷新]│  │  ← 本插件卡片（独占一行）
 │  └──────────────────────┘  │
 │  ⚙ 设置                    │
 └────────────────────────────┘
@@ -52,7 +54,7 @@
 ### 方式一：官方插件命令（推荐，自动挂载）
 
 ```bash
-dsh plugin --profile web add sm-dsh-version-display
+dsh plugin --profile web add dsh-sm-version-display
 ```
 
 ### 方式二：本地开发目录直连（本项目采用）
@@ -62,11 +64,11 @@ dsh plugin --profile web add sm-dsh-version-display
 ```json
 {
   "dependencies": {
-    "sm-dsh-version-display": "file:D:/android-project/sm-dsh-version-display-2026.08.23"
+    "dsh-sm-version-display": "file:D:/android-project/dsh-sm-version-display-2026.08.23"
   },
   "dsh": {
     "profile": {
-      "bundles": ["...", "sm-dsh-version-display"]
+      "bundles": ["...", "dsh-sm-version-display"]
     }
   }
 }
@@ -81,7 +83,7 @@ dsh plugin --profile web add sm-dsh-version-display
 ```text
 ┌─────────────────────────────── dsh 进程（host）──────────────────────────────┐
 │                                                                              │
-│  sm-dsh-version-display/lib/index.js (host 半区)                                  │
+│  dsh-sm-version-display/lib/index.js (host 半区)                                  │
 │    ├─ 订阅 webserver/index-inject 事件                                          │
 │    └─ 每次渲染 index.html 时读取 @deepseek-ai/dsh/package.json 的 version       │
 │       并注入：globalThis["__DSH_VERSION__"] = "0.1.1-rc.2"                     │
@@ -90,7 +92,7 @@ dsh plugin --profile web add sm-dsh-version-display
                                    ▼
 ┌─────────────────────────────── 浏览器（client）──────────────────────────────┐
 │                                                                              │
-│  sm-dsh-version-display/client/client.js (client 半区)                            │
+│  dsh-sm-version-display/client/client.js (client 半区)                            │
 │    ├─ 注册 sidebar.footer.action 列表槽条目（order: 100）                       │
 │    ├─ 将 [data-slot="sidebar.footer.action"] 出口改为块级布局 → 独占一行         │
 │    ├─ VersionCard 组件读取 window.__DSH_VERSION__ 显示当前版本                  │
@@ -119,7 +121,7 @@ node scripts/validate.mjs
 目录结构：
 
 ```text
-sm-dsh-version-display-2026.08.23/
+dsh-sm-version-display-2026.08.23/
 ├── package.json          # 包声明（dsh.client / dsh.bundle.patch / v1.0.0）
 ├── cordis.patch.yml      # bundle 补丁
 ├── lib/

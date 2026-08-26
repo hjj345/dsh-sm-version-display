@@ -1,4 +1,4 @@
-// sm-dsh-version-display 构建验证脚本（本插件为手写 bundle，无编译步骤，验证即构建）
+// dsh-sm-version-display 构建验证脚本（本插件为手写 bundle，无编译步骤，验证即构建）
 // 用法：node scripts/validate.mjs
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
