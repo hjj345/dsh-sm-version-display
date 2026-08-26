@@ -1,6 +1,9 @@
-# dsh-sm-version-display — DeepSeek Harness 版本号显示插件
+# DSH版本检测及显示插件 | dsh-sm-version-display
 
-> 在 DeepSeek Harness Web GUI 侧边栏左下角「设置」按钮上方，以圆角卡片的形式实时显示 deepseek-harness 版本号，并自动检测 npm registry 上的最新版本。
+[ 中文文档 ](./README.md) | [ English doc ](./README.en.md)
+
+GitHub仓库：[https://github.com/hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)
+npm仓库：[https://www.npmjs.com/package/@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/@hjj345345/dsh-sm-version-display)
 
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Node](https://img.shields.io/badge/Node.js-%3E%3D20-brightgreen.svg)
@@ -36,17 +39,17 @@
 ## 效果示意
 
 ```text
-┌────────────────────────────┐
-│  ☰  DSH Local Build  29b22c5│
-│  ＋ 新会话                  │
-│  （会话列表…）              │
-│                            │
-│  [插件运行]                 │  ← sidebar.footer.action（cordis）
-│  ┌──────────────────────┐  │
-│  │ v0.1.1-rc.2 (最新版) [刷新]│  │  ← 本插件卡片（独占一行）
-│  └──────────────────────┘  │
-│  ⚙ 设置                    │
-└────────────────────────────┘
+┌──────────────────────────────┐
+│ ☰  DSH Local Build  29b22c5  │
+│ ＋ 新会话                    │
+│ （会话列表…）                │
+│                              │
+│ [插件运行]                   │ ← sidebar.footer.action（cordis）
+│ ┌──────────────────────────┐ │
+│ │ v0.1.1-rc.2 (最新版) [刷新] │ ← 本插件卡片（独占一行）
+│ └──────────────────────────┘ │
+│ ⚙ 设置                      │
+└──────────────────────────────┘
 ```
 
 ## 安装
@@ -83,21 +86,21 @@ dsh plugin --profile web add dsh-sm-version-display
 ```text
 ┌─────────────────────────────── dsh 进程（host）──────────────────────────────┐
 │                                                                              │
-│  dsh-sm-version-display/lib/index.js (host 半区)                                  │
-│    ├─ 订阅 webserver/index-inject 事件                                          │
-│    └─ 每次渲染 index.html 时读取 @deepseek-ai/dsh/package.json 的 version       │
-│       并注入：globalThis["__DSH_VERSION__"] = "0.1.1-rc.2"                     │
+│  dsh-sm-version-display/lib/index.js (host 半区)                              │
+│    ├─ 订阅 webserver/index-inject 事件                                        │
+│    └─ 每次渲染 index.html 时读取 @deepseek-ai/dsh/package.json 的 version     │
+│       并注入：globalThis["__DSH_VERSION__"] = "0.1.1-rc.2"                    │
 └──────────────────────────────────────────────────────────────────────────────┘
                                    │ 浏览器加载页面
                                    ▼
 ┌─────────────────────────────── 浏览器（client）──────────────────────────────┐
 │                                                                              │
-│  dsh-sm-version-display/client/client.js (client 半区)                            │
-│    ├─ 注册 sidebar.footer.action 列表槽条目（order: 100）                       │
-│    ├─ 将 [data-slot="sidebar.footer.action"] 出口改为块级布局 → 独占一行         │
-│    ├─ VersionCard 组件读取 window.__DSH_VERSION__ 显示当前版本                  │
-│    └─ fetch https://registry.npmjs.org/@deepseek-ai/dsh/latest                 │
-│        加载时 + 30 分钟 + 窗口聚焦时检查最新版并比较                              │
+│  dsh-sm-version-display/client/client.js (client 半区)                        │
+│    ├─ 注册 sidebar.footer.action 列表槽条目（order: 100）                      │
+│    ├─ 将 [data-slot="sidebar.footer.action"] 出口改为块级布局 → 独占一行        │
+│    ├─ VersionCard 组件读取 window.__DSH_VERSION__ 显示当前版本                 │
+│    └─ fetch https://registry.npmjs.org/@deepseek-ai/dsh/latest                │
+│        加载时 + 30 分钟 + 窗口聚焦时检查最新版并比较                            │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -130,7 +133,8 @@ dsh-sm-version-display-2026.08.23/
 │   └── client.js         # client 半区（ModuleLoader bundle）
 ├── scripts/
 │   └── validate.mjs      # 构建验证脚本
-├── README.md
+├── README.md             # 中文文档
+├── README.en.md          # English docs
 ├── LICENSE               # MIT
 └── .gitignore
 ```

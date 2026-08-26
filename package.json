@@ -38,8 +38,9 @@
     "lib",
     "client",
     "cordis.patch.yml",
+    "LICENSE",
     "README.md",
-    "LICENSE"
+    "README.en.md"
   ],
   "license": "MIT",
   "author": "hjj345",
