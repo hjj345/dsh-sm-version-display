@@ -132,6 +132,20 @@ npm run build
 
 `npm run build` 会执行 host/client 语法检查、版本比较自测和包完整性检查。
 
+## 更新日志
+
+### v1.0.0
+
+- 首次发布 DSH Web 版本显示插件。
+- 支持运行时读取 DSH 版本、npm registry 更新检查、手动刷新和 Toast 提示。
+- 支持侧边栏响应式布局、浅色/深色主题以及中英文界面。
+- 增加版本比较、超时控制和版本不可用时的安全回退。
+
+## 作者
+
+作者：Jack·Huang<br>
+邮箱：[jack698698@gmail.com](mailto:jack698698@gmail.com)
+
 ## License
 
 本项目以 [MIT License](LICENSE) 发布。Copyright © 2026 hjj345。

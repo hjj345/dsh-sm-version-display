@@ -125,8 +125,8 @@ if (pkg) {
 }
 
 const readmeChecks = [
-	["README.md", [">= v0.1.0-rc.6", "@hjj345345/dsh-sm-version-display", "README.en.md"]],
-	["README.en.md", [">= v0.1.0-rc.6", "@hjj345345/dsh-sm-version-display", "README.md"]]
+	["README.md", [">= v0.1.0-rc.6", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
+	["README.en.md", [">= v0.1.0-rc.6", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
 ];
 for (const [file, fragments] of readmeChecks) {
 	const content = readFileSync(join(root, file), "utf8");

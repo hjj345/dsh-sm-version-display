@@ -132,6 +132,20 @@ npm run build
 
 `npm run build` performs host/client syntax checks, comparator self-tests, and package-integrity checks.
 
+## Changelog
+
+### v1.0.0
+
+- Initial release of the DSH Web version display plugin.
+- Added runtime DSH version detection, npm registry update checks, manual refresh, and Toast feedback.
+- Added responsive sidebar layout, light/dark theme support, and bilingual UI.
+- Added semantic version comparison, request timeout handling, and a safe fallback when the version is unavailable.
+
+## Author
+
+Author: Jack·Huang<br>
+Email: [jack698698@gmail.com](mailto:jack698698@gmail.com)
+
 ## License
 
 This project is released under the [MIT License](LICENSE). Copyright © 2026 hjj345.
