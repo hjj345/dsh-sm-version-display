@@ -2,12 +2,12 @@
 
 中文文档 · [English documentation](README.en.md)
 
-[![version](https://img.shields.io/badge/version-v1.0.0-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#兼容性) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#兼容性)
+[![version](https://img.shields.io/badge/version-v1.0.1-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#兼容性) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#兼容性)
 
 GitHub：[hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
 
-> 最低支持 DSH 版本：`v0.1.0-rc.6`（含）。当前插件版本：`v1.0.0`。
+> 最低支持 DSH 版本：`v0.1.0-rc.6`（含）。当前插件版本：`v1.0.1`。
 
 ## 简介
 
@@ -19,7 +19,7 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
 - DSH 运行时插件 ID：`dsh-sm-version-display`
 - GitHub 仓库：`hjj345/dsh-sm-version-display`
 
-插件版本 `v1.0.0` 表示本插件版本；卡片中显示的是运行时读取到的 DSH 版本，两者不是同一个版本号。
+插件版本 `v1.0.1` 表示本插件版本；卡片中显示的是运行时读取到的 DSH 版本，两者不是同一个版本号。
 
 ## 功能特性
 
@@ -115,7 +115,7 @@ DSH Web browser
 | DSH | `>= v0.1.0-rc.6` |
 | Node.js | `>= 20`（host 运行环境） |
 | 平台 | DSH Web |
-| 插件版本 | `v1.0.0` |
+| 插件版本 | `v1.0.1` |
 
 插件使用 DSH 官方扩展点：`dsh.client`、`sidebar.footer.action`、`webserver/index-inject` 以及 `ctx.slots.inject/register`。如果 DSH 后续发生不兼容的扩展点变更，需要相应适配。
 
@@ -133,6 +133,10 @@ npm run build
 `npm run build` 会执行 host/client 语法检查、版本比较自测和包完整性检查。
 
 ## 更新日志
+
+### v1.0.1
+
+- 修复 scoped npm 包的 DSH bundle 导入名，保持运行时插件 ID 不变。
 
 ### v1.0.0
 

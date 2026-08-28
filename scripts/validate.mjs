@@ -104,7 +104,7 @@ try {
 if (pkg) {
 	const expected = {
 		name: "@hjj345345/dsh-sm-version-display",
-		version: "1.0.0",
+		version: "1.0.1",
 		main: "lib/index.js",
 		license: "MIT",
 		engine: ">=20",

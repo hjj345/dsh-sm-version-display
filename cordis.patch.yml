@@ -5,4 +5,4 @@
 # and loaded in the web page.
 - insert:
     - id: dsh-sm-version-display
-      name: 'dsh-sm-version-display'
+      name: '@hjj345345/dsh-sm-version-display'

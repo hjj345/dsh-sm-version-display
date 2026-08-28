@@ -1,5 +1,5 @@
 window.__ModuleLoader__.load({
-	id: "dsh-sm-version-display",
+	id: "@hjj345345/dsh-sm-version-display",
 	factory: (require) => {
 		var module = { exports: {} };
 		var exports = module.exports;

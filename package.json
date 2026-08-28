@@ -1,6 +1,6 @@
 {
   "name": "@hjj345345/dsh-sm-version-display",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "DeepSeek Harness Web plugin that displays the installed dsh version above the sidebar Settings button and checks npm for updates.",
   "keywords": [
     "deepseek",
