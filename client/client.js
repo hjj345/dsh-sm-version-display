@@ -34,7 +34,7 @@ window.__ModuleLoader__.load({
 		/** Debounce between manual checks so focus/visibility events cannot spam the registry. */
 		const MIN_CHECK_GAP_MS = 15 * 1000;
 		/** Fallback used only when the host-provided global is missing. */
-		const FALLBACK_VERSION = "0.1.1-rc.2";
+		const FALLBACK_VERSION = "unknown";
 		/**
 		* Parse `X.Y.Z` optionally followed by a `-prerelease` (e.g. `0.1.1-rc.2`).
 		* @param value - version string.
@@ -80,6 +80,12 @@ window.__ModuleLoader__.load({
 			}
 			return 0;
 		}
+		/** Format a valid version without duplicating a leading `v`; invalid values stay explicit. */
+		function formatVersion(value) {
+			if (parseVersion(value) === null) return "unknown";
+			const text = String(value).trim();
+			return text.startsWith("v") ? text : "v" + text;
+		}
 		/** Fetch the latest published dsh version from the npm registry. */
 		async function fetchLatestVersion() {
 			const response = await fetch(REGISTRY_URL, {
@@ -96,6 +102,7 @@ window.__ModuleLoader__.load({
 		const zh = {
 			"latest": "最新版",
 			"update": "有更新",
+			"unknown": "版本未知",
 			"refresh": "刷新",
 			"toast.latest": "已是最新版本 {version}",
 			"toast.update": "发现新版本 {latest}，当前版本 {current}",
@@ -104,6 +111,7 @@ window.__ModuleLoader__.load({
 		const en = {
 			"latest": "Latest",
 			"update": "Update available:",
+			"unknown": "Version unavailable",
 			"refresh": "Refresh",
 			"toast.latest": "You are on the latest version {version}",
 			"toast.update": "New version {latest} available (current: {current})",
@@ -170,9 +178,11 @@ window.__ModuleLoader__.load({
 					if (result === null) {
 						setToast({ seq: Date.now(), kind: "error", text: t("toast.error") });
 					} else if (typeof result.latest === "string" && compareVersions(result.latest, result.current) === 1) {
-						setToast({ seq: Date.now(), kind: "update", text: t("toast.update", { latest: "v" + result.latest, current: "v" + result.current }) });
+						setToast({ seq: Date.now(), kind: "update", text: t("toast.update", { latest: formatVersion(result.latest), current: formatVersion(result.current) }) });
+					} else if (parseVersion(result.current) === null) {
+						setToast({ seq: Date.now(), kind: "error", text: t("unknown") });
 					} else {
-						setToast({ seq: Date.now(), kind: "latest", text: t("toast.latest", { version: "v" + result.current }) });
+						setToast({ seq: Date.now(), kind: "latest", text: t("toast.latest", { version: formatVersion(result.current) }) });
 					}
 				}, () => {
 					setToast({ seq: Date.now(), kind: "error", text: t("toast.error") });
@@ -182,12 +192,14 @@ window.__ModuleLoader__.load({
 			}, [checking, runCheck, t]);
 			const current = typeof window !== "undefined" && typeof window.__DSH_VERSION__ === "string" && window.__DSH_VERSION__ !== "" ? window.__DSH_VERSION__ : FALLBACK_VERSION;
 			let meta;
-			if (typeof latest === "string" && compareVersions(latest, current) === 1) {
-				meta = t("update") + " v" + latest;
+			if (parseVersion(current) === null) {
+				meta = t("unknown");
+			} else if (typeof latest === "string" && compareVersions(latest, current) === 1) {
+				meta = t("update") + " " + formatVersion(latest);
 			} else {
 				meta = t("latest");
 			}
-			const display = "v" + current + " (" + meta + ")";
+			const display = formatVersion(current) + " (" + meta + ")";
 			/** 悬浮提示：加粗插件英文全名 + 与卡片一致的版本文案。 */
 			const tooltipLabel = (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, {
 				children: [(0, react_jsx_runtime.jsx)("strong", {
@@ -237,7 +249,7 @@ window.__ModuleLoader__.load({
 							className: "dvd_versionText",
 							children: [(0, react_jsx_runtime.jsx)("span", {
 								className: "dvd_current",
-								children: "v" + current
+								children: formatVersion(current)
 							}), " (", (0, react_jsx_runtime.jsx)("span", {
 								className: "dvd_meta",
 								children: meta

@@ -1,7 +1,7 @@
 {
-  "name": "dsh-sm-version-display",
+  "name": "@hjj345345/dsh-sm-version-display",
   "version": "1.0.0",
-  "description": "在 DeepSeek Harness Web GUI 侧边栏「设置」按钮上方显示 deepseek-harness 版本号的圆角卡片插件；内置 npm registry 更新检测（最新版 / 有更新 vX.Y.Z）。host 半区运行时读取已安装版本，dsh 升级后自动跟随，无需维护。",
+  "description": "DeepSeek Harness Web plugin that displays the installed dsh version above the sidebar Settings button and checks npm for updates.",
   "keywords": [
     "deepseek",
     "harness",
@@ -35,8 +35,8 @@
     "build": "node --check lib/index.js && node --check client/client.js && node scripts/validate.mjs"
   },
   "files": [
-    "lib",
-    "client",
+    "lib/index.js",
+    "client/client.js",
     "cordis.patch.yml",
     "LICENSE",
     "README.md",
@@ -44,5 +44,15 @@
   ],
   "license": "MIT",
   "author": "hjj345",
-  "homepage": "https://github.com/hjj345/dsh-sm-version-display"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hjj345/dsh-sm-version-display.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hjj345/dsh-sm-version-display/issues"
+  },
+  "homepage": "https://github.com/hjj345/dsh-sm-version-display",
+  "engines": {
+    "node": ">=20"
+  }
 }
