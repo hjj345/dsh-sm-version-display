@@ -148,4 +148,4 @@ npm run build
 
 ## License
 
-本项目以 [MIT License](LICENSE) 发布。Copyright © 2026 hjj345。
+本项目以 [MIT License](LICENSE) 发布。Copyright © 2026 Jack·Huang。

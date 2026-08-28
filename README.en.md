@@ -148,4 +148,4 @@ Email: [jack698698@gmail.com](mailto:jack698698@gmail.com)
 
 ## License
 
-This project is released under the [MIT License](LICENSE). Copyright © 2026 hjj345.
+This project is released under the [MIT License](LICENSE). Copyright © 2026 Jack·Huang.
