@@ -96,6 +96,9 @@ for (const file of requiredFiles) {
 		fail("缺少或为空文件: " + file);
 	}
 }
+for (const file of ["images/sm-version-display-icon.png", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png"]) {
+	if (!existsSync(join(root, file)) || readFileSync(join(root, file)).length === 0) fail("缺少或为空图片: " + file);
+}
 let pkg;
 try {
 	pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
@@ -105,12 +108,12 @@ try {
 if (pkg) {
 	const expected = {
 		name: "@hjj345345/dsh-sm-version-display",
-		version: "1.1.0",
+		version: "1.1.1",
 		main: "lib/index.js",
 		license: "MIT",
 		engine: ">=20",
 		patch: "./cordis.patch.yml",
-		files: ["lib/index.js", "client/client.js", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
+		files: ["lib/index.js", "client/client.js", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
 	};
 	if (pkg.name !== expected.name) fail("npm 包名不符合发布契约: " + pkg.name);
 	if (pkg.version !== expected.version) fail("插件版本不符合发布契约: " + pkg.version);
@@ -135,13 +138,15 @@ const hostSrc = readFileSync(join(root, "lib", "index.js"), "utf8");
 for (const fragment of ["settingsNamespace", "settingsNamespace(SETTINGS_NAMESPACE)", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "@deepseek-ai/dsh@latest"]) {
 	if (!hostSrc.includes(fragment)) fail("host 半区缺少功能契约: " + fragment);
 }
-for (const fragment of ["settings.section", "order: 22", "v1.1.0", "@deepseek-ai/dsh@latest", "npm install --global", "npx --yes", "settings.checkVersion"]) {
+for (const fragment of ["settings.section", "order: 22", "v1.1.1", "SETTINGS_ICON_DATA_URL", "@deepseek-ai/dsh@latest", "npm install --global", "npx --yes", "settings.checkVersion"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
 }
+const settingsIconBase64 = readFileSync(join(root, "images", "sm-version-display-settings-icon.png")).toString("base64");
+if (!clientSrc.includes("data:image/png;base64," + settingsIconBase64)) fail("设置页内联图标与 PNG 文件不一致");
 
 const readmeChecks = [
-	["README.md", [">= v0.1.0-rc.6", "v1.1.0", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
-	["README.en.md", [">= v0.1.0-rc.6", "v1.1.0", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
+	["README.md", [">= v0.1.0-rc.6", "v1.1.1", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
+	["README.en.md", [">= v0.1.0-rc.6", "v1.1.1", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
 ];
 for (const [file, fragments] of readmeChecks) {
 	const content = readFileSync(join(root, file), "utf8");

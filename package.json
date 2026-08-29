@@ -1,6 +1,6 @@
 {
   "name": "@hjj345345/dsh-sm-version-display",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "DeepSeek Harness Web plugin with a DSH version card, settings page, npm checks, and safe update guidance.",
   "keywords": [
     "deepseek",
@@ -45,6 +45,8 @@
   "files": [
     "lib/index.js",
     "client/client.js",
+    "images/sm-version-display-icon-outlined.png",
+    "images/sm-version-display-settings-icon.png",
     "cordis.patch.yml",
     "LICENSE",
     "README.md",
