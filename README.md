@@ -13,6 +13,8 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
 
 `@hjj345345/dsh-sm-version-display` 是一个面向 DeepSeek Harness（DSH）Web 界面的客户端 + host 双半区插件。它在侧边栏「设置」按钮上方显示当前已安装的 DSH 版本，并从 npm registry 检查是否有新版本。
 
+从 `v1.1.0` 开始，插件同时在 DSH 设置中新增“DSH版本检测”一级页面（排序 `22`，位于参考插件下方）。页面复刻参考插件的卡片式设计，提供插件开关、通用设置、关于插件和安装命令；支持简体中文、English、繁體中文三种语言。点击“检测DSH版本”后，页面会展开显示本地版本、npm 最新版本、当前 DSH 安装方式和插件管理方式，并针对 npm、npx、pnpm 分别给出更新命令；npm/pnpm 全局安装方式还支持受本机安全限制保护的一键更新。
+
 这里有三个名称需要区分：
 
 - npm 包名：`@hjj345345/dsh-sm-version-display`

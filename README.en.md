@@ -13,6 +13,8 @@ npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345
 
 `@hjj345345/dsh-sm-version-display` is a client + host dual-half plugin for the DeepSeek Harness (DSH) Web interface. It displays the currently installed DSH version above the sidebar Settings button and checks npm for a newer DSH release.
 
+Since `v1.1.0`, the plugin also adds a first-level **DSH Version Checker** page in DSH Settings (`order: 22`, directly below the reference plugin). The page follows the reference plugin’s card-based design and includes the plugin switch, General settings, About, and Install Command sections. It supports Simplified Chinese, English, and Traditional Chinese. Clicking **Check DSH version** expands the installed version, latest npm version, detected DSH installation method, and plugin manager; update commands are clearly separated for npm, npx, and pnpm, with safe host-side one-click updates available for npm/pnpm global installations.
+
 The following names refer to different things:
 
 - npm package: `@hjj345345/dsh-sm-version-display`
