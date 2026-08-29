@@ -1,13 +1,13 @@
-# DSH Version Display | dsh-sm-version-display
+# DSH Version Checker | dsh-sm-version-display
 
 [中文文档](README.md) · English documentation
 
-[![version](https://img.shields.io/badge/version-v1.0.1-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
+[![version](https://img.shields.io/badge/version-v1.1.0-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
 
 GitHub: [hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
 
-> Minimum supported DSH version: `v0.1.0-rc.6` (inclusive). Current plugin version: `v1.0.1`.
+> Minimum supported DSH version: `v0.1.0-rc.6` (inclusive). Current plugin version: `v1.1.0`.
 
 ## Introduction
 
@@ -19,7 +19,7 @@ The following names refer to different things:
 - DSH runtime plugin ID: `dsh-sm-version-display`
 - GitHub repository: `hjj345/dsh-sm-version-display`
 
-Plugin version `v1.0.1` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
+Plugin version `v1.1.0` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
 
 ## Features
 
@@ -29,9 +29,14 @@ Plugin version `v1.0.1` identifies this plugin. The version shown in the card is
 - **Update checks**: checks on page load, every 30 minutes, and when the window returns to the foreground; foreground checks are throttled for 5 minutes.
 - **Semantic comparison**: includes a lightweight comparator for RC, beta, stable, and multi-digit versions.
 - **Manual refresh**: provides a refresh button with a loading state and a native-style DSH Toast after the check completes.
+- **DSH settings page**: registers “DSH Version Checker” below the reference plugin `sm-context-piano` (`order: 21`), at `order: 22`, using DSH’s default gear icon.
+- **Reference-style cards**: includes the plugin hero, enable switch, General settings, About, and Install Command cards.
+- **Three language choices**: Simplified Chinese, English, and Traditional Chinese, with Simplified Chinese as the default and persisted in DSH Settings.
+- **Expandable check results**: shows the installed DSH version, latest npm version, current installation method, and plugin manager beneath the check button.
+- **Update guidance**: offers a safe one-click update where possible and a complete command dialog that distinguishes npm, npx, and the detected pnpm method.
+- **Loopback-only update**: npm/pnpm global installs use a fixed host-side command; updating finishes with a restart reminder.
 - **Responsive layout**: shows a round version icon in the collapsed sidebar rail and wraps text when space is limited.
 - **Theme aware**: uses DSH design-system variables and follows light and dark themes.
-- **Bilingual UI**: Simplified Chinese and English follow the DSH interface locale.
 - **Hover tooltip**: the card and collapsed-rail icon show the English plugin name `dsh-sm-version-display` and the current version.
 
 Example states:
@@ -73,6 +78,25 @@ dsh plugin --profile web add link:C:/path/to/dsh-sm-version-display
 
 Use local linking only for development. Switch back to the npm package for normal use.
 
+## Settings page and DSH updates
+
+Open DSH Settings and select **DSH Version Checker**. Click **Check DSH version** to expand the result directly below the button. No result popup is used. When a newer version is found, choose **Update now** or open **Update commands** for the complete instructions.
+
+The command dialog always distinguishes npm and npx. If the host detects a pnpm global installation, it is shown first:
+
+```powershell
+# npm global install
+npm install --global @deepseek-ai/dsh@latest
+
+# npx temporary execution
+npx --yes @deepseek-ai/dsh@latest web
+
+# pnpm global install
+pnpm add --global @deepseek-ai/dsh@latest
+```
+
+npx has no global installation to replace; the next launch with the latest npx command uses the updated package. Restart the DSH Web service after any global update.
+
 ## How it works
 
 ```text
@@ -80,14 +104,15 @@ DSH host process
   lib/index.js
     └─ listens to webserver/index-inject
        reads version from the installed @deepseek-ai/dsh/package.json
-       injects globalThis["__DSH_VERSION__"]
+       injects globalThis["__DSH_VERSION__"], __DSH_INSTALL_INFO__, and a page token
               │
               ▼
 DSH Web browser
   client/client.js
-    ├─ registers the sidebar.footer.action slot
+    ├─ registers the sidebar.footer.action card and settings.section page
     ├─ reads window.__DSH_VERSION__ and renders the version card
-    └─ GETs https://registry.npmjs.org/@deepseek-ai/dsh/latest
+    ├─ GETs https://registry.npmjs.org/@deepseek-ai/dsh/latest
+    └─ POSTs to the loopback-only update route with fixed npm/pnpm arguments
        compares the current and latest DSH versions
 ```
 
@@ -102,8 +127,9 @@ Key files in the published package:
 
 ## Privacy and network behavior
 
-- The host half reads only the version field from the locally installed DSH package manifest.
-- The client half makes only a version request to `https://registry.npmjs.org/@deepseek-ai/dsh/latest`.
+- The host half reads only the version field and installation-path type from the locally installed DSH package manifest; absolute paths are not sent to the browser.
+- The client half makes only a version request to `https://registry.npmjs.org/@deepseek-ai/dsh/latest`; update requests carry the page-level token injected by the host.
+- The update route accepts only loopback requests with the matching token and does not accept arbitrary commands or arguments from the browser.
 - The request does not include DSH credentials, conversation content, or user files; the plugin does not read chat content.
 - If the registry request fails, the current version remains visible and a generic error is shown for manual checks.
 - The repository and npm package exclude `.env`, `.npmrc`, tokens, keys, certificates, logs, dependency directories, and local DSH data.
@@ -115,9 +141,9 @@ Key files in the published package:
 | DSH | `>= v0.1.0-rc.6` |
 | Node.js | `>= 20` (host runtime) |
 | Platform | DSH Web |
-| Plugin version | `v1.0.1` |
+| Plugin version | `v1.1.0` |
 
-The plugin uses official DSH extension points: `dsh.client`, `sidebar.footer.action`, `webserver/index-inject`, and `ctx.slots.inject/register`. If DSH introduces a breaking change to these extension points, the plugin will need a corresponding update.
+The plugin uses official DSH extension points: `dsh.client`, `sidebar.footer.action`, `settings.section`, `webserver/index-inject`, `ctx.slots.inject/register`, and `ctx.settingsScope`. If DSH introduces a breaking change to these extension points, the plugin will need a corresponding update.
 
 ## Development and local verification
 
@@ -130,9 +156,16 @@ npm run check
 npm run build
 ```
 
-`npm run build` performs host/client syntax checks, comparator self-tests, and package-integrity checks.
+`npm run build` performs host/client syntax checks, comparator self-tests, settings/update contract checks, package-integrity checks, and README checks.
 
 ## Changelog
+
+### v1.1.0 - 2026-08-29
+
+- Added the DSH Version Checker settings section below the reference plugin, with the default gear icon.
+- Added the reference-style plugin settings cards and three-language setting.
+- Added expandable version results, npm/npx/pnpm distinction, and a loopback-only one-click update route.
+- Unified all user-visible plugin version labels to `v1.1.0`.
 
 ### v1.0.1
 

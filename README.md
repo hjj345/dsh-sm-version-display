@@ -1,13 +1,13 @@
-# DSH 版本显示 | dsh-sm-version-display
+# DSH 版本检测 | dsh-sm-version-display
 
 中文文档 · [English documentation](README.en.md)
 
-[![version](https://img.shields.io/badge/version-v1.0.1-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#兼容性) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#兼容性)
+[![version](https://img.shields.io/badge/version-v1.1.0-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#兼容性) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#兼容性)
 
 GitHub：[hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
 
-> 最低支持 DSH 版本：`v0.1.0-rc.6`（含）。当前插件版本：`v1.0.1`。
+> 最低支持 DSH 版本：`v0.1.0-rc.6`（含）。当前插件版本：`v1.1.0`。
 
 ## 简介
 
@@ -19,7 +19,7 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
 - DSH 运行时插件 ID：`dsh-sm-version-display`
 - GitHub 仓库：`hjj345/dsh-sm-version-display`
 
-插件版本 `v1.0.1` 表示本插件版本；卡片中显示的是运行时读取到的 DSH 版本，两者不是同一个版本号。
+插件版本 `v1.1.0` 表示本插件版本；卡片中显示的是运行时读取到的 DSH 版本，两者不是同一个版本号。
 
 ## 功能特性
 
@@ -29,9 +29,14 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
 - **更新检测**：页面加载、每 30 分钟以及窗口重新回到前台时检查 DSH 最新版本；前台检查带 5 分钟节流。
 - **语义化比较**：内置轻量版本比较逻辑，支持 RC、beta、正式版和多位数字版本号比较。
 - **手动刷新**：卡片内提供刷新按钮，检查期间显示加载状态，完成后显示 DSH 原生 Toast。
+- **DSH 设置页**：在 DSH 设置中注册“DSH版本检测”，位于参考插件 `sm-context-piano`（排序 `21`）下方，使用默认齿轮图标（排序 `22`）。
+- **设置卡片**：包含插件名称、副标题、开关、通用设置、关于插件和安装命令，整体复刻参考插件的设计。
+- **三语设置**：支持简体中文、English、繁體中文，默认简体中文，并持久化语言选择。
+- **展开式检测**：在设置页按钮下方展开显示本地 DSH 版本、npm 最新版本、当前安装方式和插件管理方式。
+- **更新指引**：检测到新版本时提供一键更新和更新命令说明，明确区分 npm、npx，并显示当前 pnpm 方式。
+- **安全一键更新**：npm/pnpm 全局安装方式由 host 执行固定命令；请求仅限本机回环地址，完成后需要重启 DSH。
 - **响应式布局**：侧边栏折叠为窄栏时显示圆形版本图标，文本空间不足时自动换行。
 - **主题适配**：使用 DSH 设计系统变量，跟随浅色和深色主题。
-- **双语支持**：简体中文和 English 跟随 DSH 界面语言切换。
 - **悬停提示**：卡片和窄栏图标会显示插件英文名 `dsh-sm-version-display` 及当前版本。
 
 示例状态：
@@ -73,6 +78,25 @@ dsh plugin --profile web add link:C:/path/to/dsh-sm-version-display
 
 本地链接仅用于开发调试；正式使用应切换回 npm 包安装。
 
+## 设置页与版本更新
+
+打开 DSH 设置并选择 **DSH版本检测**。点击“检测DSH版本”后，结果会在按钮下方展开显示，不使用结果弹窗。检测到新版本时可使用“一键更新”，或打开“更新命令”查看完整步骤。
+
+更新命令始终区分 npm 和 npx；如果本机是 pnpm 全局安装，还会优先显示 pnpm 命令：
+
+```powershell
+# npm 全局安装
+npm install --global @deepseek-ai/dsh@latest
+
+# npx 临时执行最新版本
+npx --yes @deepseek-ai/dsh@latest web
+
+# pnpm 全局安装
+pnpm add --global @deepseek-ai/dsh@latest
+```
+
+npx 没有需要替换的全局安装，下一次使用最新 npx 命令启动即可。任何更新完成后都需要重启 DSH Web 服务。
+
 ## 工作原理
 
 ```text
@@ -80,14 +104,15 @@ DSH host process
   lib/index.js
     └─ 监听 webserver/index-inject
        读取已安装 @deepseek-ai/dsh/package.json 的 version
-       注入 globalThis["__DSH_VERSION__"]
+       注入 globalThis["__DSH_VERSION__"]、__DSH_INSTALL_INFO__ 和页面级更新 token
               │
               ▼
 DSH Web browser
   client/client.js
-    ├─ 注册 sidebar.footer.action 槽位
+    ├─ 注册 sidebar.footer.action 版本卡片和 settings.section 设置页
     ├─ 读取 window.__DSH_VERSION__ 并渲染版本卡片
-    └─ GET https://registry.npmjs.org/@deepseek-ai/dsh/latest
+    ├─ GET https://registry.npmjs.org/@deepseek-ai/dsh/latest
+    └─ POST 本机更新路由（仅固定 npm/pnpm 命令）
        比较当前版本和 npm 最新版本
 ```
 
@@ -102,8 +127,9 @@ DSH Web browser
 
 ## 隐私与网络说明
 
-- host 半区只读取本机已安装的 DSH 包清单中的版本字段。
-- client 半区只向 `https://registry.npmjs.org/@deepseek-ai/dsh/latest` 发起版本查询。
+- host 半区只读取本机已安装的 DSH 包清单中的版本字段和安装路径类型，不向浏览器暴露绝对路径。
+- client 半区只向 `https://registry.npmjs.org/@deepseek-ai/dsh/latest` 发起版本查询；更新请求携带 host 注入的页面级 token。
+- 更新路由只接受本机回环请求和匹配 token，命令和参数在 host 内固定，不接受浏览器传入任意命令。
 - 请求不携带 DSH 登录凭据、会话内容或用户文件，插件也不会读取聊天内容。
 - npm registry 请求失败时保留当前版本显示，并在手动检查时显示通用错误提示。
 - 仓库和 npm 包均排除 `.env`、`.npmrc`、令牌、密钥、证书、日志、依赖目录及本地 DSH 数据。
@@ -115,9 +141,9 @@ DSH Web browser
 | DSH | `>= v0.1.0-rc.6` |
 | Node.js | `>= 20`（host 运行环境） |
 | 平台 | DSH Web |
-| 插件版本 | `v1.0.1` |
+| 插件版本 | `v1.1.0` |
 
-插件使用 DSH 官方扩展点：`dsh.client`、`sidebar.footer.action`、`webserver/index-inject` 以及 `ctx.slots.inject/register`。如果 DSH 后续发生不兼容的扩展点变更，需要相应适配。
+插件使用 DSH 官方扩展点：`dsh.client`、`sidebar.footer.action`、`settings.section`、`webserver/index-inject`、`ctx.slots.inject/register` 和 `ctx.settingsScope`。如果 DSH 后续发生不兼容的扩展点变更，需要相应适配。
 
 ## 开发与本地验证
 
@@ -130,9 +156,16 @@ npm run check
 npm run build
 ```
 
-`npm run build` 会执行 host/client 语法检查、版本比较自测和包完整性检查。
+`npm run build` 会执行 host/client 语法检查、版本比较自测、设置页/更新链路契约检查、包完整性检查和 README 检查。
 
 ## 更新日志
+
+### v1.1.0 - 2026-08-29
+
+- 新增 DSH 设置中的“DSH版本检测”一级导航，使用默认齿轮图标。
+- 新增复刻参考项目的插件设置卡片和三语语言设置。
+- 新增展开式版本检测结果、npm/npx/pnpm 更新区分和安全一键更新路由。
+- 统一所有用户可见插件版本为 `v1.1.0`。
 
 ### v1.0.1
 

@@ -28,10 +28,11 @@ for (const [file, label] of checks) {
 // 从 client bundle 提取真实函数并跑版本比较自测
 const clientSrc = readFileSync(join(root, "client", "client.js"), "utf8");
 const start = clientSrc.indexOf("function parseVersion");
-const end = clientSrc.indexOf("/** Fetch the latest");
+const end = clientSrc.indexOf("async function fetchLatestVersion");
+if (start < 0 || end < 0 || end <= start) fail("无法从 client bundle 提取版本比较函数");
 const funcs = clientSrc.slice(start, end).trim();
 const sandbox = { module: { exports: {} } };
-new Function("module", "exports", funcs + "\nmodule.exports = { parseVersion, compareVersions, formatVersion };")(
+new Function("module", "exports", "const FALLBACK_VERSION = 'unknown';\n" + funcs + "\nmodule.exports = { parseVersion, compareVersions, formatVersion };")(
 	sandbox.module, sandbox.module.exports
 );
 const { compareVersions, formatVersion } = sandbox.module.exports;
@@ -104,7 +105,7 @@ try {
 if (pkg) {
 	const expected = {
 		name: "@hjj345345/dsh-sm-version-display",
-		version: "1.0.1",
+		version: "1.1.0",
 		main: "lib/index.js",
 		license: "MIT",
 		engine: ">=20",
@@ -121,12 +122,26 @@ if (pkg) {
 	if (pkg.homepage !== "https://github.com/hjj345/dsh-sm-version-display") fail("homepage 不符合发布契约");
 	if (pkg.dsh?.bundle?.patch !== expected.patch) fail("dsh.bundle.patch 不符合发布契约: " + pkg.dsh?.bundle?.patch);
 	if (JSON.stringify(pkg.files) !== JSON.stringify(expected.files)) fail("files 发布白名单不符合预期");
+	for (const dependency of ["@deepseek-ai/dsh-client-ui-settings", "@deepseek-ai/dsh-client-ui-slots", "@deepseek-ai/dsh-client-ui-primitives"]) {
+		if (!pkg.dsh?.client?.inject?.includes(dependency)) fail("dsh.client.inject 缺少依赖: " + dependency);
+	}
+	for (const dependency of ["@deepseek-ai/dsh-settings", "@deepseek-ai/schemastery", "react"]) {
+		if (pkg.peerDependencies?.[dependency] === undefined) fail("peerDependencies 缺少依赖: " + dependency);
+	}
 	console.log("✔ 包信息:", pkg.name + "@" + pkg.version);
 }
 
+const hostSrc = readFileSync(join(root, "lib", "index.js"), "utf8");
+for (const fragment of ["settingsNamespace", "settingsNamespace(SETTINGS_NAMESPACE)", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "@deepseek-ai/dsh@latest"]) {
+	if (!hostSrc.includes(fragment)) fail("host 半区缺少功能契约: " + fragment);
+}
+for (const fragment of ["settings.section", "order: 22", "v1.1.0", "@deepseek-ai/dsh@latest", "npm install --global", "npx --yes", "settings.checkVersion"]) {
+	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
+}
+
 const readmeChecks = [
-	["README.md", [">= v0.1.0-rc.6", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
-	["README.en.md", [">= v0.1.0-rc.6", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
+	["README.md", [">= v0.1.0-rc.6", "v1.1.0", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
+	["README.en.md", [">= v0.1.0-rc.6", "v1.1.0", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
 ];
 for (const [file, fragments] of readmeChecks) {
 	const content = readFileSync(join(root, file), "utf8");
