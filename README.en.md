@@ -178,11 +178,11 @@ npm run build
 - Added expandable version results, npm/npx/pnpm distinction, and a loopback-only one-click update route.
 - Unified all user-visible plugin version labels to `v1.1.0`.
 
-### v1.0.1
+### v1.0.1 - 2026-08-29
 
 - Fixed the DSH bundle import name for the scoped npm package while preserving the runtime plugin ID.
 
-### v1.0.0
+### v1.0.0 - 2026-08-28
 
 - Initial release of the DSH Web version display plugin.
 - Added runtime DSH version detection, npm registry update checks, manual refresh, and Toast feedback.
