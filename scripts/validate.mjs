@@ -141,6 +141,11 @@ for (const fragment of ["settingsNamespace", "settingsNamespace(SETTINGS_NAMESPA
 for (const fragment of ["settings.section", "order: 22", "v1.1.1", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "dvd-settings-version-grid", "settings.confirmTitle", "settings.updateLog", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
 }
+const localizedKeys = ["settings.source.npm", "settings.source.github", "settings.versionType", "settings.type.alpha", "settings.type.beta", "settings.type.rc", "settings.type.release", "settings.confirmTitle", "settings.confirmWarning", "settings.updateLog", "settings.command.githubSource", "settings.stepSource", "settings.channel.latest"];
+for (const key of localizedKeys) {
+		const occurrences = clientSrc.split("\"" + key + "\"").length - 1;
+		if (occurrences < 3) fail("多语言文案未覆盖 zh/en/zh-TW: " + key);
+}
 const settingsIconBase64 = readFileSync(join(root, "images", "sm-version-display-settings-icon.png")).toString("base64");
 if (!clientSrc.includes("data:image/png;base64," + settingsIconBase64)) fail("设置页内联图标与 PNG 文件不一致");
 
