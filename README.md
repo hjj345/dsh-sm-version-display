@@ -15,9 +15,9 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
 
 ## 简介
 
-`@hjj345345/dsh-sm-version-display` 是一个面向 DeepSeek Harness（DSH）Web 界面的客户端 + host 双半区插件。它在侧边栏「设置」按钮上方显示当前已安装的 DSH 版本，并从 npm registry 检查是否有新版本。
+`@hjj345345/dsh-sm-version-display` 是一个面向 DeepSeek Harness（DSH）Web 界面的客户端 + host 双半区插件。它在侧边栏「设置」按钮上方显示当前已安装的 DSH 版本，并检测 npm registry 与官方 GitHub Release 的新版本。
 
-从 `v1.1.0` 开始，插件同时在 DSH 设置中新增“DSH版本检测”一级页面（排序 `22`，位于参考插件下方）。页面复刻参考插件的卡片式设计，提供插件开关、通用设置、关于插件和安装命令；支持简体中文、English、繁體中文三种语言。点击“检测DSH版本”后，页面会展开显示本地版本、npm 最新版本、当前 DSH 安装方式和插件管理方式，并针对 npm、npx、pnpm 分别给出更新命令；npm/pnpm 全局安装方式还支持受本机安全限制保护的一键更新。
+从 `v1.1.0` 开始，插件同时在 DSH 设置中新增“DSH版本检测”一级页面（排序 `22`，位于参考插件下方）。页面复刻参考插件的卡片式设计，提供插件开关、通用设置、关于插件和安装命令；支持简体中文、English、繁體中文三种语言。检测结果会在 DSH 进程期间缓存，设置弹窗重新打开后仍可查看。检测到更新时，用户可以先查看风险并确认后由插件执行精确版本命令，也可以打开手动更新步骤逐条执行。
 
 这里有三个名称需要区分：
 
@@ -32,15 +32,17 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
 - **版本卡片**：在侧边栏底部「设置」按钮上方显示圆角版本卡片，并独占一行。
 - **运行时读取**：host 半区在渲染页面时读取已安装的 `@deepseek-ai/dsh` 版本，DSH 升级并重启后自动跟随。
 - **安全回退**：host 版本暂时不可用时显示“版本未知”，不会猜测或伪造固定版本。
-- **更新检测**：页面加载、每 30 分钟以及窗口重新回到前台时检查 DSH 最新版本；前台检查带 5 分钟节流。
-- **语义化比较**：内置轻量版本比较逻辑，支持 RC、beta、正式版和多位数字版本号比较。
+- **更新检测**：页面加载、每 30 分钟以及窗口重新回到前台时检查 npm 和 GitHub Release；结果在 DSH 进程内缓存。
+- **版本类型**：GitHub 版本区分预发布 Alpha、测试版 Beta、公测版 RC 和正式版 Release。
+- **语义化比较**：内置轻量版本比较逻辑，支持 Alpha、Beta、RC、正式版和多位数字版本号比较。
 - **手动刷新**：卡片内提供刷新按钮，检查期间显示加载状态，完成后显示 DSH 原生 Toast。
 - **DSH 设置页**：在 DSH 设置中注册“DSH版本检测”，位于参考插件 `sm-context-piano`（排序 `21`）下方，使用默认齿轮图标（排序 `22`）。
 - **设置卡片**：包含插件名称、副标题、开关、通用设置、关于插件和安装命令，整体复刻参考插件的设计。
 - **三语设置**：支持简体中文、English、繁體中文，默认简体中文，并持久化语言选择。
-- **展开式检测**：在设置页按钮下方展开显示本地 DSH 版本、npm 最新版本、当前安装方式和插件管理方式。
-- **更新指引**：检测到新版本时提供一键更新和更新命令说明，明确区分 npm、npx，并显示当前 pnpm 方式。
-- **安全一键更新**：npm/pnpm 全局安装方式由 host 执行固定命令；请求仅限本机回环地址，完成后需要重启 DSH。
+- **展开式检测**：在设置页按钮下方并排显示 npm 与 GitHub 版本、类型、发布时间、Release 链接、当前安装方式和插件管理方式。
+- **双路径更新**：更新前必须确认风险；支持 host 后台自动执行，或打开完整命令和步骤手动更新。
+- **更新输出**：自动更新时显示执行命令、实时输出、成功/失败状态和重启要求。
+- **安全一键更新**：仅执行 host 内固定的精确版本命令；请求仅限本机回环地址，GitHub 源码版本无对应 npm 包时仅提供手动构建步骤。
 - **响应式布局**：侧边栏折叠为窄栏时显示圆形版本图标，文本空间不足时自动换行。
 - **主题适配**：使用 DSH 设计系统变量，跟随浅色和深色主题。
 - **悬停提示**：卡片和窄栏图标会显示插件英文名 `dsh-sm-version-display` 及当前版本。
@@ -86,22 +88,24 @@ dsh plugin --profile web add link:C:/path/to/dsh-sm-version-display
 
 ## 设置页与版本更新
 
-打开 DSH 设置并选择 **DSH版本检测**。点击“检测DSH版本”后，结果会在按钮下方展开显示，不使用结果弹窗。检测到新版本时可使用“一键更新”，或打开“更新命令”查看完整步骤。
+打开 DSH 设置并选择 **DSH版本检测**。点击“检测DSH版本”后，npm 与 GitHub 结果会在按钮下方展开显示，并在本次 DSH 进程期间保留。只有用户点击“收起检测结果”后才会折叠；重新启动 DSH 后状态重置。
 
 更新命令始终区分 npm 和 npx；如果本机是 pnpm 全局安装，还会优先显示 pnpm 命令：
 
 ```powershell
 # npm 全局安装
-npm install --global @deepseek-ai/dsh@latest
+npm install --global @deepseek-ai/dsh@<version>
 
-# npx 临时执行最新版本
-npx --yes @deepseek-ai/dsh@latest web
+# npx 临时执行指定版本
+npx --yes @deepseek-ai/dsh@<version> web
 
 # pnpm 全局安装
-pnpm add --global @deepseek-ai/dsh@latest
+pnpm add --global @deepseek-ai/dsh@<version>
 ```
 
-npx 没有需要替换的全局安装，下一次使用最新 npx 命令启动即可。任何更新完成后都需要重启 DSH Web 服务。
+npx 没有需要替换的全局安装；GitHub Release 如果没有对应 npm 包，则需要按照弹窗中的 clone、checkout、pnpm install、build 和启动步骤手动执行。任何更新完成后都需要重启 DSH Web 服务。
+
+自动更新会先显示来源、目标版本、版本类型和风险，用户确认后才执行。执行期间设置页会显示命令和输出。Alpha、Beta、RC 版本可能包含破坏性变更；切换版本前建议备份 `.dsh` 配置和 profile 数据。回退时请使用明确的旧版本号，例如 `@deepseek-ai/dsh@0.1.1-rc.2`。
 
 ## 工作原理
 
@@ -116,10 +120,10 @@ DSH host process
 DSH Web browser
   client/client.js
     ├─ 注册 sidebar.footer.action 版本卡片和 settings.section 设置页
-    ├─ 读取 window.__DSH_VERSION__ 并渲染版本卡片
-    ├─ GET https://registry.npmjs.org/@deepseek-ai/dsh/latest
-    └─ POST 本机更新路由（仅固定 npm/pnpm 命令）
-       比较当前版本和 npm 最新版本
+     ├─ 读取 window.__DSH_VERSION__ 并渲染版本卡片
+     ├─ GET 本机检查路由（host 缓存 npm 与 GitHub Release）
+     └─ POST 本机更新路由（仅固定精确版本命令）
+        比较当前版本和两个来源的版本
 ```
 
 发布包中的关键文件：
@@ -134,7 +138,7 @@ DSH Web browser
 ## 隐私与网络说明
 
 - host 半区只读取本机已安装的 DSH 包清单中的版本字段和安装路径类型，不向浏览器暴露绝对路径。
-- client 半区只向 `https://registry.npmjs.org/@deepseek-ai/dsh/latest` 发起版本查询；更新请求携带 host 注入的页面级 token。
+- host 半区查询 npm Registry 与 GitHub Releases，并在 DSH 进程内缓存结果；更新请求携带 host 注入的页面级 token。
 - 更新路由只接受本机回环请求和匹配 token，命令和参数在 host 内固定，不接受浏览器传入任意命令。
 - 请求不携带 DSH 登录凭据、会话内容或用户文件，插件也不会读取聊天内容。
 - npm registry 请求失败时保留当前版本显示，并在手动检查时显示通用错误提示。

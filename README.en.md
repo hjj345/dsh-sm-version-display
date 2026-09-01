@@ -15,9 +15,9 @@ npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345
 
 ## Introduction
 
-`@hjj345345/dsh-sm-version-display` is a client + host dual-half plugin for the DeepSeek Harness (DSH) Web interface. It displays the currently installed DSH version above the sidebar Settings button and checks npm for a newer DSH release.
+`@hjj345345/dsh-sm-version-display` is a client + host dual-half plugin for the DeepSeek Harness (DSH) Web interface. It displays the currently installed DSH version above the sidebar Settings button and checks npm and the official GitHub releases for newer DSH versions.
 
-Since `v1.1.0`, the plugin also adds a first-level **DSH Version Checker** page in DSH Settings (`order: 22`, directly below the reference plugin). The page follows the reference plugin’s card-based design and includes the plugin switch, General settings, About, and Install Command sections. It supports Simplified Chinese, English, and Traditional Chinese. Clicking **Check DSH version** expands the installed version, latest npm version, detected DSH installation method, and plugin manager; update commands are clearly separated for npm, npx, and pnpm, with safe host-side one-click updates available for npm/pnpm global installations.
+Since `v1.1.0`, the plugin also adds a first-level **DSH Version Checker** page in DSH Settings (`order: 22`, directly below the reference plugin). The page follows the reference plugin’s card-based design and includes the plugin switch, General settings, About, and Install Command sections. It supports Simplified Chinese, English, and Traditional Chinese. Results are cached for the DSH process and remain available when the settings dialog is reopened. When an update is found, the user can confirm a host-side exact-version update or open the complete manual steps.
 
 The following names refer to different things:
 
@@ -32,15 +32,17 @@ Plugin version `v1.1.1` identifies this plugin. The version shown in the card is
 - **Version card**: displays a rounded version card on its own row above the sidebar Settings button.
 - **Runtime detection**: the host half reads the installed `@deepseek-ai/dsh` version while rendering the page, so the card follows DSH upgrades after restart.
 - **Safe fallback**: if the host version is temporarily unavailable, the card shows “Version unavailable” instead of guessing a fixed version.
-- **Update checks**: checks on page load, every 30 minutes, and when the window returns to the foreground; foreground checks are throttled for 5 minutes.
-- **Semantic comparison**: includes a lightweight comparator for RC, beta, stable, and multi-digit versions.
+- **Update checks**: checks npm and GitHub releases on page load, every 30 minutes, and when the window returns to the foreground; results are cached in the DSH process.
+- **Release types**: classifies GitHub versions as Alpha preview, Beta, Release Candidate, or Release.
+- **Semantic comparison**: includes a lightweight comparator for Alpha, Beta, RC, stable, and multi-digit versions.
 - **Manual refresh**: provides a refresh button with a loading state and a native-style DSH Toast after the check completes.
 - **DSH settings page**: registers “DSH Version Checker” below the reference plugin `sm-context-piano` (`order: 21`), at `order: 22`, using DSH’s default gear icon.
 - **Reference-style cards**: includes the plugin hero, enable switch, General settings, About, and Install Command cards.
 - **Three language choices**: Simplified Chinese, English, and Traditional Chinese, with Simplified Chinese as the default and persisted in DSH Settings.
-- **Expandable check results**: shows the installed DSH version, latest npm version, current installation method, and plugin manager beneath the check button.
-- **Update guidance**: offers a safe one-click update where possible and a complete command dialog that distinguishes npm, npx, and the detected pnpm method.
-- **Loopback-only update**: npm/pnpm global installs use a fixed host-side command; updating finishes with a restart reminder.
+- **Expandable check results**: shows side-by-side npm and GitHub cards with versions, release types, dates, links, current installation method, and plugin manager beneath the check button.
+- **Two update paths**: requires risk confirmation, then either runs the host-side update or opens complete commands and steps for manual execution.
+- **Update output**: automatic updates show the command, live output, completion state, and restart reminder.
+- **Loopback-only update**: only fixed exact-version commands run on the host; GitHub source-only releases fall back to manual build steps.
 - **Responsive layout**: shows a round version icon in the collapsed sidebar rail and wraps text when space is limited.
 - **Theme aware**: uses DSH design-system variables and follows light and dark themes.
 - **Hover tooltip**: the card and collapsed-rail icon show the English plugin name `dsh-sm-version-display` and the current version.
@@ -86,22 +88,24 @@ Use local linking only for development. Switch back to the npm package for norma
 
 ## Settings page and DSH updates
 
-Open DSH Settings and select **DSH Version Checker**. Click **Check DSH version** to expand the result directly below the button. No result popup is used. When a newer version is found, choose **Update now** or open **Update commands** for the complete instructions.
+Open DSH Settings and select **DSH Version Checker**. Click **Check DSH version** to expand the npm and GitHub results directly below the button. Results remain cached for the DSH process; clicking **Collapse result** keeps them collapsed until DSH is restarted.
 
 The command dialog always distinguishes npm and npx. If the host detects a pnpm global installation, it is shown first:
 
 ```powershell
 # npm global install
-npm install --global @deepseek-ai/dsh@latest
+npm install --global @deepseek-ai/dsh@<version>
 
 # npx temporary execution
-npx --yes @deepseek-ai/dsh@latest web
+npx --yes @deepseek-ai/dsh@<version> web
 
 # pnpm global install
-pnpm add --global @deepseek-ai/dsh@latest
+pnpm add --global @deepseek-ai/dsh@<version>
 ```
 
-npx has no global installation to replace; the next launch with the latest npx command uses the updated package. Restart the DSH Web service after any global update.
+npx has no global installation to replace. If a GitHub Release has no matching npm package, follow the dialog’s clone, checkout, pnpm install, build, and launch steps manually. Restart the DSH Web service after any update.
+
+Automatic updates show the source, target version, release type, and risks first; the command runs only after confirmation. Alpha, Beta, and RC releases may contain breaking changes. Back up `.dsh` configuration and profile data before switching channels, and use an exact older version such as `@deepseek-ai/dsh@0.1.1-rc.2` to roll back.
 
 ## How it works
 
@@ -117,9 +121,9 @@ DSH Web browser
   client/client.js
     ├─ registers the sidebar.footer.action card and settings.section page
     ├─ reads window.__DSH_VERSION__ and renders the version card
-    ├─ GETs https://registry.npmjs.org/@deepseek-ai/dsh/latest
-    └─ POSTs to the loopback-only update route with fixed npm/pnpm arguments
-       compares the current and latest DSH versions
+    ├─ GETs the local check route (host caches npm and GitHub releases)
+    └─ POSTs to the loopback-only update route with fixed exact-version arguments
+       compares the current version with both sources
 ```
 
 Key files in the published package:
@@ -134,7 +138,7 @@ Key files in the published package:
 ## Privacy and network behavior
 
 - The host half reads only the version field and installation-path type from the locally installed DSH package manifest; absolute paths are not sent to the browser.
-- The client half makes only a version request to `https://registry.npmjs.org/@deepseek-ai/dsh/latest`; update requests carry the page-level token injected by the host.
+- The host half queries npm Registry and GitHub Releases and caches results in process memory; update requests carry the page-level token injected by the host.
 - The update route accepts only loopback requests with the matching token and does not accept arbitrary commands or arguments from the browser.
 - The request does not include DSH credentials, conversation content, or user files; the plugin does not read chat content.
 - If the registry request fails, the current version remains visible and a generic error is shown for manual checks.
