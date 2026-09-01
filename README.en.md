@@ -172,7 +172,14 @@ npm run build
 
 ### v1.2.0 - 2026-09-01
 
-- Updated the plugin version and release date information.
+- Reworked dual-source version checks to query the npm Registry and official GitHub Releases, showing the current and latest versions, release type, publication date, release tag, link, and npm availability.
+- Improved version parsing and comparison for Alpha, Beta, RC, stable, and multi-digit versions, with distinct latest, update available, current newer, and check failed states.
+- Improved check timing and caching: checks run on page load, refresh every 30 minutes, and refresh after the window returns to the foreground when the interval allows; results are cached in the DSH process to avoid duplicate requests.
+- Updated the settings result UI with expandable side-by-side npm and GitHub cards, current installation method and plugin manager details, plus clear Simplified Chinese, English, and Traditional Chinese labels for the stable `latest` channel.
+- Added a safer update flow that shows the source, target version, release type, and risks before confirmation; only confirmed fixed-version commands are executed.
+- Hardened host-side updates by requiring a loopback address, valid origin, and page-level token, validating stale targets, preventing duplicate jobs, and reporting command output, completion state, failure reasons, and restart reminders.
+- Covered multiple update methods: npm and pnpm support host-side one-click updates, npx provides a temporary execution command, and GitHub releases without a matching npm package fall back to clone, checkout, install, build, and launch steps.
+- Synchronized the package, About page, and bilingual documentation to plugin version `v1.2.0` with release date `2026-09-01`, and added the corresponding build and localization contract checks.
 
 ### v1.1.1 - 2026-08-29
 
