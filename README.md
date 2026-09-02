@@ -33,6 +33,7 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
 - **运行时读取**：host 半区在渲染页面时读取已安装的 `@deepseek-ai/dsh` 版本，DSH 升级并重启后自动跟随。
 - **安全回退**：host 版本暂时不可用时显示“版本未知”，不会猜测或伪造固定版本。
 - **更新检测**：页面加载、每 30 分钟以及窗口重新回到前台时检查 npm 和 GitHub Release；结果在 DSH 进程内缓存。
+- **GitHub 限流回退**：GitHub API 受限时自动改用官方 Releases Atom Feed；npm 检测不受影响。
 - **版本类型**：GitHub 版本区分预发布 Alpha、测试版 Beta、公测版 RC 和正式版 Release。
 - **语义化比较**：内置轻量版本比较逻辑，支持 Alpha、Beta、RC、正式版和多位数字版本号比较。
 - **手动刷新**：卡片内提供刷新按钮，检查期间显示加载状态，完成后显示 DSH 原生 Toast。
@@ -138,7 +139,7 @@ DSH Web browser
 ## 隐私与网络说明
 
 - host 半区只读取本机已安装的 DSH 包清单中的版本字段和安装路径类型，不向浏览器暴露绝对路径。
-- host 半区查询 npm Registry 与 GitHub Releases，并在 DSH 进程内缓存结果；更新请求携带 host 注入的页面级 token。
+- host 半区查询 npm Registry 与 GitHub Releases，并在 DSH 进程内缓存结果；GitHub API 限流时回退到官方 Releases Atom Feed；更新请求携带 host 注入的页面级 token。
 - 更新路由只接受本机回环请求和匹配 token，命令和参数在 host 内固定，不接受浏览器传入任意命令。
 - 请求不携带 DSH 登录凭据、会话内容或用户文件，插件也不会读取聊天内容。
 - npm registry 请求失败时保留当前版本显示，并在手动检查时显示通用错误提示。

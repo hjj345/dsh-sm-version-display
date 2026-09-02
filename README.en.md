@@ -33,6 +33,7 @@ Plugin version `v1.2.0` identifies this plugin. The version shown in the card is
 - **Runtime detection**: the host half reads the installed `@deepseek-ai/dsh` version while rendering the page, so the card follows DSH upgrades after restart.
 - **Safe fallback**: if the host version is temporarily unavailable, the card shows “Version unavailable” instead of guessing a fixed version.
 - **Update checks**: checks npm and GitHub releases on page load, every 30 minutes, and when the window returns to the foreground; results are cached in the DSH process.
+- **GitHub rate-limit fallback**: falls back to the official Releases Atom Feed when the GitHub API is rate-limited, without affecting npm checks.
 - **Release types**: classifies GitHub versions as Alpha preview, Beta, Release Candidate, or Release.
 - **Semantic comparison**: includes a lightweight comparator for Alpha, Beta, RC, stable, and multi-digit versions.
 - **Manual refresh**: provides a refresh button with a loading state and a native-style DSH Toast after the check completes.
@@ -138,7 +139,7 @@ Key files in the published package:
 ## Privacy and network behavior
 
 - The host half reads only the version field and installation-path type from the locally installed DSH package manifest; absolute paths are not sent to the browser.
-- The host half queries npm Registry and GitHub Releases and caches results in process memory; update requests carry the page-level token injected by the host.
+- The host half queries npm Registry and GitHub Releases and caches results in process memory; GitHub API rate limits fall back to the official Releases Atom Feed; update requests carry the page-level token injected by the host.
 - The update route accepts only loopback requests with the matching token and does not accept arbitrary commands or arguments from the browser.
 - The request does not include DSH credentials, conversation content, or user files; the plugin does not read chat content.
 - If the registry request fails, the current version remains visible and a generic error is shown for manual checks.

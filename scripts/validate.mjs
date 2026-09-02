@@ -135,10 +135,10 @@ if (pkg) {
 }
 
 const hostSrc = readFileSync(join(root, "lib", "index.js"), "utf8");
-for (const fragment of ["settingsNamespace", "settingsNamespace(SETTINGS_NAMESPACE)", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "GITHUB_RELEASES_URL", "npmAvailable", "@deepseek-ai/dsh@"]){
+for (const fragment of ["settingsNamespace", "settingsNamespace(SETTINGS_NAMESPACE)", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "GITHUB_RELEASES_URL", "GITHUB_RELEASES_FEED_URL", "fetchGithubLatestFromFeed", "github-rate-limit", "npmAvailable", "@deepseek-ai/dsh@"]){
 	if (!hostSrc.includes(fragment)) fail("host 半区缺少功能契约: " + fragment);
 }
-for (const fragment of ["settings.section", "order: 22", "v1.2.0", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "dvd-settings-version-grid", "settings.confirmTitle", "settings.updateLog", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
+for (const fragment of ["settings.section", "order: 22", "v1.2.0", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "dvd-settings-version-grid", "settings.confirmTitle", "settings.updateLog", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
 }
 const localizedKeys = ["settings.source.npm", "settings.source.github", "settings.versionType", "settings.type.alpha", "settings.type.beta", "settings.type.rc", "settings.type.release", "settings.confirmTitle", "settings.confirmWarning", "settings.updateLog", "settings.command.githubSource", "settings.stepSource", "settings.channel.latest"];
