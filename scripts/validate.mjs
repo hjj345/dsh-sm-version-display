@@ -141,7 +141,7 @@ for (const fragment of ["settingsNamespace", "settingsNamespace(SETTINGS_NAMESPA
 for (const fragment of ["settings.section", "order: 22", "v1.2.0", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "dvd-settings-version-grid", "settings.confirmTitle", "settings.updateLog", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
 }
-const localizedKeys = ["settings.source.npm", "settings.source.github", "settings.versionType", "settings.type.alpha", "settings.type.beta", "settings.type.rc", "settings.type.release", "settings.confirmTitle", "settings.confirmWarning", "settings.updateLog", "settings.command.githubSource", "settings.stepSource", "settings.channel.latest"];
+const localizedKeys = ["settings.source.npm", "settings.source.github", "settings.versionType", "settings.type.alpha", "settings.type.beta", "settings.type.rc", "settings.type.release", "settings.confirmTitle", "settings.confirmWarning", "settings.updateLog", "settings.command.githubSource", "settings.stepSource", "settings.channel.latest", "settings.openRelease"];
 for (const key of localizedKeys) {
 		const occurrences = clientSrc.split("\"" + key + "\"").length - 1;
 		if (occurrences < 3) fail("多语言文案未覆盖 zh/en/zh-TW: " + key);
