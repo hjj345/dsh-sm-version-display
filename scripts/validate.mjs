@@ -108,7 +108,7 @@ try {
 if (pkg) {
 	const expected = {
 		name: "@hjj345345/dsh-sm-version-display",
-		version: "1.2.3",
+		version: "1.2.4",
 		main: "lib/index.js",
 		license: "MIT",
 		engine: ">=20",
@@ -139,7 +139,7 @@ const hostSrc = readFileSync(join(root, "lib", "index.js"), "utf8");
 for (const fragment of ["SETTINGS_NAMESPACE", "settingsCtx.settings.register(SETTINGS_NAMESPACE, SettingsSchema", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "GITHUB_RELEASES_URL", "GITHUB_RELEASES_FEED_URL", "fetchGithubLatestFromFeed", "github-rate-limit", "npmAvailable", "@deepseek-ai/dsh@"]){
 	if (!hostSrc.includes(fragment)) fail("host 半区缺少功能契约: " + fragment);
 }
-for (const fragment of ["settings.section", "order: 22", "v1.2.3", "2026-09-03", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "dvd-settings-version-grid", "settings.confirmTitle", "settings.updateLog", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
+for (const fragment of ["settings.section", "order: 22", "v1.2.4", "2026-09-03", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "dvd-settings-version-grid", "settings.confirmTitle", "settings.updateLog", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
 }
 const localizedKeys = ["settings.source.npm", "settings.source.github", "settings.versionType", "settings.type.alpha", "settings.type.beta", "settings.type.rc", "settings.type.release", "settings.confirmTitle", "settings.confirmWarning", "settings.updateLog", "settings.command.githubSource", "settings.stepSource", "settings.channel.latest", "settings.openRelease"];
@@ -151,8 +151,8 @@ const settingsIconBase64 = readFileSync(join(root, "images", "sm-version-display
 if (!clientSrc.includes("data:image/png;base64," + settingsIconBase64)) fail("设置页内联图标与 PNG 文件不一致");
 
 const readmeChecks = [
-	["README.md", [">= v0.1.0-rc.6", "v1.2.3", "2026-09-03", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
-	["README.en.md", [">= v0.1.0-rc.6", "v1.2.3", "2026-09-03", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
+	["README.md", [">= v0.1.0-rc.6", "v1.2.4", "2026-09-03", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
+	["README.en.md", [">= v0.1.0-rc.6", "v1.2.4", "2026-09-03", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
 ];
 for (const [file, fragments] of readmeChecks) {
 	const content = readFileSync(join(root, file), "utf8");

@@ -2,7 +2,7 @@
 
 [中文文档](README.md) · English documentation
 
-[![version](https://img.shields.io/badge/version-v1.2.3-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
+[![version](https://img.shields.io/badge/version-v1.2.4-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
 
 GitHub: [hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
@@ -11,7 +11,7 @@ npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345
   <img src="images/sm-version-display-icon-outlined.png" alt="DSH Version Checker plugin icon" width="180">
 </p>
 
-> Minimum supported DSH version: `v0.1.0-rc.6` (inclusive). Current plugin version: `v1.2.3`.
+> Minimum supported DSH version: `v0.1.0-rc.6` (inclusive). Current plugin version: `v1.2.4`.
 
 ## Introduction
 
@@ -25,7 +25,7 @@ The following names refer to different things:
 - DSH runtime plugin ID: `dsh-sm-version-display`
 - GitHub repository: `hjj345/dsh-sm-version-display`
 
-Plugin version `v1.2.3` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
+Plugin version `v1.2.4` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
 
 ## Features
 
@@ -190,7 +190,7 @@ Key files in the published package:
 | DSH | `>= v0.1.0-rc.6` |
 | Node.js | `>= 20` (host runtime) |
 | Platform | DSH Web |
-| Plugin version | `v1.2.3` |
+| Plugin version | `v1.2.4` |
 
 The plugin uses official DSH extension points: `dsh.client`, `sidebar.footer.action`, `settings.section`, `webserver/index-inject`, `ctx.slots.inject/register`, and `ctx.settingsScope`. If DSH introduces a breaking change to these extension points, the plugin will need a corresponding update.
 
@@ -208,6 +208,12 @@ npm run build
 `npm run build` performs host/client syntax checks, comparator self-tests, settings/update contract checks, package-integrity checks, and README checks.
 
 ## Changelog
+
+### v1.2.4 - 2026-09-03
+
+- Fixed DSH client-module loading compatibility by replacing the obsolete `@deepseek-ai/dsh-client-runtime` entry in `dsh.client.inject` with `@deepseek-ai/dsh-client-modules`, while retaining the locale, settings, slots, and UI-primitives injections.
+- Strengthened the release-contract checks to require `@deepseek-ai/dsh-client-modules` and reject any remaining `@deepseek-ai/dsh-client-runtime`, preventing the client loading entry point from regressing.
+- Updated the package, client About page, and bilingual documentation to plugin version `v1.2.4` with release date `2026-09-03`.
 
 ### v1.2.3 - 2026-09-03
 
