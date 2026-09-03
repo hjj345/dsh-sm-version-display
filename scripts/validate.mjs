@@ -125,9 +125,10 @@ if (pkg) {
 	if (pkg.homepage !== "https://github.com/hjj345/dsh-sm-version-display") fail("homepage 不符合发布契约");
 	if (pkg.dsh?.bundle?.patch !== expected.patch) fail("dsh.bundle.patch 不符合发布契约: " + pkg.dsh?.bundle?.patch);
 	if (JSON.stringify(pkg.files) !== JSON.stringify(expected.files)) fail("files 发布白名单不符合预期");
-	for (const dependency of ["@deepseek-ai/dsh-client-ui-settings", "@deepseek-ai/dsh-client-ui-slots", "@deepseek-ai/dsh-client-ui-primitives"]) {
+	for (const dependency of ["@deepseek-ai/dsh-client-modules", "@deepseek-ai/dsh-client-ui-settings", "@deepseek-ai/dsh-client-ui-slots", "@deepseek-ai/dsh-client-ui-primitives"]) {
 		if (!pkg.dsh?.client?.inject?.includes(dependency)) fail("dsh.client.inject 缺少依赖: " + dependency);
 	}
+	if (pkg.dsh?.client?.inject?.includes("@deepseek-ai/dsh-client-runtime")) fail("dsh.client.inject 仍包含已过时的 dsh-client-runtime");
 	for (const dependency of ["@deepseek-ai/dsh-settings", "@deepseek-ai/schemastery", "react"]) {
 		if (pkg.peerDependencies?.[dependency] === undefined) fail("peerDependencies 缺少依赖: " + dependency);
 	}
