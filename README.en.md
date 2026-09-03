@@ -48,6 +48,44 @@ Plugin version `v1.2.2` identifies this plugin. The version shown in the card is
 - **Theme aware**: uses DSH design-system variables and follows light and dark themes.
 - **Hover tooltip**: the card and collapsed-rail icon show the English plugin name `dsh-sm-version-display` and the current version.
 
+## Screenshots / 实际效果截图
+
+Sidebar version card:
+
+<p align="center">
+  <img src="images/Screenshot/0RudPrDwe6.png" alt="Sidebar version card" width="420">
+</p>
+
+Collapsed sidebar hover tooltip:
+
+<p align="center">
+  <img src="images/Screenshot/chrome_OQz4xZKVFZ.png" alt="Collapsed sidebar hover tooltip" width="420">
+</p>
+
+Settings page overview:
+
+<p align="center">
+  <img src="images/Screenshot/chrome_nhY8tQiILP.png" alt="DSH Version Checker settings page overview" width="680">
+</p>
+
+Dual-source version check results:
+
+<p align="center">
+  <img src="images/Screenshot/chrome_kpQwbwJoWO.png" alt="npm and GitHub dual-source version check results" width="680">
+</p>
+
+Update confirmation dialog:
+
+<p align="center">
+  <img src="images/Screenshot/chrome_ThdSMjsumh.png" alt="DSH update confirmation dialog" width="680">
+</p>
+
+Update execution record, About section, and install command:
+
+<p align="center">
+  <img src="images/Screenshot/chrome_9tWPgqs9Pp.png" alt="Update execution record, About section, and install command" width="680">
+</p>
+
 Example states:
 
 ```text

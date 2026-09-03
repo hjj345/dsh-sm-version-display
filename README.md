@@ -48,6 +48,44 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
 - **主题适配**：使用 DSH 设计系统变量，跟随浅色和深色主题。
 - **悬停提示**：卡片和窄栏图标会显示插件英文名 `dsh-sm-version-display` 及当前版本。
 
+## 实际效果截图 / Screenshots
+
+侧边栏版本卡片：
+
+<p align="center">
+  <img src="images/Screenshot/0RudPrDwe6.png" alt="侧边栏版本卡片" width="420">
+</p>
+
+侧边栏窄栏悬停提示：
+
+<p align="center">
+  <img src="images/Screenshot/chrome_OQz4xZKVFZ.png" alt="侧边栏窄栏悬停提示" width="420">
+</p>
+
+设置页总览：
+
+<p align="center">
+  <img src="images/Screenshot/chrome_nhY8tQiILP.png" alt="DSH版本检测设置页总览" width="680">
+</p>
+
+双源版本检测结果：
+
+<p align="center">
+  <img src="images/Screenshot/chrome_kpQwbwJoWO.png" alt="npm与GitHub双源版本检测结果" width="680">
+</p>
+
+更新确认弹窗：
+
+<p align="center">
+  <img src="images/Screenshot/chrome_ThdSMjsumh.png" alt="DSH更新确认弹窗" width="680">
+</p>
+
+更新执行记录、关于插件与安装命令：
+
+<p align="center">
+  <img src="images/Screenshot/chrome_9tWPgqs9Pp.png" alt="更新执行记录关于插件与安装命令" width="680">
+</p>
+
 示例状态：
 
 ```text

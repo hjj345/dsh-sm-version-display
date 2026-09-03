@@ -47,6 +47,7 @@
     "client/client.js",
     "images/sm-version-display-icon-outlined.png",
     "images/sm-version-display-settings-icon.png",
+    "images/Screenshot/",
     "cordis.patch.yml",
     "LICENSE",
     "README.md",
