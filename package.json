@@ -1,6 +1,6 @@
 {
   "name": "@hjj345345/dsh-sm-version-display",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "DeepSeek Harness Web plugin with a DSH version card, settings page, npm checks, and safe update guidance.",
   "keywords": [
     "deepseek",
