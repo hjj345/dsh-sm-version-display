@@ -13,6 +13,7 @@ const fail = (message) => {
 };
 const checks = [
 	["lib/index.js", "host 半区"],
+	["lib/update-worker.mjs", "升级 Worker"],
 	["client/client.js", "client 半区 bundle"]
 ];
 for (const [file, label] of checks) {
@@ -113,7 +114,7 @@ if (pkg) {
 		license: "MIT",
 		engine: ">=20",
 		patch: "./cordis.patch.yml",
-		files: ["lib/index.js", "client/client.js", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png", "images/Screenshot/", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
+		files: ["lib/index.js", "lib/update-worker.mjs", "client/client.js", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png", "images/Screenshot/", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
 	};
 	if (pkg.name !== expected.name) fail("npm 包名不符合发布契约: " + pkg.name);
 	if (pkg.version !== expected.version) fail("插件版本不符合发布契约: " + pkg.version);
@@ -136,7 +137,7 @@ if (pkg) {
 }
 
 const hostSrc = readFileSync(join(root, "lib", "index.js"), "utf8");
-for (const fragment of ["SETTINGS_NAMESPACE", "settingsCtx.settings.register(SETTINGS_NAMESPACE, SettingsSchema", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "GITHUB_RELEASES_URL", "GITHUB_RELEASES_FEED_URL", "fetchGithubLatestFromFeed", "github-rate-limit", "npmAvailable", "resolveVirtualStoreDir", "needsPnpmGlobalRepair", "[\"install\", \"--global\", \"--force\"]", "@deepseek-ai/dsh@"]){
+for (const fragment of ["SETTINGS_NAMESPACE", "settingsCtx.settings.register(SETTINGS_NAMESPACE, SettingsSchema", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "GITHUB_RELEASES_URL", "GITHUB_RELEASES_FEED_URL", "fetchGithubLatestFromFeed", "github-rate-limit", "npmAvailable", "resolveVirtualStoreDir", "needsPnpmGlobalRepair", "[\"install\", \"--global\", \"--force\"]", "@deepseek-ai/dsh@"]){
 	if (!hostSrc.includes(fragment)) fail("host 半区缺少功能契约: " + fragment);
 }
 const parserStart = hostSrc.indexOf("function parseVirtualStoreDir");
@@ -162,7 +163,7 @@ if (parserStart < 0 || parserEnd <= parserStart) {
 for (const fragment of ["settings.section", "order: 22", "v1.2.7", "2026-09-07", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "dvd-settings-version-grid", "settings.confirmTitle", "settings.updateLog", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
 }
-const localizedKeys = ["settings.source.npm", "settings.source.github", "settings.versionType", "settings.type.alpha", "settings.type.beta", "settings.type.rc", "settings.type.release", "settings.confirmTitle", "settings.confirmWarning", "settings.updateLog", "settings.command.githubSource", "settings.stepSource", "settings.channel.latest", "settings.openRelease"];
+const localizedKeys = ["settings.source.npm", "settings.source.github", "settings.versionType", "settings.type.alpha", "settings.type.beta", "settings.type.rc", "settings.type.release", "settings.confirmTitle", "settings.confirmWarning", "settings.updateLog", "settings.command.githubSource", "settings.stepSource", "settings.channel.latest", "settings.openRelease", "settings.step.backup", "settings.step.preflight", "settings.step.repair", "settings.step.install", "settings.step.verify", "settings.step.running", "settings.step.success", "settings.step.error", "settings.step.pending", "settings.step.skipped", "settings.backupPath", "settings.backupFiles", "settings.peerWarnings", "settings.repair", "settings.rollback", "settings.repairing", "settings.rollingBack", "settings.rollbackFinished", "settings.repairFinished", "settings.actionUnavailable", "settings.manualRepair"];
 for (const key of localizedKeys) {
 		const occurrences = clientSrc.split("\"" + key + "\"").length - 1;
 		if (occurrences < 3) fail("多语言文案未覆盖 zh/en/zh-TW: " + key);

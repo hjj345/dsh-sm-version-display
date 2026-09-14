@@ -44,6 +44,7 @@
   },
   "files": [
     "lib/index.js",
+    "lib/update-worker.mjs",
     "client/client.js",
     "images/sm-version-display-icon-outlined.png",
     "images/sm-version-display-settings-icon.png",
