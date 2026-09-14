@@ -2,7 +2,7 @@
 
 [中文文档](README.md) · English documentation
 
-[![version](https://img.shields.io/badge/version-v1.2.7-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
+[![version](https://img.shields.io/badge/version-v1.2.8-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
 
 GitHub: [hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
@@ -11,7 +11,7 @@ npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345
   <img src="images/sm-version-display-icon-outlined.png" alt="DSH Version Checker plugin icon" width="180">
 </p>
 
-> Minimum supported DSH version: `v0.1.0-rc.6` (inclusive). Current plugin version: `v1.2.7`.
+> Minimum supported DSH version: `v0.1.0-rc.6` (inclusive). Current plugin version: `v1.2.8`.
 
 ## Introduction
 
@@ -25,7 +25,7 @@ The following names refer to different things:
 - DSH runtime plugin ID: `dsh-sm-version-display`
 - GitHub repository: `hjj345/dsh-sm-version-display`
 
-Plugin version `v1.2.7` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
+Plugin version `v1.2.8` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
 
 ## Features
 
@@ -190,7 +190,7 @@ Key files in the published package:
 | DSH | `>= v0.1.0-rc.6` |
 | Node.js | `>= 20` (host runtime) |
 | Platform | DSH Web |
-| Plugin version | `v1.2.7` |
+| Plugin version | `v1.2.8` |
 
 The plugin uses official DSH extension points: `dsh.client`, `sidebar.footer.action`, `settings.section`, `webserver/index-inject`, `ctx.slots.inject/register`, and `ctx.settingsScope`. If DSH introduces a breaking change to these extension points, the plugin will need a corresponding update.
 
@@ -208,6 +208,15 @@ npm run build
 `npm run build` performs host/client syntax checks, comparator self-tests, settings/update contract checks, package-integrity checks, and README checks.
 
 ## Changelog
+
+### v1.2.8 - 2026-09-14
+
+- Improved the safe DSH one-click upgrade flow with a dedicated update worker that runs backup, target-version preflight, global dependency-tree repair, target installation, and installation/profile verification as separate steps without blocking the main process.
+- Added recoverable environment backups for the global DSH directory and DSH profile data, including a manifest with version, paths, file count, and byte count; directory traversal does not follow symbolic links.
+- Improved failure handling by persisting worker steps, output, warnings, and state; interrupted jobs are marked failed, and completed backups enable auto repair and one-click rollback, with post-rollback version verification and a retained recovery copy.
+- Improved client update interaction with backup path, backup file count, step states, and peer-dependency warnings; failed updates now offer auto repair or one-click rollback and poll the new update-action job state.
+- Added `lib/update-worker.mjs` to the npm publish allowlist and expanded Worker self-tests, virtual-store parsing checks, client update-action checks, and published-file contract checks.
+- Updated the package, client About page, and bilingual documentation to plugin version `v1.2.8` with release date `2026-09-14`.
 
 ### v1.2.7 - 2026-09-07
 

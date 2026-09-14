@@ -109,7 +109,7 @@ try {
 if (pkg) {
 	const expected = {
 		name: "@hjj345345/dsh-sm-version-display",
-		version: "1.2.7",
+		version: "1.2.8",
 		main: "lib/index.js",
 		license: "MIT",
 		engine: ">=20",
@@ -160,7 +160,7 @@ if (parserStart < 0 || parserEnd <= parserStart) {
 	if (virtualStoreFailed === 0) console.log("✔ virtualStoreDir 解析: " + virtualStoreCases.length + "/" + virtualStoreCases.length + " 用例通过");
 	else fail("virtualStoreDir 解析失败: " + virtualStoreFailed + " 个用例");
 }
-for (const fragment of ["settings.section", "order: 22", "v1.2.7", "2026-09-07", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "dvd-settings-version-grid", "settings.confirmTitle", "settings.updateLog", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
+for (const fragment of ["settings.section", "order: 22", "v1.2.8", "2026-09-14", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "dvd-settings-version-grid", "settings.confirmTitle", "settings.updateLog", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
 }
 const localizedKeys = ["settings.source.npm", "settings.source.github", "settings.versionType", "settings.type.alpha", "settings.type.beta", "settings.type.rc", "settings.type.release", "settings.confirmTitle", "settings.confirmWarning", "settings.updateLog", "settings.command.githubSource", "settings.stepSource", "settings.channel.latest", "settings.openRelease", "settings.step.backup", "settings.step.preflight", "settings.step.repair", "settings.step.install", "settings.step.verify", "settings.step.running", "settings.step.success", "settings.step.error", "settings.step.pending", "settings.step.skipped", "settings.backupPath", "settings.backupFiles", "settings.peerWarnings", "settings.repair", "settings.rollback", "settings.repairing", "settings.rollingBack", "settings.rollbackFinished", "settings.repairFinished", "settings.actionUnavailable", "settings.manualRepair"];
@@ -172,8 +172,8 @@ const settingsIconBase64 = readFileSync(join(root, "images", "sm-version-display
 if (!clientSrc.includes("data:image/png;base64," + settingsIconBase64)) fail("设置页内联图标与 PNG 文件不一致");
 
 const readmeChecks = [
-	["README.md", [">= v0.1.0-rc.6", "v1.2.7", "2026-09-07", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
-	["README.en.md", [">= v0.1.0-rc.6", "v1.2.7", "2026-09-07", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
+	["README.md", [">= v0.1.0-rc.6", "v1.2.8", "2026-09-14", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
+	["README.en.md", [">= v0.1.0-rc.6", "v1.2.8", "2026-09-14", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
 ];
 for (const [file, fragments] of readmeChecks) {
 	const content = readFileSync(join(root, file), "utf8");
