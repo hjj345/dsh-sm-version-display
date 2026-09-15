@@ -2,7 +2,7 @@
 
 [中文文档](README.md) · English documentation
 
-[![version](https://img.shields.io/badge/version-v1.2.8-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
+[![version](https://img.shields.io/badge/version-v1.2.9-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
 
 GitHub: [hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
@@ -11,7 +11,7 @@ npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345
   <img src="images/sm-version-display-icon-outlined.png" alt="DSH Version Checker plugin icon" width="180">
 </p>
 
-> Minimum supported DSH version: `v0.1.0-rc.6` (inclusive). Current plugin version: `v1.2.8`.
+> Minimum supported DSH version: `v0.1.0-rc.6` (inclusive). Current plugin version: `v1.2.9`.
 
 ## Introduction
 
@@ -25,7 +25,7 @@ The following names refer to different things:
 - DSH runtime plugin ID: `dsh-sm-version-display`
 - GitHub repository: `hjj345/dsh-sm-version-display`
 
-Plugin version `v1.2.8` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
+Plugin version `v1.2.9` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
 
 ## Features
 
@@ -191,7 +191,7 @@ Key files in the published package:
 | Verified supported DSH RC builds | `dsh-0.1.5-rc.1`, `dsh-0.1.5-rc.2` |
 | Node.js | `>= 20` (host runtime) |
 | Platform | DSH Web |
-| Plugin version | `v1.2.8` |
+| Plugin version | `v1.2.9` |
 
 The plugin uses official DSH extension points: `dsh.client`, `sidebar.footer.action`, `settings.section`, `webserver/index-inject`, `ctx.slots.inject/register`, and `ctx.settingsScope`. If DSH introduces a breaking change to these extension points, the plugin will need a corresponding update.
 
@@ -209,6 +209,15 @@ npm run build
 `npm run build` performs host/client syntax checks, comparator self-tests, settings/update contract checks, package-integrity checks, and README checks.
 
 ## Changelog
+
+### v1.2.9 - 2026-09-15
+
+- Improved the DSH upgrade backup-progress and heartbeat dashboard with live backup scan/copy progress, current step, target version, command, and processed-file counts for easier troubleshooting.
+- Strengthened Worker heartbeats by recording the last activity time; after 10 minutes without progress the job is marked heartbeat-expired and offers continue waiting, auto repair, or rollback instead of leaving the state ambiguous.
+- Improved the repair flow with a Web profile-repair step covering common failures such as profile/config export issues, port conflicts, and a still-running DSH process, with manual repair commands and guidance when needed.
+- Improved update-action interaction with an update dashboard, target version, and explicit no-command-output state; wait, auto-repair, and rollback actions now stop or resume the Worker safely during transitions.
+- Extended three-language copy and release-contract checks for heartbeat timeouts, progress dashboards, profile repair, update actions, and the upgrade Worker.
+- Updated the package, client About page, and bilingual documentation to plugin version `v1.2.9` with release date `2026-09-15`.
 
 ### v1.2.8 - 2026-09-14
 
