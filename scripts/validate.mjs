@@ -137,7 +137,7 @@ if (pkg) {
 }
 
 const hostSrc = readFileSync(join(root, "lib", "index.js"), "utf8");
-for (const fragment of ["SETTINGS_NAMESPACE", "settingsCtx.settings.register(SETTINGS_NAMESPACE, SettingsSchema", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "GITHUB_RELEASES_URL", "GITHUB_RELEASES_FEED_URL", "fetchGithubLatestFromFeed", "github-rate-limit", "npmAvailable", "resolveVirtualStoreDir", "needsPnpmGlobalRepair", "HEARTBEAT_TIMEOUT_MS", "lastActivityAt", "heartbeatExpired", "[\"install\", \"--global\", \"--force\"]", "@deepseek-ai/dsh@"]){
+for (const fragment of ["SETTINGS_NAMESPACE", "settingsCtx.settings.register(SETTINGS_NAMESPACE, SettingsSchema", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "GITHUB_RELEASES_URL", "GITHUB_RELEASES_FEED_URL", "fetchGithubLatestFromFeed", "github-rate-limit", "npmAvailable", "resolveVirtualStoreDir", "needsPnpmGlobalRepair", "HEARTBEAT_TIMEOUT_MS", "STATE_WRITE_RETRIES", "SharedArrayBuffer", "lastActivityAt", "heartbeatExpired", "[\"install\", \"--global\", \"--force\"]", "@deepseek-ai/dsh@"]){
 	if (!hostSrc.includes(fragment)) fail("host 半区缺少功能契约: " + fragment);
 }
 const parserStart = hostSrc.indexOf("function parseVirtualStoreDir");
@@ -164,9 +164,10 @@ for (const fragment of ["settings.section", "order: 22", "v1.2.9", "2026-09-15",
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
 }
 const workerSrc = readFileSync(join(root, "lib", "update-worker.mjs"), "utf8");
-for (const fragment of ["HEARTBEAT_TIMEOUT_MS", "lastActivityAt", "scanTree", "copyTree", "--self-test", "command timed out", "rollback-complete"]) {
+for (const fragment of ["HEARTBEAT_TIMEOUT_MS", "STATE_WRITE_RETRIES", "SharedArrayBuffer", "lastActivityAt", "scanTree", "copyTree", "--self-test", "command timed out", "rollback-complete"]) {
 	if (!workerSrc.includes(fragment)) fail("升级 Worker 缺少功能契约: " + fragment);
 }
+if (hostSrc.includes('const temporary = UPDATE_STATE_FILE + ".tmp"') || workerSrc.includes('const temporary = statePath + ".tmp"')) fail("状态文件仍使用共享临时文件名");
 const localizedKeys = ["settings.source.npm", "settings.source.github", "settings.versionType", "settings.type.alpha", "settings.type.beta", "settings.type.rc", "settings.type.release", "settings.confirmTitle", "settings.confirmWarning", "settings.updateLog", "settings.command.githubSource", "settings.stepSource", "settings.channel.latest", "settings.openRelease", "settings.step.backup", "settings.step.preflight", "settings.step.repair", "settings.step.install", "settings.step.profileRepair", "settings.step.verify", "settings.step.running", "settings.step.success", "settings.step.error", "settings.step.pending", "settings.step.skipped", "settings.backupPath", "settings.backupFiles", "settings.peerWarnings", "settings.repair", "settings.rollback", "settings.repairing", "settings.rollingBack", "settings.rollbackFinished", "settings.repairFinished", "settings.actionUnavailable", "settings.manualRepair", "settings.heartbeatTimeout", "settings.heartbeatHelp", "settings.continueWaiting", "settings.updateBoard", "settings.targetVersion", "settings.noCommand"];
 for (const key of localizedKeys) {
 		const occurrences = clientSrc.split("\"" + key + "\"").length - 1;
