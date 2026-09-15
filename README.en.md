@@ -188,6 +188,7 @@ Key files in the published package:
 | Item | Requirement |
 | --- | --- |
 | DSH | `>= v0.1.0-rc.6` |
+| Verified supported DSH RC builds | `dsh-0.1.5-rc.1`, `dsh-0.1.5-rc.2` |
 | Node.js | `>= 20` (host runtime) |
 | Platform | DSH Web |
 | Plugin version | `v1.2.8` |

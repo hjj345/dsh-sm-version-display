@@ -188,6 +188,7 @@ DSH Web browser
 | 项目 | 要求 |
 | --- | --- |
 | DSH | `>= v0.1.0-rc.6` |
+| 已验证支持的 DSH RC | `dsh-0.1.5-rc.1`、`dsh-0.1.5-rc.2` |
 | Node.js | `>= 20`（host 运行环境） |
 | 平台 | DSH Web |
 | 插件版本 | `v1.2.8` |

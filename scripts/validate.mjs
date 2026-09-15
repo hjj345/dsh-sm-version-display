@@ -160,14 +160,14 @@ if (parserStart < 0 || parserEnd <= parserStart) {
 	if (virtualStoreFailed === 0) console.log("✔ virtualStoreDir 解析: " + virtualStoreCases.length + "/" + virtualStoreCases.length + " 用例通过");
 	else fail("virtualStoreDir 解析失败: " + virtualStoreFailed + " 个用例");
 }
-for (const fragment of ["settings.section", "order: 22", "v1.2.8", "2026-09-14", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "HEARTBEAT_TIMEOUT_MS", "heartbeatExpired", "slice(-10)", "dvd-settings-version-grid", "settings.confirmTitle", "settings.updateBoard", "settings.targetVersion", "settings.updateLog", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
+for (const fragment of ["settings.section", "order: 22", "v1.2.8", "2026-09-14", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "HEARTBEAT_TIMEOUT_MS", "heartbeatExpired", "slice(-10)", "dvd-settings-version-grid", "dvd-settings-update-action", "settings.confirmTitle", "settings.updateBoard", "settings.targetVersion", "settings.updateLog", "settings.manualRepair", "settings.step.profileRepair", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
 }
 const workerSrc = readFileSync(join(root, "lib", "update-worker.mjs"), "utf8");
 for (const fragment of ["HEARTBEAT_TIMEOUT_MS", "lastActivityAt", "scanTree", "copyTree", "--self-test", "command timed out", "rollback-complete"]) {
 	if (!workerSrc.includes(fragment)) fail("升级 Worker 缺少功能契约: " + fragment);
 }
-const localizedKeys = ["settings.source.npm", "settings.source.github", "settings.versionType", "settings.type.alpha", "settings.type.beta", "settings.type.rc", "settings.type.release", "settings.confirmTitle", "settings.confirmWarning", "settings.updateLog", "settings.command.githubSource", "settings.stepSource", "settings.channel.latest", "settings.openRelease", "settings.step.backup", "settings.step.preflight", "settings.step.repair", "settings.step.install", "settings.step.verify", "settings.step.running", "settings.step.success", "settings.step.error", "settings.step.pending", "settings.step.skipped", "settings.backupPath", "settings.backupFiles", "settings.peerWarnings", "settings.repair", "settings.rollback", "settings.repairing", "settings.rollingBack", "settings.rollbackFinished", "settings.repairFinished", "settings.actionUnavailable", "settings.manualRepair", "settings.heartbeatTimeout", "settings.heartbeatHelp", "settings.continueWaiting", "settings.updateBoard", "settings.targetVersion", "settings.noCommand"];
+const localizedKeys = ["settings.source.npm", "settings.source.github", "settings.versionType", "settings.type.alpha", "settings.type.beta", "settings.type.rc", "settings.type.release", "settings.confirmTitle", "settings.confirmWarning", "settings.updateLog", "settings.command.githubSource", "settings.stepSource", "settings.channel.latest", "settings.openRelease", "settings.step.backup", "settings.step.preflight", "settings.step.repair", "settings.step.install", "settings.step.profileRepair", "settings.step.verify", "settings.step.running", "settings.step.success", "settings.step.error", "settings.step.pending", "settings.step.skipped", "settings.backupPath", "settings.backupFiles", "settings.peerWarnings", "settings.repair", "settings.rollback", "settings.repairing", "settings.rollingBack", "settings.rollbackFinished", "settings.repairFinished", "settings.actionUnavailable", "settings.manualRepair", "settings.heartbeatTimeout", "settings.heartbeatHelp", "settings.continueWaiting", "settings.updateBoard", "settings.targetVersion", "settings.noCommand"];
 for (const key of localizedKeys) {
 		const occurrences = clientSrc.split("\"" + key + "\"").length - 1;
 		if (occurrences < 3) fail("多语言文案未覆盖 zh/en/zh-TW: " + key);
@@ -176,8 +176,8 @@ const settingsIconBase64 = readFileSync(join(root, "images", "sm-version-display
 if (!clientSrc.includes("data:image/png;base64," + settingsIconBase64)) fail("设置页内联图标与 PNG 文件不一致");
 
 const readmeChecks = [
-	["README.md", [">= v0.1.0-rc.6", "v1.2.8", "2026-09-14", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
-	["README.en.md", [">= v0.1.0-rc.6", "v1.2.8", "2026-09-14", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
+	["README.md", [">= v0.1.0-rc.6", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.8", "2026-09-14", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
+	["README.en.md", [">= v0.1.0-rc.6", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.8", "2026-09-14", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
 ];
 for (const [file, fragments] of readmeChecks) {
 	const content = readFileSync(join(root, file), "utf8");
