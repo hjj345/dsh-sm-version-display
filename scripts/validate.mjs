@@ -3,7 +3,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve, win32 } from "node:path";
 import { tmpdir } from "node:os";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -169,7 +169,7 @@ if (globalRootStart < 0 || globalRootEnd <= globalRootStart) {
 } else {
 	const sandbox = { module: { exports: {} } };
 	new Function("module", "exports", "dirname", "basename", hostSrc.slice(globalRootStart, globalRootEnd) + "\nmodule.exports = resolveGlobalRootFromPackage;")(
-		sandbox.module, sandbox.module.exports, dirname, (path) => path.split(/[\\/]/).at(-1)
+		sandbox.module, sandbox.module.exports, win32.dirname, win32.basename
 	);
 	const resolveNpmRoot = sandbox.module.exports;
 	if (resolveNpmRoot("C:\\Tools\\Node Global\\node_modules\\@deepseek-ai\\dsh\\package.json") !== "C:\\Tools\\Node Global") fail("自定义 Windows npm prefix 无法识别全局 DSH 根目录");
