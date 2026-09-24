@@ -6,17 +6,21 @@ import vm from "node:vm";
 let api;
 let states = [];
 let cursor = 0;
+let effects = [];
+let interval;
+let clearedInterval;
 const react = {
   createElement: (type, props, ...children) => ({ type, props: props ?? {}, children: children.flat(Infinity) }),
   Fragment: "fragment",
   useState: (initial) => { const index = cursor++; if (!(index in states)) states[index] = initial; return [states[index], (value) => { states[index] = typeof value === "function" ? value(states[index]) : value; }]; },
-  useEffect() {},
+  useEffect: (effect, dependencies) => { effects.push({ effect, dependencies }); },
   useRef: () => ({ current: null }),
 };
-const source = fs.readFileSync(new URL("../client/client.js", import.meta.url), "utf8").replace("exports.apply = apply;", "exports.test = { UpdateConfirmModal, UpdateOutputPanel, BackupManager, formatBytes, translate }; exports.apply = apply;");
-vm.runInNewContext(source, { window: { __ModuleLoader__: { load: ({ factory }) => { api = factory((name) => name === "react" ? react : {}).test; } } }, console, Date, AbortSignal });
+const source = fs.readFileSync(new URL("../client/client.js", import.meta.url), "utf8").replace("exports.apply = apply;", "exports.test = { UpdateConfirmModal, UpdateOutputPanel, BackupManager, DirectoryPicker, formatBytes, translate }; exports.apply = apply;");
+const window = { __ModuleLoader__: { load: ({ factory }) => { api = factory((name) => name === "react" ? react : {}).test; } }, setInterval: (callback, delay) => { interval = { callback, delay }; return 17; }, clearInterval: (id) => { clearedInterval = id; } };
+vm.runInNewContext(source, { window, console, Date, AbortSignal });
 const t = (key, values) => api.translate("zh", key, values);
-const render = (component, props) => { cursor = 0; return component(props); };
+const render = (component, props) => { cursor = 0; effects = []; return component(props); };
 const nodes = (tree) => !tree || typeof tree !== "object" ? [] : [tree, ...tree.children.flatMap(nodes)];
 const text = (tree) => typeof tree === "string" ? tree : typeof tree === "object" && tree ? tree.children.map(text).join(" ") : "";
 const button = (tree, label) => nodes(tree).find((node) => node.type === "button" && text(node) === label);
@@ -49,10 +53,21 @@ states = [null, [], false, "signal timed out", false];
 tree = render(api.BackupManager, { t });
 assert.match(text(tree), /signal timed out/);
 assert.doesNotMatch(text(tree), /未找到插件备份/);
+const refreshEffect = effects.find(({ dependencies }) => Array.isArray(dependencies) && dependencies.length === 0);
+const stopRefresh = refreshEffect.effect();
+assert.equal(interval.delay, 30 * 60 * 1000);
+stopRefresh();
+assert.equal(clearedInterval, 17);
+tree = render(api.DirectoryPicker, { initial: "D:\\backups", t, onClose() {}, onSelect() {} });
+assert.ok(button(tree, t("settings.openDirectory")).props.className.includes("secondary"));
+assert.ok(button(tree, t("settings.cancel")).props.className.includes("secondary"));
+assert.ok(button(tree, t("settings.useDirectory")).props.className.includes("primary"));
 states = [{ backups: [{ id: "one", status: "failed", path: "D:\\backups\\one", sizeBytes: 2048 }, { id: "two", status: "running", path: "D:\\backups\\two", sizeBytes: 1024, inUse: true }] }, ["one", "two"], false, "", false];
 tree = render(api.BackupManager, { t });
 assert.match(text(tree), /已选 1 份 · 2.00 KiB/);
 assert.equal(nodes(tree).filter((node) => node.props.type === "checkbox" && node.props.disabled).length, 1);
 assert.equal(api.formatBytes(0), "0 B");
 assert.equal(api.formatBytes(1024 ** 3), "1.00 GiB");
-console.log("Backup UI checks passed: options, skip warning, failed-state output, retry capabilities, sizes and protected selections.");
+assert.match(source, /general, h\(BackupManager, \{ t, job: updateState\.job \}\), about/);
+assert.match(source, /dvd-settings-directory-pill/);
+console.log("Backup UI checks passed: persistent card, 30-minute refresh lifecycle, picker styling, update actions, sizes and protected selections.");
