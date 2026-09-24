@@ -44,5 +44,9 @@ jobs:
           }
 
       - run: npm run build
+
+      - name: Install host peer used by route tests
+        run: npm install --no-save --package-lock=false @deepseek-ai/schemastery@3.18.4
+
       - run: npm test
       - run: npm publish --access public
