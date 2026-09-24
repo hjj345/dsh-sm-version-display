@@ -283,8 +283,8 @@ const settingsIconBase64 = readFileSync(join(root, "images", "sm-version-display
 if (!clientSrc.includes("data:image/png;base64," + settingsIconBase64)) fail("设置页内联图标与 PNG 文件不一致");
 
 const readmeChecks = [
-	["README.md", [">= v0.1.0-rc.6", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.12", "2026-09-24", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
-	["README.en.md", [">= v0.1.0-rc.6", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.12", "2026-09-24", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
+	["README.md", [">= v0.1.2-rc.1", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.12", "2026-09-24", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
+	["README.en.md", [">= v0.1.2-rc.1", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.12", "2026-09-24", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
 ];
 for (const [file, fragments] of readmeChecks) {
 	const content = readFileSync(join(root, file), "utf8");
