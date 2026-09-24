@@ -2,7 +2,7 @@
 
 中文文档 · [English documentation](README.en.md)
 
-[![version](https://img.shields.io/badge/version-v1.2.10-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#兼容性) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#兼容性)
+[![version](https://img.shields.io/badge/version-v1.2.11-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.0--rc.6-orange?style=flat-square)](#兼容性) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#兼容性)
 
 GitHub：[hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
@@ -11,7 +11,7 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
   <img src="images/sm-version-display-icon-outlined.png" alt="DSH 版本检测插件图标" width="180">
 </p>
 
-> 最低支持 DSH 版本：`v0.1.0-rc.6`（含）。当前插件版本：`v1.2.10`。
+> 最低支持 DSH 版本：`v0.1.0-rc.6`（含）。当前插件版本：`v1.2.11`。
 
 ## 简介
 
@@ -25,7 +25,7 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
 - DSH 运行时插件 ID：`dsh-sm-version-display`
 - GitHub 仓库：`hjj345/dsh-sm-version-display`
 
-插件版本 `v1.2.10` 表示本插件版本；卡片中显示的是运行时读取到的 DSH 版本，两者不是同一个版本号。
+插件版本 `v1.2.11` 表示本插件版本；卡片中显示的是运行时读取到的 DSH 版本，两者不是同一个版本号。
 
 ## 功能特性
 
@@ -196,7 +196,7 @@ DSH Web browser
 | 已验证支持的 DSH RC | `dsh-0.1.5-rc.1`、`dsh-0.1.5-rc.2` |
 | Node.js | `>= 20`（host 运行环境） |
 | 平台 | DSH Web |
-| 插件版本 | `v1.2.10` |
+| 插件版本 | `v1.2.11` |
 
 插件使用 DSH 官方扩展点：`dsh.client`、`sidebar.footer.action`、`settings.section`、`webserver/index-inject`、`ctx.slots.inject/register` 和 `ctx.settingsScope`。如果 DSH 后续发生不兼容的扩展点变更，需要相应适配。
 
@@ -214,6 +214,14 @@ npm run build
 `npm run build` 会执行 host/client 语法检查、版本比较自测、设置页/更新链路契约检查、包完整性检查和 README 检查。
 
 ## 更新日志
+
+### v1.2.11 - 2026-09-24
+
+- 完善 DSH 一键升级备份管理：支持默认备份、明确跳过备份、指定 DSH 主机目录，并记住最近使用的备份目录；目录浏览限定在 DSH 主机，不扫描远程浏览器设备，也不跟随符号链接。
+- 新增并优化备份管理卡片：展示默认或自定义目录中的完整、失败和中断备份，显示文件数量与逻辑大小，支持刷新、目录扫描及确认后删除；正在使用、不完整或路径已变化的备份会受到保护。
+- 增强失败恢复：展示备份失败原因、停止时间和已复制大小，支持重试备份；只有完整、校验通过且与当前升级任务匹配的备份才允许回滚，并保留回滚恢复副本。
+- 优化升级看板、备份目录选择器和三语文案，补充备份管理器、路由、界面及发布契约自测，覆盖目录安全校验、manifest、进度、删除保护和恢复链路。
+- 更新插件包、客户端关于页面和双语文档的版本标识为 `v1.2.11`，发布日期为 `2026-09-24`。
 
 ### v1.2.10 - 2026-09-15
 
