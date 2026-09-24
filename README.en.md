@@ -43,12 +43,17 @@ Plugin version `v1.2.10` identifies this plugin. The version shown in the card i
 - **Expandable check results**: shows side-by-side npm and GitHub cards with versions, release types, dates, links, current installation method, and plugin manager beneath the check button.
 - **Two update paths**: requires risk confirmation, then either runs the host-side update or opens complete commands and steps for manual execution.
 - **Update output**: automatic updates show the command, live output, completion state, and restart reminder.
+- **Backup choice**: updates default to creating a backup, with an explicit skip option that disables backup rollback for that update. Choose a directory on the DSH host and reuse the last location.
+- **Backup management**: list complete, failed, and interrupted backups in the default and registered custom directories, including summed file sizes. Refresh, scan a chosen directory, and confirm selected deletions without following links into external files.
+- **Failure recovery**: failed backups show the stop time, cause, and copied size, with a fresh-backup retry. Rollback requires a complete, validated backup belonging to the update.
 - **Loopback-only update**: only fixed exact-version commands run on the host; GitHub source-only releases fall back to manual build steps.
 - **Responsive layout**: shows a round version icon in the collapsed sidebar rail and wraps text when space is limited.
 - **Theme aware**: uses DSH design-system variables and follows light and dark themes.
 - **Hover tooltip**: the card and collapsed-rail icon show the English plugin name `dsh-sm-version-display` and the current version.
 
 ## Screenshots / 实际效果截图
+
+The directory picker browses the **DSH host**, not the remote browser's device. The list does not scan the entire computer; incomplete legacy backups in the default directory are included, and custom locations can be added by scanning a chosen directory. Sizes sum regular-file logical lengths, excluding link targets, and may differ from allocated disk space. Deletion is permanent; deleting the current job's complete backup removes its rollback capability. Backups in use cannot be deleted.
 
 Sidebar version card:
 

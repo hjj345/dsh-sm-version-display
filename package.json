@@ -40,11 +40,13 @@
   },
   "scripts": {
     "check": "node --check lib/index.js && node --check client/client.js",
-    "build": "node --check lib/index.js && node --check client/client.js && node scripts/validate.mjs"
+    "build": "node --check lib/index.js && node --check client/client.js && node scripts/validate.mjs",
+    "test": "node lib/update-worker.mjs --self-test && node scripts/test-backup-manager.mjs && node scripts/test-backup-ui.mjs && node scripts/test-backup-routes.mjs"
   },
   "files": [
     "lib/index.js",
     "lib/update-worker.mjs",
+    "lib/backup-manager.mjs",
     "client/client.js",
     "images/sm-version-display-icon-outlined.png",
     "images/sm-version-display-settings-icon.png",
