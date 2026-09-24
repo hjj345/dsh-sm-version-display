@@ -96,6 +96,23 @@ finishRead();
 await new Promise((resolve) => setImmediate(resolve));
 assert.deepEqual(states[0].backups, [], "an older in-flight read cannot restore a deleted backup");
 assert.match(states[3], /已删除 1 份备份/);
+states = [{ backups: [{ id: "three", status: "incomplete", path: "D:\\backups\\three", sizeBytes: 4 }], directory: "D:\\backups" }, ["three"], false, "", false, ""];
+let finishQueuedDelete;
+let refreshCalls = 0;
+fetchImpl = (url) => url.endsWith("/backups/delete")
+  ? new Promise((resolve) => { finishQueuedDelete = () => resolve({ ok: true, json: async () => ({ ok: true, deleted: ["three"], errors: [] }) }); })
+  : (refreshCalls++, Promise.resolve({ ok: true, json: async () => ({ ok: true, backups: [] }) }));
+tree = render(api.BackupManager, { t });
+effects.find(({ dependencies }) => Array.isArray(dependencies) && dependencies.length === 0).effect();
+const queuedDeletion = button(tree, t("settings.backupDelete")).props.onClick();
+interval.callback();
+assert.equal(refreshCalls, 0, "scheduled refresh is deferred while deletion is active");
+finishQueuedDelete();
+await queuedDeletion;
+await new Promise((resolve) => setImmediate(resolve));
+assert.equal(refreshCalls, 1, "one latest-state refresh runs after deletion completes");
+assert.deepEqual(states[0].backups, []);
+assert.match(states[3], /已删除 1 份备份/);
 assert.equal(api.formatBytes(0), "0 B");
 assert.equal(api.formatBytes(1024 ** 3), "1.00 GiB");
 assert.match(source, /general, h\(BackupManager, \{ t, job: updateState\.job \}\), about/);
