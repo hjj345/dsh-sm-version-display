@@ -25,6 +25,9 @@ try {
   const listed = await listBackups(stateDir);
   assert.equal(listed.backups.length, 1); assert.equal(listed.backups[0].status, 'complete');
   assert.equal(listed.backups[0].fileCount, 2);
+  const fastListed = await listBackups(stateDir, undefined, { measureSizes: false });
+  assert.equal(fastListed.backups[0].sizeBytes, null);
+  assert.equal(fastListed.backups[0].fileCount, null);
   await assert.rejects(deleteBackups(stateDir, [root], { status: 'running', backup }), /running/);
   assert.equal((await deleteBackups(stateDir, [source])).errors.length, 1);
   assert.deepEqual((await deleteBackups(stateDir, [root])).deleted, [root]);

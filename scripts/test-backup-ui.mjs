@@ -9,16 +9,17 @@ let cursor = 0;
 let effects = [];
 let interval;
 let clearedInterval;
+let fetchImpl = async () => { throw new Error("unexpected fetch"); };
 const react = {
   createElement: (type, props, ...children) => ({ type, props: props ?? {}, children: children.flat(Infinity) }),
   Fragment: "fragment",
   useState: (initial) => { const index = cursor++; if (!(index in states)) states[index] = initial; return [states[index], (value) => { states[index] = typeof value === "function" ? value(states[index]) : value; }]; },
   useEffect: (effect, dependencies) => { effects.push({ effect, dependencies }); },
-  useRef: () => ({ current: null }),
+  useRef: (initial) => ({ current: initial }),
 };
 const source = fs.readFileSync(new URL("../client/client.js", import.meta.url), "utf8").replace("exports.apply = apply;", "exports.test = { UpdateConfirmModal, UpdateOutputPanel, BackupManager, DirectoryPicker, formatBytes, translate }; exports.apply = apply;");
-const window = { __ModuleLoader__: { load: ({ factory }) => { api = factory((name) => name === "react" ? react : {}).test; } }, setInterval: (callback, delay) => { interval = { callback, delay }; return 17; }, clearInterval: (id) => { clearedInterval = id; } };
-vm.runInNewContext(source, { window, console, Date, AbortSignal });
+const window = { __ModuleLoader__: { load: ({ factory }) => { api = factory((name) => name === "react" ? react : {}).test; } }, confirm: () => true, setInterval: (callback, delay) => { interval = { callback, delay }; return 17; }, clearInterval: (id) => { clearedInterval = id; } };
+vm.runInNewContext(source, { window, console, Date, AbortSignal, fetch: (...args) => fetchImpl(...args) });
 const t = (key, values) => api.translate("zh", key, values);
 const render = (component, props) => { cursor = 0; effects = []; return component(props); };
 const nodes = (tree) => !tree || typeof tree !== "object" ? [] : [tree, ...tree.children.flatMap(nodes)];
@@ -66,6 +67,35 @@ states = [{ backups: [{ id: "one", status: "failed", path: "D:\\backups\\one", s
 tree = render(api.BackupManager, { t });
 assert.match(text(tree), /已选 1 份 · 2.00 KiB/);
 assert.equal(nodes(tree).filter((node) => node.props.type === "checkbox" && node.props.disabled).length, 1);
+states = [{ backups: [{ id: "one", status: "failed", path: "D:\\backups\\one", sizeBytes: 2048 }], directory: "D:\\backups" }, ["one"], false, "", false, ""];
+let deleteCalls = 0;
+let finishDelete;
+fetchImpl = (url, options) => { deleteCalls++; assert.ok(url.endsWith("/backups/delete")); assert.equal(JSON.parse(options.body).ids[0], "one"); return new Promise((resolve) => { finishDelete = () => resolve({ ok: true, json: async () => ({ ok: true, deleted: ["one"], errors: [] }) }); }); };
+tree = render(api.BackupManager, { t });
+const deletion = button(tree, t("settings.backupDelete")).props.onClick();
+assert.equal(states[2], true);
+tree = render(api.BackupManager, { t });
+assert.match(text(tree), /删除选中备份…/);
+assert.doesNotMatch(text(tree), /正在读取备份/);
+finishDelete();
+await deletion;
+assert.equal(deleteCalls, 1, "delete sends one request and does not trigger a follow-up listing");
+assert.deepEqual(states[0].backups, []);
+assert.deepEqual(states[1], []);
+assert.match(states[3], /已删除 1 份备份/);
+assert.equal(states[2], false, "delete always clears its pending state");
+states = [{ backups: [{ id: "two", status: "incomplete", path: "D:\\backups\\two", sizeBytes: 3 }], directory: "D:\\backups" }, ["two"], false, "", false, ""];
+let finishRead;
+fetchImpl = (url) => url.endsWith("/backups/delete")
+  ? Promise.resolve({ ok: true, json: async () => ({ ok: true, deleted: ["two"], errors: [] }) })
+  : new Promise((resolve) => { finishRead = () => resolve({ ok: true, json: async () => ({ ok: true, backups: [{ id: "two" }] }) }); });
+tree = render(api.BackupManager, { t });
+effects.find(({ dependencies }) => Array.isArray(dependencies) && dependencies.length === 2).effect();
+await button(tree, t("settings.backupDelete")).props.onClick();
+finishRead();
+await new Promise((resolve) => setImmediate(resolve));
+assert.deepEqual(states[0].backups, [], "an older in-flight read cannot restore a deleted backup");
+assert.match(states[3], /已删除 1 份备份/);
 assert.equal(api.formatBytes(0), "0 B");
 assert.equal(api.formatBytes(1024 ** 3), "1.00 GiB");
 assert.match(source, /general, h\(BackupManager, \{ t, job: updateState\.job \}\), about/);
