@@ -65,6 +65,7 @@
   },
   "homepage": "https://github.com/hjj345/dsh-sm-version-display",
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "dsh": ">=0.1.2-rc.1"
   }
 }

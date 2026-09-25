@@ -200,6 +200,8 @@ DSH Web browser
 
 插件使用 DSH 官方扩展点：`dsh.client`、`sidebar.footer.action`、`settings.section`、`webserver/index-inject` 和 `ctx.slots.inject/register`。旧版 DSH 可通过 `ctx.settingsScope` 保存设置；没有该服务的版本会在浏览器本地保存启用状态与语言。更新链路会核对实际依赖版本，但不同 DSH 版本的第三方插件兼容性仍需重启后检查。
 
+插件市场从 npm 包的顶层 `engines.dsh` 读取最低宿主版本；本插件声明为 `>=0.1.2-rc.1`，与上表一致。
+
 ## 开发与本地验证
 
 本插件使用与 DSH 客户端插件一致的手写 bundle 格式：`window.__ModuleLoader__.load({ id, factory })`，不需要额外编译器或运行时依赖。

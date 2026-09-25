@@ -115,6 +115,7 @@ if (pkg) {
 		main: "lib/index.js",
 		license: "MIT",
 		engine: ">=20",
+		dshEngine: ">=0.1.2-rc.1",
 		patch: "./cordis.patch.yml",
 		files: ["lib/index.js", "lib/update-worker.mjs", "lib/backup-manager.mjs", "client/client.js", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png", "images/Screenshot/", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
 	};
@@ -124,6 +125,7 @@ if (pkg) {
 	if (pkg.exports?.["."] !== "./lib/index.js" || pkg.exports?.["./client"] !== "./client/client.js") fail("exports 不符合发布契约");
 	if (pkg.license !== expected.license) fail("许可证不是 MIT: " + pkg.license);
 	if (pkg.engines?.node !== expected.engine) fail("Node.js engine 不符合发布契约: " + pkg.engines?.node);
+	if (pkg.engines?.dsh !== expected.dshEngine) fail("DSH 最低版本声明不符合发布契约: " + pkg.engines?.dsh);
 	if (pkg.repository?.url !== "git+https://github.com/hjj345/dsh-sm-version-display.git") fail("repository URL 不符合发布契约");
 	if (pkg.homepage !== "https://github.com/hjj345/dsh-sm-version-display") fail("homepage 不符合发布契约");
 	if (pkg.dsh?.bundle?.patch !== expected.patch) fail("dsh.bundle.patch 不符合发布契约: " + pkg.dsh?.bundle?.patch);
@@ -283,8 +285,8 @@ const settingsIconBase64 = readFileSync(join(root, "images", "sm-version-display
 if (!clientSrc.includes("data:image/png;base64," + settingsIconBase64)) fail("设置页内联图标与 PNG 文件不一致");
 
 const readmeChecks = [
-	["README.md", [">= v0.1.2-rc.1", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.12", "2026-09-24", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
-	["README.en.md", [">= v0.1.2-rc.1", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.12", "2026-09-24", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
+	["README.md", [">= v0.1.2-rc.1", "engines.dsh", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.12", "2026-09-24", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
+	["README.en.md", [">= v0.1.2-rc.1", "engines.dsh", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.12", "2026-09-24", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
 ];
 for (const [file, fragments] of readmeChecks) {
 	const content = readFileSync(join(root, file), "utf8");

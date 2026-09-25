@@ -200,6 +200,8 @@ Key files in the published package:
 
 The plugin uses official DSH extension points: `dsh.client`, `sidebar.footer.action`, `settings.section`, `webserver/index-inject`, and `ctx.slots.inject/register`. Older DSH versions can persist preferences through `ctx.settingsScope`; versions without it store the enabled state and language in the browser. The update flow checks resolved dependency versions, while third-party plugin compatibility still needs a check after restart.
 
+The plugin market reads the minimum host version from the npm package's top-level `engines.dsh`; this plugin declares `>=0.1.2-rc.1`, matching the table above.
+
 ## Development and local verification
 
 This plugin uses the hand-written bundle format used by DSH client plugins: `window.__ModuleLoader__.load({ id, factory })`. It does not require an additional compiler or runtime dependency.
