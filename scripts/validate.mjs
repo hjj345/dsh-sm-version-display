@@ -111,7 +111,7 @@ try {
 if (pkg) {
 	const expected = {
 		name: "@hjj345345/dsh-sm-version-display",
-		version: "1.2.12",
+		version: "1.2.13",
 		main: "lib/index.js",
 		license: "MIT",
 		engine: ">=20",
@@ -256,7 +256,7 @@ if (parserStart < 0 || parserEnd <= parserStart) {
 	if (virtualStoreFailed === 0) console.log("✔ virtualStoreDir 解析: " + virtualStoreCases.length + "/" + virtualStoreCases.length + " 用例通过");
 	else fail("virtualStoreDir 解析失败: " + virtualStoreFailed + " 个用例");
 }
-for (const fragment of ["settings.section", "order: 22", "v1.2.12", "2026-09-24", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "HEARTBEAT_TIMEOUT_MS", "heartbeatExpired", "slice(-10)", "dvd-settings-version-grid", "dvd-settings-update-action", "settings.confirmTitle", "settings.updateBoard", "settings.targetVersion", "settings.updateLog", "settings.manualRepair", "settings.step.profileRepair", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
+for (const fragment of ["settings.section", "order: 22", "v1.2.13", "2026-09-25", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "HEARTBEAT_TIMEOUT_MS", "heartbeatExpired", "slice(-10)", "dvd-settings-version-grid", "dvd-settings-update-action", "settings.confirmTitle", "settings.updateBoard", "settings.targetVersion", "settings.updateLog", "settings.manualRepair", "settings.step.profileRepair", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
 }
 const workerSrc = readFileSync(join(root, "lib", "update-worker.mjs"), "utf8");
@@ -285,8 +285,8 @@ const settingsIconBase64 = readFileSync(join(root, "images", "sm-version-display
 if (!clientSrc.includes("data:image/png;base64," + settingsIconBase64)) fail("设置页内联图标与 PNG 文件不一致");
 
 const readmeChecks = [
-	["README.md", [">= v0.1.2-rc.1", "engines.dsh", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.12", "2026-09-24", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
-	["README.en.md", [">= v0.1.2-rc.1", "engines.dsh", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.12", "2026-09-24", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
+	["README.md", [">= v0.1.2-rc.1", "engines.dsh", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.13", "2026-09-25", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
+	["README.en.md", [">= v0.1.2-rc.1", "engines.dsh", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.13", "2026-09-25", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
 ];
 for (const [file, fragments] of readmeChecks) {
 	const content = readFileSync(join(root, file), "utf8");
