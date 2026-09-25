@@ -1,6 +1,6 @@
 {
   "name": "@hjj345345/dsh-sm-version-display",
-  "version": "1.2.14",
+  "version": "1.2.15",
   "description": "DeepSeek Harness Web plugin with a DSH version card, settings page, npm checks, and safe update guidance.",
   "keywords": [
     "deepseek",
@@ -33,8 +33,11 @@
     }
   },
   "peerDependencies": {
-    "@deepseek-ai/schemastery": "^3.18.1-rc.1 || ^3.18.2",
+    "@deepseek-ai/schemastery": "~3.18.4",
     "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/schemastery": "3.18.4"
   },
   "scripts": {
     "check": "node --check lib/index.js && node --check client/client.js",
