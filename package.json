@@ -39,7 +39,7 @@
   "scripts": {
     "check": "node --check lib/index.js && node --check client/client.js",
     "build": "node --check lib/index.js && node --check client/client.js && node scripts/validate.mjs",
-    "test": "node lib/update-worker.mjs --self-test && node scripts/test-backup-manager.mjs && node scripts/test-backup-ui.mjs && node scripts/test-backup-routes.mjs"
+    "test": "node lib/update-worker.mjs --self-test && node scripts/test-backup-manager.mjs && node scripts/test-backup-ui.mjs && node scripts/test-backup-routes.mjs && node scripts/test-settings-migration.mjs"
   },
   "files": [
     "lib/index.js",
@@ -66,6 +66,6 @@
   "homepage": "https://github.com/hjj345/dsh-sm-version-display",
   "engines": {
     "node": ">=20",
-    "dsh": ">=0.1.2-rc.1"
+    "dsh": ">=0.1.7-rc.1"
   }
 }

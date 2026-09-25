@@ -115,7 +115,7 @@ if (pkg) {
 		main: "lib/index.js",
 		license: "MIT",
 		engine: ">=20",
-		dshEngine: ">=0.1.2-rc.1",
+		dshEngine: ">=0.1.7-rc.1",
 		patch: "./cordis.patch.yml",
 		files: ["lib/index.js", "lib/update-worker.mjs", "lib/backup-manager.mjs", "client/client.js", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png", "images/Screenshot/", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
 	};
@@ -141,7 +141,13 @@ if (pkg) {
 }
 
 const hostSrc = readFileSync(join(root, "lib", "index.js"), "utf8");
+if (!hostSrc.includes("export const Config = z.object(") || !hostSrc.includes("settingsCtx.settings.configure({ auto: false })")) fail("新版 DSH 设置 Config/页面策略未正确声明");
+for (const fragment of ["const inject = [\"slots\", \"locale\", \"remote\"]", "remote.settings.describe()", "document.namespaces.find((item) => item.ns === NS)", "Object.hasOwn(user, field)", "remote.settings.update(NS, migration, revision)", "remote.settings.update(NS, { [field]: next }, revision)"]) {
+	if (!clientSrc.includes(fragment)) fail("client 半区缺少新版设置契约: " + fragment);
+}
+if (pkg.engines?.dsh !== ">=0.1.7-rc.1") fail("最低 DSH 版本必须声明为 >=0.1.7-rc.1");
 for (const fragment of ["SETTINGS_NAMESPACE", "settingsCtx.settings.register(SETTINGS_NAMESPACE, SettingsSchema", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "GITHUB_RELEASES_URL", "GITHUB_RELEASES_FEED_URL", "fetchGithubLatestFromFeed", "github-rate-limit", "npmAvailable", "resolveVirtualStoreDir", "needsPnpmGlobalRepair", "HEARTBEAT_TIMEOUT_MS", "STATE_WRITE_RETRIES", "SharedArrayBuffer", "lastActivityAt", "heartbeatExpired", "[\"install\", \"--global\", \"--force\"]", "@deepseek-ai/dsh@"]){
+	if (fragment === "SETTINGS_NAMESPACE" || fragment.startsWith("settingsCtx.settings.register")) continue;
 	if (!hostSrc.includes(fragment)) fail("host 半区缺少功能契约: " + fragment);
 }
 const launcherStart = hostSrc.indexOf("function resolveDshPackageFromLauncher");
@@ -285,8 +291,8 @@ const settingsIconBase64 = readFileSync(join(root, "images", "sm-version-display
 if (!clientSrc.includes("data:image/png;base64," + settingsIconBase64)) fail("设置页内联图标与 PNG 文件不一致");
 
 const readmeChecks = [
-	["README.md", [">= v0.1.2-rc.1", "engines.dsh", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.13", "2026-09-25", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
-	["README.en.md", [">= v0.1.2-rc.1", "engines.dsh", "dsh-0.1.5-rc.1", "dsh-0.1.5-rc.2", "v1.2.13", "2026-09-25", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
+	["README.md", [">= v0.1.7-rc.1", "engines.dsh", "v1.2.13", "2026-09-25", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.en.md", "## 更新日志", "Jack·Huang", "jack698698@gmail.com"]],
+	["README.en.md", [">= v0.1.7-rc.1", "engines.dsh", "v1.2.13", "2026-09-25", "images/sm-version-display-icon-outlined.png", "@hjj345345/dsh-sm-version-display", "README.md", "## Changelog", "Jack·Huang", "jack698698@gmail.com"]]
 ];
 for (const [file, fragments] of readmeChecks) {
 	const content = readFileSync(join(root, file), "utf8");

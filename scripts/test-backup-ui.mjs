@@ -19,13 +19,15 @@ const react = {
 };
 const source = fs.readFileSync(new URL("../client/client.js", import.meta.url), "utf8").replace("exports.apply = apply;", "exports.test = { apply, UpdateConfirmModal, UpdateOutputPanel, BackupManager, DirectoryPicker, formatBytes, translate }; exports.apply = apply;");
 const savedSettings = new Map();
+let profileSettings = { language: "zh", enabled: true };
+let settingsRevision = 1;
 const window = { __ModuleLoader__: { load: ({ factory }) => { api = factory((name) => name === "react" ? react : {}).test; } }, localStorage: { getItem: (key) => savedSettings.get(key) ?? null, setItem: (key, value) => savedSettings.set(key, value) }, confirm: () => true, setInterval: (callback, delay) => { interval = { callback, delay }; return 17; }, clearInterval: (id) => { clearedInterval = id; } };
 vm.runInNewContext(source, { window, console, Date, AbortSignal, fetch: (...args) => fetchImpl(...args) });
 let localScope;
-api.apply({ effect() {}, locale: { bind: () => () => "", register() {} }, slots: { register: (entry) => entry, inject: (_name, callback) => { localScope = callback().inject().scope; } } });
+api.apply({ effect() {}, locale: { bind: () => () => "", register() {} }, remote: { settings: { describe: async () => ({ writable: true, namespaces: [{ ns: "dsh-sm-version-display", value: profileSettings, user: {}, revision: settingsRevision }] }), update: async (_ns, patch) => { profileSettings = { ...profileSettings, ...patch }; settingsRevision++; return { value: profileSettings, revision: settingsRevision }; } } }, slots: { register: (entry) => entry, inject: (_name, callback) => { localScope = callback().inject().scope; } } });
 assert.equal(localScope.getSnapshot().value.enabled, true);
 await localScope.set("language", "en");
-assert.equal(JSON.parse(savedSettings.get("dsh-sm-version-display:settings")).language, "en");
+assert.equal(profileSettings.language, "en");
 const t = (key, values) => api.translate("zh", key, values);
 const render = (component, props) => { cursor = 0; effects = []; return component(props); };
 const nodes = (tree) => !tree || typeof tree !== "object" ? [] : [tree, ...tree.children.flatMap(nodes)];

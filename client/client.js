@@ -242,22 +242,41 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			if (value === null || typeof value !== "object") return { ...DEFAULT_SETTINGS };
 			return { language: ["zh", "en", "zh-TW"].includes(value.language) ? value.language : DEFAULT_SETTINGS.language, enabled: typeof value.enabled === "boolean" ? value.enabled : DEFAULT_SETTINGS.enabled };
 		}
-		function localSettingsScope() {
+		function remoteSettingsScope(remote) {
 			const key = "dsh-sm-version-display:settings";
-			let value;
-			try { value = decodeSettings(JSON.parse(window.localStorage.getItem(key))); }
-			catch { value = { ...DEFAULT_SETTINGS }; }
-			let snapshot = { value, writable: true };
+			let legacy;
+			try { const raw = window.localStorage.getItem(key); if (raw !== null) legacy = decodeSettings(JSON.parse(raw)); } catch { /* Ignore invalid legacy browser data. */ }
+			let snapshot = { value: { ...DEFAULT_SETTINGS }, writable: false };
+			let revision;
 			const listeners = new Set();
+			const notify = () => { for (const listener of listeners) listener(); };
+			const ready = (async () => {
+				const document = await remote.settings.describe();
+				const descriptor = document.namespaces.find((item) => item.ns === NS);
+				if (!descriptor) throw new Error("Plugin settings entry is unavailable");
+				revision = descriptor.revision;
+				snapshot = { value: decodeSettings(descriptor.value), writable: document.writable };
+				const user = descriptor.user && typeof descriptor.user === "object" ? descriptor.user : {};
+				const migration = legacy && Object.fromEntries(Object.entries(legacy).filter(([field]) => !Object.hasOwn(user, field)));
+				if (migration && document.writable && Object.keys(migration).length > 0) {
+					const saved = await remote.settings.update(NS, migration, revision);
+					revision = saved.revision;
+					snapshot = { value: decodeSettings(saved.value), writable: true };
+					try { window.localStorage.removeItem(key); } catch { /* Migration succeeded; stale browser data is harmless. */ }
+				}
+				notify();
+			})().catch((error) => { snapshot = { ...snapshot, writable: false, error }; notify(); throw error; });
 			return {
 				getSnapshot: () => snapshot,
 				subscribe: (listener) => { listeners.add(listener); return () => listeners.delete(listener); },
 				set: async (field, next) => {
 					if (field !== "enabled" && field !== "language") throw new Error("unsupported setting");
-					const updated = decodeSettings({ ...snapshot.value, [field]: next });
-					try { window.localStorage.setItem(key, JSON.stringify(updated)); } catch { /* Keep preferences for this page when browser storage is disabled. */ }
-					snapshot = { value: updated, writable: true };
-					for (const listener of listeners) listener();
+					await ready;
+					if (!snapshot.writable) throw new Error("Plugin settings are read-only");
+					const saved = await remote.settings.update(NS, { [field]: next }, revision);
+					revision = saved.revision;
+					snapshot = { value: decodeSettings(saved.value), writable: true };
+					notify();
 				}
 			};
 		}
@@ -512,14 +531,11 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 		}
 
 		const NS = "dsh-sm-version-display";
-		const inject = ["slots", "locale"];
+		const inject = ["slots", "locale", "remote"];
 		function apply(ctx) {
 			ctx.effect(() => ctx.locale.register(NS, { zh, en }), "dsh-sm-version-display: dictionaries");
 			const t = ctx.locale.bind(NS);
-			let scope;
-			try { if (typeof ctx.settingsScope?.bind === "function") scope = ctx.settingsScope.bind({ namespace: NS, decode: decodeSettings }); }
-			catch { /* Older and newer DSH builds expose different settings services. */ }
-			scope ??= localSettingsScope();
+			const scope = remoteSettingsScope(ctx.remote);
 			ctx.slots.inject("sidebar.footer.action", () => ctx.slots.register({ name: "sidebar.footer.action", id: "dsh-sm-version-display", order: 100, locale: NS, inject: () => ({ scope }) }, VersionCard));
 			ctx.slots.inject("settings.section", () => ctx.slots.register({ name: "settings.section", id: "dsh-sm-version-display", order: 22, label: () => t("settings.nav"), inject: () => ({ scope }) }, VersionSettingsPage));
 		}

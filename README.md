@@ -2,7 +2,7 @@
 
 中文文档 · [English documentation](README.en.md)
 
-[![version](https://img.shields.io/badge/version-v1.2.13-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.2--rc.1-orange?style=flat-square)](#兼容性) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#兼容性)
+[![version](https://img.shields.io/badge/version-v1.2.13-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.7--rc.1-orange?style=flat-square)](#兼容性) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#兼容性)
 
 GitHub：[hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
@@ -11,7 +11,7 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
   <img src="images/sm-version-display-icon-outlined.png" alt="DSH 版本检测插件图标" width="180">
 </p>
 
-> 最低支持 DSH 版本：`v0.1.2-rc.1`（含）。当前插件版本：`v1.2.13`。
+> 最低支持 DSH 版本：`v0.1.7-rc.1`（含）。当前插件版本：`v1.2.13`。
 
 ## 简介
 
@@ -192,15 +192,14 @@ DSH Web browser
 
 | 项目 | 要求 |
 | --- | --- |
-| DSH | `>= v0.1.2-rc.1` |
-| 已验证支持的 DSH RC | `dsh-0.1.5-rc.1`、`dsh-0.1.5-rc.2` |
+| DSH | `>= v0.1.7-rc.1` |
 | Node.js | `>= 20`（host 运行环境） |
 | 平台 | DSH Web |
 | 插件版本 | `v1.2.13` |
 
-插件使用 DSH 官方扩展点：`dsh.client`、`sidebar.footer.action`、`settings.section`、`webserver/index-inject` 和 `ctx.slots.inject/register`。旧版 DSH 可通过 `ctx.settingsScope` 保存设置；没有该服务的版本会在浏览器本地保存启用状态与语言。更新链路会核对实际依赖版本，但不同 DSH 版本的第三方插件兼容性仍需重启后检查。
+插件使用 DSH 官方扩展点：`dsh.client`、`sidebar.footer.action`、`settings.section`、`webserver/index-inject` 和 `ctx.slots.inject/register`。启用状态与语言保存在 DSH profile 配置中；升级时会把仍留在浏览器本地的旧设置迁移到 profile，已有 profile 设置优先保留。
 
-插件市场从 npm 包的顶层 `engines.dsh` 读取最低宿主版本；本插件声明为 `>=0.1.2-rc.1`，与上表一致。
+插件市场从 npm 包的顶层 `engines.dsh` 读取最低宿主版本；本插件声明为 `>=0.1.7-rc.1`，与上表一致。
 
 ## 开发与本地验证
 

@@ -37,7 +37,7 @@ try {
 	const context = {
 		effect: fn => fn(),
 		webServer: { register: route => { routes.set(route.path, route.handler); return () => {}; } },
-		inject: (_services, fn) => fn({ settings: { register() {} } }),
+		inject: (_services, fn) => fn({ settings: { configure() { return () => {}; } }, effect: (effect) => effect() }),
 		on: (_event, fn) => { const globals = []; fn(globals); token = globals.find(item => item.name === "__DSH_UPDATE_TOKEN__").value; }
 	};
 	host.apply(context);
