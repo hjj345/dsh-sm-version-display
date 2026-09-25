@@ -149,7 +149,7 @@ pnpm add --global @deepseek-ai/dsh@<version>
 
 npx has no global installation to replace. If a GitHub Release has no matching npm package, follow the dialog’s clone, checkout, pnpm install, build, and launch steps manually. Restart the DSH Web service after any update.
 
-Automatic updates show the source, target version, release type, and risks first; the command runs only after confirmation. Alpha, Beta, and RC releases may contain breaking changes. Back up `.dsh` configuration and profile data before switching channels, and use an exact older version such as `@deepseek-ai/dsh@0.1.1-rc.2` to roll back.
+Automatic updates first show the source, target version, release type, and risks. After confirmation, the plugin backs up and checks the target. If a global or profile dependency is pinned to an older version, it provides an exact command to run after stopping DSH. Restart DSH and verify from the plugin page before the update is marked successful. Alpha, Beta, and RC releases may contain breaking changes. Back up `.dsh` configuration and profile data before switching channels, and use an exact older version such as `@deepseek-ai/dsh@0.1.1-rc.2` to roll back.
 
 ## How it works
 
@@ -198,7 +198,7 @@ Key files in the published package:
 | Platform | DSH Web |
 | Plugin version | `v1.2.12` |
 
-The plugin uses official DSH extension points: `dsh.client`, `sidebar.footer.action`, `settings.section`, `webserver/index-inject`, `ctx.slots.inject/register`, and `ctx.settingsScope`. If DSH introduces a breaking change to these extension points, the plugin will need a corresponding update.
+The plugin uses official DSH extension points: `dsh.client`, `sidebar.footer.action`, `settings.section`, `webserver/index-inject`, and `ctx.slots.inject/register`. Older DSH versions can persist preferences through `ctx.settingsScope`; versions without it store the enabled state and language in the browser. The update flow checks resolved dependency versions, while third-party plugin compatibility still needs a check after restart.
 
 ## Development and local verification
 

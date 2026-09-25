@@ -152,9 +152,18 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			};
 			void poll();
 		}
+		async function loadUpdateState() {
+			try {
+				const response = await fetch(UPDATE_STATUS_ROUTE, { headers: { accept: "application/json", "x-dsh-sm-version-display-token": typeof window.__DSH_UPDATE_TOKEN__ === "string" ? window.__DSH_UPDATE_TOKEN__ : "" }, signal: AbortSignal.timeout(8000) });
+				const payload = await response.json();
+				if (!response.ok || payload.ok !== true) return;
+				publish(updateStore, { status: payload.job?.status ?? "idle", job: payload.job ?? null, error: null });
+				if (payload.job?.status === "running") startUpdatePolling(payload.job.id);
+			} catch { /* The update panel stays idle when no status endpoint is available. */ }
+		}
 		async function requestUpdateAction(action) {
 			const job = updateStore.state.job;
-			if (job?.id === undefined || (job.status !== "error" && job.heartbeatExpired !== true)) return;
+			if (job?.id === undefined || (job.status !== "error" && job.status !== "restart-required" && job.heartbeatExpired !== true)) return;
 			try {
 				const token = typeof window.__DSH_UPDATE_TOKEN__ === "string" ? window.__DSH_UPDATE_TOKEN__ : "";
 				const response = await fetch(UPDATE_ACTION_ROUTE, { method: "POST", headers: { accept: "application/json", "content-type": "application/json", "x-dsh-sm-version-display-token": token }, body: JSON.stringify({ jobId: job.id, action }), signal: AbortSignal.timeout(15000) });
@@ -217,9 +226,12 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			backupTitle: ["自动备份管理", "Automatic backups", "自動備份管理"], backupEnabled: ["执行备份（推荐）", "Create a backup (recommended)", "執行備份（建議）"], backupSkip: ["跳过备份：本次更新无法使用本次备份回滚。", "Skipping backup: this update will have no new backup to roll back to.", "略過備份：本次更新無法使用本次備份回滾。"], backupDirectory: ["保存目录（DSH 所在电脑）", "Destination (DSH host computer)", "儲存目錄（DSH 所在電腦）"], browse: ["选择目录", "Choose directory", "選擇目錄"], useDirectory: ["使用此目录", "Use this directory", "使用此目錄"], openDirectory: ["打开路径", "Open path", "開啟路徑"], parentDirectory: ["上一级", "Parent directory", "上一層"], backupEmpty: ["未找到插件备份。", "No plugin backups found.", "找不到外掛備份。"], backupLoading: ["正在读取备份…", "Loading backups…", "正在讀取備份…"], backupScan: ["扫描指定目录", "Scan a directory", "掃描指定目錄"], backupDelete: ["删除选中备份", "Delete selected backups", "刪除所選備份"], backupSelected: ["已选 {count} 份 · {size}", "Selected {count} · {size}", "已選 {count} 份 · {size}"], backupDeleteConfirm: ["永久删除所选 {count} 份备份（{size}）？删除后无法用于回滚。", "Permanently delete {count} selected backups ({size})? They will no longer be available for rollback.", "永久刪除所選 {count} 份備份（{size}）？刪除後無法用於回滾。"], backupDeleted: ["已删除 {count} 份备份。", "Deleted {count} backups.", "已刪除 {count} 份備份。"], backupInUse: ["使用中，不可删除", "In use; cannot delete", "使用中，不可刪除"], backupSizeNote: ["大小为文件内容合计；包含不完整备份。", "Sizes are file-content totals, including incomplete backups.", "大小為檔案內容總計；包含不完整備份。"], "backupStatus.complete": ["完整", "Complete", "完整"], "backupStatus.failed": ["失败 · 不完整", "Failed · incomplete", "失敗 · 不完整"], "backupStatus.interrupted": ["中断 · 不完整", "Interrupted · incomplete", "中斷 · 不完整"], "backupStatus.incomplete": ["不完整", "Incomplete", "不完整"], "backupStatus.running": ["备份中", "Backing up", "備份中"], retryBackup: ["重新备份并重试", "Back up again and retry", "重新備份並重試"], updateFailed: ["更新未完成，请查看错误及下方可用操作。", "Update did not finish. Review the error and available actions below.", "更新未完成，請查看錯誤及下方可用操作。"], noActiveCommand: ["当前没有正在执行的命令。", "No command is currently running.", "目前沒有正在執行的命令。"], heartbeatHelp: ["尚未确认任务是否结束，请刷新状态并查看可用操作。", "Completion is unconfirmed. Refresh status and review available actions.", "尚未確認任務是否結束，請重新整理狀態並查看可用操作。"], lastActivity: ["最后活动", "Last activity", "最後活動"]
 		};
 		for (const [key, values] of Object.entries(backupText)) [zh, en, zhTW].forEach((dictionary, index) => { dictionary["settings." + key] = values[index]; });
-		Object.assign(zh, { "settings.retryVerification": "重新验证已安装版本", "settings.verifyFinished": "安装和 Web profile 验证通过。" });
-		Object.assign(en, { "settings.retryVerification": "Verify the installed version again", "settings.verifyFinished": "Installation and Web profile verification passed." });
-		Object.assign(zhTW, { "settings.retryVerification": "重新驗證已安裝版本", "settings.verifyFinished": "安裝和 Web profile 驗證通過。" });
+		Object.assign(zh, { "settings.retryVerification": "重新验证已安装版本", "settings.verifyFinished": "目标 DSH 正在运行，本插件页面已加载；请检查其他插件状态。" });
+		Object.assign(en, { "settings.retryVerification": "Verify the installed version again", "settings.verifyFinished": "The target DSH is running and this plugin page loaded; check the other plugins." });
+		Object.assign(zhTW, { "settings.retryVerification": "重新驗證已安裝版本", "settings.verifyFinished": "目標 DSH 正在執行，本外掛頁面已載入；請檢查其他外掛狀態。" });
+		Object.assign(zh, { "settings.confirmWarning": "将先备份并预检目标版本。若依赖需要停机更新，请按页面提示关闭 DSH 后执行修复命令；重启验证前不会标记成功。预发布版本可能不兼容。", "settings.manualRepair": "关闭 DSH 后按顺序执行：", "settings.offlineRequired": "需关闭 DSH 后完成版本与依赖更新", "settings.restartRequired": "依赖已安装；重启后验证插件", "settings.offlineHelp": "先关闭 DSH，确认备份可用，再复制下方命令到 PowerShell 执行。", "settings.restartHelp": "重启 DSH 后点击“重新验证已安装版本”；当前尚未确认插件已正常加载。" });
+		Object.assign(en, { "settings.confirmWarning": "The plugin first backs up and checks the target. If dependencies require downtime, close DSH and run the displayed repair command. Success is confirmed only after restart. Preview releases may be incompatible.", "settings.manualRepair": "After closing DSH, follow these steps:", "settings.offlineRequired": "Close DSH to finish the version and dependency update", "settings.restartRequired": "Dependencies installed; verify plugins after restart", "settings.offlineHelp": "Close DSH and check your backup before running the command below in PowerShell.", "settings.restartHelp": "After restarting DSH, choose Verify the installed version again. Plugin activation is not yet confirmed." });
+		Object.assign(zhTW, { "settings.confirmWarning": "外掛會先備份並預檢目標版本。若依賴需要停機更新，請依提示關閉 DSH 後執行修復命令；重新啟動驗證前不會標記成功。預發布版本可能不相容。", "settings.manualRepair": "關閉 DSH 後依序執行：", "settings.offlineRequired": "需關閉 DSH 後完成版本與依賴更新", "settings.restartRequired": "依賴已安裝；重新啟動後驗證外掛", "settings.offlineHelp": "先關閉 DSH，確認備份可用，再複製下方命令至 PowerShell 執行。", "settings.restartHelp": "重新啟動 DSH 後點擊重新驗證；目前尚未確認外掛已正常載入。" });
 		const dictionaries = { zh, en, "zh-TW": zhTW };
 		function translate(language, key, values) {
 			let text = dictionaries[language]?.[key] ?? dictionaries.zh[key] ?? key;
@@ -229,6 +241,25 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 		function decodeSettings(value) {
 			if (value === null || typeof value !== "object") return { ...DEFAULT_SETTINGS };
 			return { language: ["zh", "en", "zh-TW"].includes(value.language) ? value.language : DEFAULT_SETTINGS.language, enabled: typeof value.enabled === "boolean" ? value.enabled : DEFAULT_SETTINGS.enabled };
+		}
+		function localSettingsScope() {
+			const key = "dsh-sm-version-display:settings";
+			let value;
+			try { value = decodeSettings(JSON.parse(window.localStorage.getItem(key))); }
+			catch { value = { ...DEFAULT_SETTINGS }; }
+			let snapshot = { value, writable: true };
+			const listeners = new Set();
+			return {
+				getSnapshot: () => snapshot,
+				subscribe: (listener) => { listeners.add(listener); return () => listeners.delete(listener); },
+				set: async (field, next) => {
+					if (field !== "enabled" && field !== "language") throw new Error("unsupported setting");
+					const updated = decodeSettings({ ...snapshot.value, [field]: next });
+					try { window.localStorage.setItem(key, JSON.stringify(updated)); } catch { /* Keep preferences for this page when browser storage is disabled. */ }
+					snapshot = { value: updated, writable: true };
+					for (const listener of listeners) listener();
+				}
+			};
 		}
 		function useSettingsSnapshot(scope) {
 			const subscribe = react.useCallback((listener) => scope.subscribe(listener), [scope]);
@@ -315,7 +346,7 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			if (state.job === null || state.job?.status === "idle") return null;
 			const job = state.job;
 			const heartbeatExpired = job.heartbeatExpired === true || (job.status === "running" && Date.now() - (job.lastActivityAt ?? job.startedAt ?? Date.now()) >= HEARTBEAT_TIMEOUT_MS);
-			const status = heartbeatExpired ? t("settings.heartbeatTimeout") : job.status === "running" ? t("settings.updating") : job.status === "success" ? t("settings.updateFinished") : t("settings.updateFailed");
+			const status = heartbeatExpired ? t("settings.heartbeatTimeout") : job.status === "running" ? t("settings.updating") : job.status === "success" ? t("settings.updateFinished") : job.status === "needs-offline-repair" ? t("settings.offlineRequired") : job.status === "restart-required" ? t("settings.restartRequired") : t("settings.updateFailed");
 			const stepStatus = (step) => t("settings.step." + step.status);
 			const stepList = h("ol", { style: { margin: "10px 0 0", paddingLeft: "22px" } }, (job.steps ?? []).map((step) => h("li", { key: step.id, style: { marginBottom: "5px" } }, t(step.label), " · ", stepStatus(step), step.detail?.root ? " · " + t("settings.backupPath") + ": " + step.detail.root : "")));
 			const backupProgress = job.status !== "running" || heartbeatExpired ? null : job.backup?.phase === "scanning" ? h("progress", { style: { width: "100%", marginTop: "8px" } }) : job.backup?.phase === "copying" ? h("progress", { max: 100, value: job.backup.progress ?? 0, style: { width: "100%", marginTop: "8px" } }) : null;
@@ -323,9 +354,9 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			const peerWarning = job.warnings?.length ? h("p", { className: "dvd-settings-source-hint", role: "status" }, t("settings.peerWarnings")) : null;
 			const activeStep = (job.steps ?? []).find((step) => step.status === "running");
 			const currentCommand = activeStep?.command ?? t(job.status === "running" && !heartbeatExpired ? "settings.noCommand" : "settings.noActiveCommand");
-			const actions = (job.status === "error" || heartbeatExpired) && Array.isArray(job.actions) ? h("div", { className: "dvd-settings-update-actions" }, job.actions.filter((action) => ["wait", "verify", "retry-backup", "repair", "rollback"].includes(action)).map((action) => h("button", { key: action, type: "button", className: "dvd-settings-update-action dvd-settings-update-action--" + (["verify", "retry-backup"].includes(action) ? "repair" : action), onClick: () => onAction(action) }, t("settings." + ({ wait: "continueWaiting", "retry-backup": "retryBackup", verify: "retryVerification" }[action] ?? action))))) : null;
+			const actions = (job.status === "error" || job.status === "restart-required" || heartbeatExpired) && Array.isArray(job.actions) ? h("div", { className: "dvd-settings-update-actions" }, job.actions.filter((action) => ["wait", "verify", "retry-backup", "repair", "rollback"].includes(action)).map((action) => h("button", { key: action, type: "button", className: "dvd-settings-update-action dvd-settings-update-action--" + (["verify", "retry-backup"].includes(action) ? "repair" : action), onClick: () => onAction(action) }, t("settings." + ({ wait: "continueWaiting", "retry-backup": "retryBackup", verify: "retryVerification" }[action] ?? action))))) : null;
 			const manual = job.manual ? h("div", { className: "dvd-settings-update-manual" }, h("strong", null, t("settings.manualRepair")), h("code", null, job.manual.stopCommand), h("button", { type: "button", onClick: () => onCopy(job.manual.stopCommand) }, copiedCommand === job.manual.stopCommand ? t("settings.copied") : t("settings.copy")), h("code", null, job.manual.repairCommand), h("button", { type: "button", onClick: () => onCopy(job.manual.repairCommand) }, copiedCommand === job.manual.repairCommand ? t("settings.copied") : t("settings.copy")), h("p", null, job.manual.note)) : null;
-			const result = heartbeatExpired ? h("p", { className: "dvd-settings-source-hint" }, t("settings.heartbeatHelp")) : job.status === "success" ? h("p", { className: "dvd-settings-source-hint" }, job.stage === "rollback-complete" ? t("settings.rollbackFinished") : job.action === "repair" ? t("settings.repairFinished") : job.action === "verify" ? t("settings.verifyFinished") : t("settings.updateSuccess"), " ", job.restartRequired === false ? null : t("settings.restart")) : job.status === "error" ? h(Fragment, null, h("p", { className: "dvd-settings-source-hint" }, t("settings.updateFailed"))) : null;
+			const result = heartbeatExpired ? h("p", { className: "dvd-settings-source-hint" }, t("settings.heartbeatHelp")) : job.status === "success" ? h("p", { className: "dvd-settings-source-hint" }, job.stage === "rollback-complete" ? t("settings.rollbackFinished") : job.action === "repair" ? t("settings.repairFinished") : job.action === "verify" ? t("settings.verifyFinished") : t("settings.updateSuccess"), " ", job.restartRequired === false ? null : t("settings.restart")) : job.status === "needs-offline-repair" ? h("p", { className: "dvd-settings-source-hint" }, t("settings.offlineHelp")) : job.status === "restart-required" ? h("p", { className: "dvd-settings-source-hint" }, t("settings.restartHelp")) : job.status === "error" ? h(Fragment, null, h("p", { className: "dvd-settings-source-hint" }, t("settings.updateFailed"))) : null;
 			return h("section", { className: "dvd-settings-update-log", "aria-live": "polite" }, h("h3", null, t("settings.updateBoard")), h("p", { className: "dvd-settings-source-hint" }, t("settings.targetVersion"), ": ", formatVersion(job.version)), h("p", null, status), job.lastActivityAt ? h("p", null, t("settings.lastActivity") + ": " + new Date(job.lastActivityAt).toLocaleString()) : null, stepList, backupInfo, backupProgress, peerWarning, h("p", { className: "dvd-settings-update-command" }, currentCommand), h("pre", { className: "dvd-settings-update-output" }, job.lines?.slice(-10).join("\n") || t(job.status === "running" && !heartbeatExpired ? "settings.waitingOutput" : "settings.noActiveCommand")), manual, actions, result);
 		}
 
@@ -410,6 +441,7 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			const [commandDefinitions, setCommandDefinitions] = react.useState([]);
 			const [copiedCommand, setCopiedCommand] = react.useState(null);
 			const [confirmTarget, setConfirmTarget] = react.useState(null);
+			react.useEffect(() => { void loadUpdateState(); }, []);
 			const disabled = snapshot.writable === false;
 			const installInfo = checkState.data?.installInfo ?? { method: "unknown", profilePackageManager: "pnpm", canOneClick: false };
 			const installMethod = installMethodLabel(installInfo.method, t);
@@ -480,11 +512,14 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 		}
 
 		const NS = "dsh-sm-version-display";
-		const inject = ["slots", "locale", "settingsScope"];
+		const inject = ["slots", "locale"];
 		function apply(ctx) {
 			ctx.effect(() => ctx.locale.register(NS, { zh, en }), "dsh-sm-version-display: dictionaries");
 			const t = ctx.locale.bind(NS);
-			const scope = ctx.settingsScope.bind({ namespace: NS, decode: decodeSettings });
+			let scope;
+			try { if (typeof ctx.settingsScope?.bind === "function") scope = ctx.settingsScope.bind({ namespace: NS, decode: decodeSettings }); }
+			catch { /* Older and newer DSH builds expose different settings services. */ }
+			scope ??= localSettingsScope();
 			ctx.slots.inject("sidebar.footer.action", () => ctx.slots.register({ name: "sidebar.footer.action", id: "dsh-sm-version-display", order: 100, locale: NS, inject: () => ({ scope }) }, VersionCard));
 			ctx.slots.inject("settings.section", () => ctx.slots.register({ name: "settings.section", id: "dsh-sm-version-display", order: 22, label: () => t("settings.nav"), inject: () => ({ scope }) }, VersionSettingsPage));
 		}

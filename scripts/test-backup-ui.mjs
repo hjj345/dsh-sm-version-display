@@ -17,9 +17,15 @@ const react = {
   useEffect: (effect, dependencies) => { effects.push({ effect, dependencies }); },
   useRef: (initial) => ({ current: initial }),
 };
-const source = fs.readFileSync(new URL("../client/client.js", import.meta.url), "utf8").replace("exports.apply = apply;", "exports.test = { UpdateConfirmModal, UpdateOutputPanel, BackupManager, DirectoryPicker, formatBytes, translate }; exports.apply = apply;");
-const window = { __ModuleLoader__: { load: ({ factory }) => { api = factory((name) => name === "react" ? react : {}).test; } }, confirm: () => true, setInterval: (callback, delay) => { interval = { callback, delay }; return 17; }, clearInterval: (id) => { clearedInterval = id; } };
+const source = fs.readFileSync(new URL("../client/client.js", import.meta.url), "utf8").replace("exports.apply = apply;", "exports.test = { apply, UpdateConfirmModal, UpdateOutputPanel, BackupManager, DirectoryPicker, formatBytes, translate }; exports.apply = apply;");
+const savedSettings = new Map();
+const window = { __ModuleLoader__: { load: ({ factory }) => { api = factory((name) => name === "react" ? react : {}).test; } }, localStorage: { getItem: (key) => savedSettings.get(key) ?? null, setItem: (key, value) => savedSettings.set(key, value) }, confirm: () => true, setInterval: (callback, delay) => { interval = { callback, delay }; return 17; }, clearInterval: (id) => { clearedInterval = id; } };
 vm.runInNewContext(source, { window, console, Date, AbortSignal, fetch: (...args) => fetchImpl(...args) });
+let localScope;
+api.apply({ effect() {}, locale: { bind: () => () => "", register() {} }, slots: { register: (entry) => entry, inject: (_name, callback) => { localScope = callback().inject().scope; } } });
+assert.equal(localScope.getSnapshot().value.enabled, true);
+await localScope.set("language", "en");
+assert.equal(JSON.parse(savedSettings.get("dsh-sm-version-display:settings")).language, "en");
 const t = (key, values) => api.translate("zh", key, values);
 const render = (component, props) => { cursor = 0; effects = []; return component(props); };
 const nodes = (tree) => !tree || typeof tree !== "object" ? [] : [tree, ...tree.children.flatMap(nodes)];
@@ -48,8 +54,15 @@ assert.equal(nodes(tree).filter((node) => node.type === "progress").length, 0);
 tree = api.UpdateOutputPanel({ state: { job: { status: "error", version: "0.1.5-rc.3", actions: ["verify"], steps: [], lines: [] } }, t, onAction() {} });
 assert.ok(button(tree, t("settings.retryVerification")));
 tree = api.UpdateOutputPanel({ state: { job: { status: "success", action: "verify", version: "0.1.5-rc.3", restartRequired: false, steps: [], lines: [] } }, t, onAction() {} });
-assert.match(text(tree), /安装和 Web profile 验证通过/);
+assert.match(text(tree), /目标 DSH 正在运行/);
 assert.doesNotMatch(text(tree), new RegExp(t("settings.restart")));
+tree = api.UpdateOutputPanel({ state: { job: { status: "needs-offline-repair", version: "0.1.7-rc.2", manual: { stopCommand: "关闭 DSH", repairCommand: "node worker --action offline-repair", note: "依赖未对齐" }, steps: [], lines: [] } }, t, onAction() {} });
+assert.match(text(tree), /关闭 DSH 后完成版本与依赖更新/);
+assert.match(text(tree), /node worker --action offline-repair/);
+assert.doesNotMatch(text(tree), /已完成/);
+tree = api.UpdateOutputPanel({ state: { job: { status: "restart-required", version: "0.1.7-rc.2", actions: ["verify"], steps: [], lines: [] } }, t, onAction() {} });
+assert.ok(button(tree, t("settings.retryVerification")));
+assert.match(text(tree), /尚未确认插件已正常加载/);
 states = [null, [], false, "signal timed out", false];
 tree = render(api.BackupManager, { t });
 assert.match(text(tree), /signal timed out/);

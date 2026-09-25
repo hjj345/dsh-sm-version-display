@@ -149,7 +149,7 @@ pnpm add --global @deepseek-ai/dsh@<version>
 
 npx 没有需要替换的全局安装；GitHub Release 如果没有对应 npm 包，则需要按照弹窗中的 clone、checkout、pnpm install、build 和启动步骤手动执行。任何更新完成后都需要重启 DSH Web 服务。
 
-自动更新会先显示来源、目标版本、版本类型和风险，用户确认后才执行。执行期间设置页会显示命令和输出。Alpha、Beta、RC 版本可能包含破坏性变更；切换版本前建议备份 `.dsh` 配置和 profile 数据。回退时请使用明确的旧版本号，例如 `@deepseek-ai/dsh@0.1.1-rc.2`。
+自动更新会先显示来源、目标版本、版本类型和风险，用户确认后先备份并预检。如果检测到全局安装或 profile 中有旧版本固定依赖，页面会给出停机后的精确修复命令；命令完成后仍须重启 DSH，并在插件页面执行验证，才会标记更新成功。Alpha、Beta、RC 版本可能包含破坏性变更；切换版本前建议备份 `.dsh` 配置和 profile 数据。回退时请使用明确的旧版本号，例如 `@deepseek-ai/dsh@0.1.1-rc.2`。
 
 ## 工作原理
 
@@ -198,7 +198,7 @@ DSH Web browser
 | 平台 | DSH Web |
 | 插件版本 | `v1.2.12` |
 
-插件使用 DSH 官方扩展点：`dsh.client`、`sidebar.footer.action`、`settings.section`、`webserver/index-inject`、`ctx.slots.inject/register` 和 `ctx.settingsScope`。如果 DSH 后续发生不兼容的扩展点变更，需要相应适配。
+插件使用 DSH 官方扩展点：`dsh.client`、`sidebar.footer.action`、`settings.section`、`webserver/index-inject` 和 `ctx.slots.inject/register`。旧版 DSH 可通过 `ctx.settingsScope` 保存设置；没有该服务的版本会在浏览器本地保存启用状态与语言。更新链路会核对实际依赖版本，但不同 DSH 版本的第三方插件兼容性仍需重启后检查。
 
 ## 开发与本地验证
 

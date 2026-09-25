@@ -93,6 +93,10 @@ try {
 	assert.equal(verifyState.stage, "verifying");
 	assert.equal(verifyState.backup.status, "skipped");
 	assert.equal(spawned, 1, "verification action spawns only the isolated fake worker");
+	writeFileSync(statePath, JSON.stringify({ ...failed, status: "restart-required", stage: "restart-required", actions: ["verify"], finishedAt: Date.now() - 1000 }));
+	const restarted = await request("/update/action", { method: "POST", body: { jobId: failed.id, action: "verify" } });
+	assert.equal(restarted.status, 202, "restart-required state can be verified after DSH restarts");
+	assert.equal(spawned, 2);
 	console.log("✔ Backup/update routes: authorization, incomplete rollback, traversal and verify-only recovery; no real workers spawned");
 } finally {
 	if (oldLocal === undefined) delete process.env.LOCALAPPDATA; else process.env.LOCALAPPDATA = oldLocal;
