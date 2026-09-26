@@ -50,6 +50,7 @@ const pillTooltip = seatRow.children[0];
 assert.equal(pillTooltip.props.label.includes("dsh-sm-version-display"), true);
 assert.equal(pillTooltip.props.portal, true);
 assert.equal(source.match(/portal: true/g).length, 3);
+assert.equal(source.match(/side: "top"/g).length, 3);
 assert.match(source, /\[data-slot="sidebar\.footer\.action"\]\{display:block!important;flex:1 1 0%!important;width:100%!important;max-width:100%!important;min-width:0!important;overflow:hidden\}/);
 assert.match(source, /\.dvd_statusDot\[data-state="update"\]/);
 assert.match(source, /body\[data-ds-dark-theme\] \.dvd-overlay-panel\{box-shadow/);
