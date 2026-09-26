@@ -50,6 +50,8 @@ assert.equal(source.match(/portal: true/g).length, 2);
 assert.match(source, /\[data-slot="sidebar\.footer\.action"\]\{display:block!important;flex:1 1 0%!important;width:100%!important;max-width:100%!important;min-width:0!important;overflow:hidden\}/);
 assert.match(source, /\.dvd_versionCard\{[^}]*max-width:100%/);
 assert.match(source, /\.dvd_sourceText\{display:block\}/);
+assert.match(source, /new ResizeObserver\(measure\)/);
+assert.match(source, /ref: cardRef, className: "dvd_versionCard", style: cardMaxWidth === null \? undefined : \{ maxWidth: cardMaxWidth \+ "px" \}/);
 const refresh = button(tree, t("refresh"));
 assert.equal(refresh.props.disabled, false);
 const pending = refresh.props.onClick();

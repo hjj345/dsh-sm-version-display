@@ -308,6 +308,27 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			const [checking, setChecking] = react.useState(false);
 			const [toast, setToast] = react.useState(null);
 			const dismissToast = react.useCallback(() => setToast(null), []);
+			const cardRef = react.useRef(null);
+			const [cardMaxWidth, setCardMaxWidth] = react.useState(null);
+			// The served sidebar can size the slot chain by content, so percentages alone cannot recover the sidebar width; clamp the card to the tightest real ancestor instead.
+			(react.useLayoutEffect || react.useEffect)(() => {
+				const el = cardRef.current;
+				if (el === null || typeof ResizeObserver === "undefined") return undefined;
+				const measure = () => {
+					let width = Infinity;
+					for (let node = el.parentElement; node !== null && node !== document.body; node = node.parentElement) {
+						if (node.clientWidth <= 0) continue;
+						const style = window.getComputedStyle(node);
+						width = Math.min(width, node.clientWidth - (parseFloat(style.paddingLeft) || 0) - (parseFloat(style.paddingRight) || 0));
+					}
+					if (Number.isFinite(width)) setCardMaxWidth(Math.max(0, Math.floor(width)));
+				};
+				measure();
+				const observer = new ResizeObserver(measure);
+				for (let node = el.parentElement; node !== null && node !== document.body; node = node.parentElement) observer.observe(node);
+				window.addEventListener("resize", measure);
+				return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
+			}, [wide, settings.enabled]);
 			react.useEffect(() => {
 				if (!settings.enabled) return undefined;
 				requestCheck();
@@ -342,7 +363,7 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			}
 			const tooltipText = "dsh-sm-version-display\n" + formatVersion(current) + " (" + meta + ")\n" + sourceStatuses.join(" · ");
 			if (!wide) return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "right", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_railButton", "aria-label": "dsh-sm-version-display" }, h(primitives.IconCodeOutlineRegular, { size: 18 }))), toastElement);
-			return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "right", delayMs: 300, portal: true }, h("div", { className: "dvd_versionCard" }, h("span", { className: "dvd_versionText" }, h("span", { className: "dvd_current" }, formatVersion(current)), " (", h("span", { className: "dvd_meta" }, meta), ")", h("span", { className: "dvd_sourceText" }, sourceStatuses.join(" · "))), h(primitives.Button, { variant: "primary", size: "sm", className: "dvd_refreshBtn", onClick: handleRefresh, disabled: checking, icon: checking ? h(primitives.IconLoadingOutlineRegular, { size: 14, className: "dvd_spin" }) : h(primitives.IconRefreshOutlineRegular, { size: 14 }) }, t("refresh")))), toastElement);
+			return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "right", delayMs: 300, portal: true }, h("div", { ref: cardRef, className: "dvd_versionCard", style: cardMaxWidth === null ? undefined : { maxWidth: cardMaxWidth + "px" } }, h("span", { className: "dvd_versionText" }, h("span", { className: "dvd_current" }, formatVersion(current)), " (", h("span", { className: "dvd_meta" }, meta), ")", h("span", { className: "dvd_sourceText" }, sourceStatuses.join(" · "))), h(primitives.Button, { variant: "primary", size: "sm", className: "dvd_refreshBtn", onClick: handleRefresh, disabled: checking, icon: checking ? h(primitives.IconLoadingOutlineRegular, { size: 14, className: "dvd_spin" }) : h(primitives.IconRefreshOutlineRegular, { size: 14 }) }, t("refresh")))), toastElement);
 		}
 
 		function CommandBlock({ definition, onCopy, copied, copyLabel }) {
