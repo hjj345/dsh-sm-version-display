@@ -30,10 +30,10 @@ const PLUGIN_VERSION = "v1.2.17";
 		];
 
 		const css = `
-[data-slot="sidebar.footer.action"]{display:block!important;flex:1 1 auto;min-width:0}
-.dvd_versionCard{box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;min-width:0;margin:2px 0 6px;padding:7px 10px;border:1px solid var(--dsw-alias-border-l2);border-radius:12px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px;overflow:hidden}
+[data-slot="sidebar.footer.action"]{display:block!important;flex:1 1 0%!important;width:100%!important;max-width:100%!important;min-width:0!important;overflow:hidden}
+.dvd_versionCard{box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;max-width:100%;min-width:0;margin:2px 0 6px;padding:7px 10px;border:1px solid var(--dsw-alias-border-l2);border-radius:12px;background:var(--dsw-alias-bg-layer-2);color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px;overflow:hidden}
 .dvd_versionText{flex:1;min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal}
-.dvd_current{font-family:var(--ds-font-family-code);color:var(--dsw-alias-label-primary);font-weight:500}.dvd_meta{color:var(--dsw-alias-label-secondary)}
+.dvd_current{font-family:var(--ds-font-family-code);color:var(--dsw-alias-label-primary);font-weight:500}.dvd_meta{color:var(--dsw-alias-label-secondary)}.dvd_sourceText{display:block}
 .dvd_railButton{box-sizing:border-box;cursor:pointer;width:36px;height:36px;color:var(--dsw-alias-label-primary);background:0 0;border:none;border-radius:50%;flex:none;justify-content:center;align-items:center;padding:0;display:inline-flex}.dvd_railButton:hover{background:var(--dsw-alias-interactive-bg-hover)}
 .dvd_tipName{font-weight:600}.dvd_tipVersion{white-space:nowrap}.dvd_refreshBtn{flex:none}.dvd_spin{animation:dvd-spin .9s linear infinite}@keyframes dvd-spin{to{transform:rotate(360deg)}}
 .dvd_toastSuccess{color:var(--dsw-alias-state-success-primary)}.dvd_toastInfo{color:var(--dsw-alias-state-business-primary)}.dvd_toastError{color:var(--dsw-alias-state-error-primary)}
@@ -341,8 +341,8 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 				toastElement = h(primitives.Toast, { key: toast.seq, text: toast.text, icon: h(Icon, { size: 16, className: colorClass }), onDone: dismissToast });
 			}
 			const tooltipText = "dsh-sm-version-display\n" + formatVersion(current) + " (" + meta + ")\n" + sourceStatuses.join(" · ");
-			if (!wide) return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "right", delayMs: 300 }, h("button", { type: "button", className: "dvd_railButton", "aria-label": "dsh-sm-version-display" }, h(primitives.IconCodeOutlineRegular, { size: 18 }))), toastElement);
-			return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "right", delayMs: 300 }, h("div", { className: "dvd_versionCard" }, h("span", { className: "dvd_versionText" }, h("span", { className: "dvd_current" }, formatVersion(current)), " (", h("span", { className: "dvd_meta" }, meta), ")", h("span", { className: "dvd_sourceText" }, sourceStatuses.join(" · "))), h(primitives.Button, { variant: "primary", size: "sm", className: "dvd_refreshBtn", onClick: handleRefresh, disabled: checking, icon: checking ? h(primitives.IconLoadingOutlineRegular, { size: 14, className: "dvd_spin" }) : h(primitives.IconRefreshOutlineRegular, { size: 14 }) }, t("refresh")))), toastElement);
+			if (!wide) return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "right", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_railButton", "aria-label": "dsh-sm-version-display" }, h(primitives.IconCodeOutlineRegular, { size: 18 }))), toastElement);
+			return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "right", delayMs: 300, portal: true }, h("div", { className: "dvd_versionCard" }, h("span", { className: "dvd_versionText" }, h("span", { className: "dvd_current" }, formatVersion(current)), " (", h("span", { className: "dvd_meta" }, meta), ")", h("span", { className: "dvd_sourceText" }, sourceStatuses.join(" · "))), h(primitives.Button, { variant: "primary", size: "sm", className: "dvd_refreshBtn", onClick: handleRefresh, disabled: checking, icon: checking ? h(primitives.IconLoadingOutlineRegular, { size: 14, className: "dvd_spin" }) : h(primitives.IconRefreshOutlineRegular, { size: 14 }) }, t("refresh")))), toastElement);
 		}
 
 		function CommandBlock({ definition, onCopy, copied, copyLabel }) {

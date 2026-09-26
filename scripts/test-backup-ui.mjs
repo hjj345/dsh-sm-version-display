@@ -45,6 +45,11 @@ const cardScope = { subscribe() { return () => {}; }, getSnapshot: () => ({ valu
 fetchImpl = () => Promise.resolve({ ok: true, json: async () => ({ ok: true, current: "1.2.17", npm: { status: "success", version: "1.2.17" }, github: { status: "success", version: "1.2.17" } }) });
 tree = render(api.VersionCard, { wide: true, t, scope: cardScope });
 assert.equal(tree.children[0].props.label.includes("dsh-sm-version-display"), true);
+assert.equal(tree.children[0].props.portal, true);
+assert.equal(source.match(/portal: true/g).length, 2);
+assert.match(source, /\[data-slot="sidebar\.footer\.action"\]\{display:block!important;flex:1 1 0%!important;width:100%!important;max-width:100%!important;min-width:0!important;overflow:hidden\}/);
+assert.match(source, /\.dvd_versionCard\{[^}]*max-width:100%/);
+assert.match(source, /\.dvd_sourceText\{display:block\}/);
 const refresh = button(tree, t("refresh"));
 assert.equal(refresh.props.disabled, false);
 const pending = refresh.props.onClick();
