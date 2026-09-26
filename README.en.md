@@ -2,7 +2,7 @@
 
 [中文文档](README.md) · English documentation
 
-[![version](https://img.shields.io/badge/version-v1.2.18-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.7--rc.1-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
+[![version](https://img.shields.io/badge/version-v1.2.19-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.7--rc.1-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
 
 GitHub: [hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
@@ -11,7 +11,7 @@ npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345
   <img src="images/sm-version-display-icon-outlined.png" alt="DSH Version Checker plugin icon" width="180">
 </p>
 
-> Minimum supported DSH version: `v0.1.7-rc.1` (inclusive). Current plugin version: `v1.2.18`.
+> Minimum supported DSH version: `v0.1.7-rc.1` (inclusive). Current plugin version: `v1.2.19`.
 
 ## Introduction
 
@@ -25,7 +25,7 @@ The following names refer to different things:
 - DSH runtime plugin ID: `dsh-sm-version-display`
 - GitHub repository: `hjj345/dsh-sm-version-display`
 
-Plugin version `v1.2.18` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
+Plugin version `v1.2.19` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
 
 ## Features
 
@@ -195,7 +195,7 @@ Key files in the published package:
 | DSH | `>= v0.1.7-rc.1` |
 | Node.js | `>= 20` (host runtime) |
 | Platform | DSH Web |
-| Plugin version | `v1.2.18` |
+| Plugin version | `v1.2.19` |
 
 The plugin uses official DSH extension points: `dsh.client`, `sidebar.footer.action`, `settings.section`, `webserver/index-inject`, and `ctx.slots.inject/register`. The enabled state and language are stored in the DSH profile configuration. On upgrade, any legacy browser-local settings are migrated to the profile, while existing profile settings take precedence.
 
@@ -215,6 +215,15 @@ npm run build
 `npm run build` performs host/client syntax checks, comparator self-tests, settings/update contract checks, package-integrity checks, and README checks.
 
 ## Changelog
+
+### v1.2.19 - 2026-09-26
+
+- Reworked the sidebar version entry: the footer slot now hosts a compact status capsule (status dot + version number) and a standalone refresh button, whose short content naturally fits any sidebar width and fully resolves the narrow-sidebar overflow and clipped refresh button.
+- Clicking the capsule or the collapsed-rail icon opens a body-portal fullscreen panel showing the version, check status, npm/GitHub results, and the refresh button, decoupled from the sidebar layout chain.
+- Panel and capsule styles use DSH theme variables with dark-mode overrides, rendering correctly in both light and dark modes; closing works via Esc, mask click, or the close button, and `prefers-reduced-motion` is respected.
+- All three Tooltips switched to `side:"top"`: bubbles render above the anchor, clamp to a 12px viewport margin, and flip automatically when space is tight, fixing tooltips overflowing the viewport bottom when the capsule sits at the sidebar bottom.
+- Tests now cover the capsule structure, panel toggling, wide/narrow branch behavior, and Tooltip side assertions.
+- Updated the package, client About page, release contract, and bilingual documentation to plugin version `v1.2.19` with release date `2026-09-26`.
 
 ### v1.2.18 - 2026-09-26
 

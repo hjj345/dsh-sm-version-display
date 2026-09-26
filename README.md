@@ -2,7 +2,7 @@
 
 中文文档 · [English documentation](README.en.md)
 
-[![version](https://img.shields.io/badge/version-v1.2.18-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.7--rc.1-orange?style=flat-square)](#兼容性) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#兼容性)
+[![version](https://img.shields.io/badge/version-v1.2.19-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.7--rc.1-orange?style=flat-square)](#兼容性) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#兼容性)
 
 GitHub：[hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
@@ -11,7 +11,7 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
   <img src="images/sm-version-display-icon-outlined.png" alt="DSH 版本检测插件图标" width="180">
 </p>
 
-> 最低支持 DSH 版本：`v0.1.7-rc.1`（含）。当前插件版本：`v1.2.18`。
+> 最低支持 DSH 版本：`v0.1.7-rc.1`（含）。当前插件版本：`v1.2.19`。
 
 ## 简介
 
@@ -25,7 +25,7 @@ npm：[@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj34
 - DSH 运行时插件 ID：`dsh-sm-version-display`
 - GitHub 仓库：`hjj345/dsh-sm-version-display`
 
-插件版本 `v1.2.18` 表示本插件版本；卡片中显示的是运行时读取到的 DSH 版本，两者不是同一个版本号。
+插件版本 `v1.2.19` 表示本插件版本；卡片中显示的是运行时读取到的 DSH 版本，两者不是同一个版本号。
 
 ## 功能特性
 
@@ -195,7 +195,7 @@ DSH Web browser
 | DSH | `>= v0.1.7-rc.1` |
 | Node.js | `>= 20`（host 运行环境） |
 | 平台 | DSH Web |
-| 插件版本 | `v1.2.18` |
+| 插件版本 | `v1.2.19` |
 
 插件使用 DSH 官方扩展点：`dsh.client`、`sidebar.footer.action`、`settings.section`、`webserver/index-inject` 和 `ctx.slots.inject/register`。启用状态与语言保存在 DSH profile 配置中；升级时会把仍留在浏览器本地的旧设置迁移到 profile，已有 profile 设置优先保留。
 
@@ -215,6 +215,15 @@ npm run build
 `npm run build` 会执行 host/client 语法检查、版本比较自测、设置页/更新链路契约检查、包完整性检查和 README 检查。
 
 ## 更新日志
+
+### v1.2.19 - 2026-09-26
+
+- 重构侧栏版本入口：底部槽位改为紧凑状态胶囊（状态点 + 版本号）与独立刷新圆钮，内容短小天然自适应任何侧栏宽度，彻底解决窄侧栏下版本卡片溢出、刷新按钮被裁的问题。
+- 点击胶囊或折叠栏图标弹出 body portal 全屏面板，展示版本、检测状态、npm/GitHub 结果与刷新按钮，宽度与侧栏布局链解耦。
+- 弹层与座位样式全量使用 DSH 主题变量并补充暗色覆盖，明亮/暗色模式均正确渲染；支持 Esc、遮罩点击、关闭按钮三种关闭方式及 prefers-reduced-motion。
+- 三处 Tooltip 方位改为 `side:"top"`：气泡显示在锚点上方并按视口 12px 边距钳制、放不下自动翻转，修复胶囊位于侧栏底部时悬浮提示越出视口底沿的问题。
+- 测试同步覆盖座位结构、弹层开关、宽/窄两分支行为与 Tooltip 方位断言。
+- 更新插件包、客户端关于页面、发布契约和双语文档的版本标识为 `v1.2.19`，发布日期为 `2026-09-26`。
 
 ### v1.2.18 - 2026-09-26
 
