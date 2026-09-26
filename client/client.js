@@ -320,7 +320,7 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			const handleRefresh = react.useCallback(() => {
 				if (checking) return;
 				setChecking(true);
-				requestCheck(true).then((result) => {
+				return requestCheck(true).then((result) => {
 					if (result === null) setToast({ kind: "error", seq: Date.now(), text: t("toast.error") });
 					else if ([result.npm, result.github].some((item) => updateComparison(result.current, item) === 1)) { const item = [result.npm, result.github].find((candidate) => updateComparison(result.current, candidate) === 1); const source = item === result.github ? t("settings.source.github") : t("settings.source.npm"); setToast({ kind: "update", seq: Date.now(), text: t("toast.update", { source, latest: formatVersion(item.version), current: formatVersion(result.current) }) }); }
 					else if (parseVersion(result?.current) === null) setToast({ kind: "error", seq: Date.now(), text: t("unknown") });
@@ -334,15 +334,15 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			const updateItem = [npm, github].find((item) => updateComparison(current, item) === 1);
 			const meta = parseVersion(current) === null ? t("unknown") : updateItem !== undefined ? t("update") + " " + formatVersion(updateItem.version) : t("latest");
 			const sourceStatuses = [sidebarSourceStatus("npm", npm, current, t), sidebarSourceStatus("github", github, current, t)];
-			const tooltip = h(Fragment, null, h("strong", { className: "dvd_tipName" }, "dsh-sm-version-display"), h("br"), h("span", { className: "dvd_tipVersion" }, formatVersion(current) + " (" + meta + ")"), h("br"), h("span", { className: "dvd_tipVersion" }, sourceStatuses.join(" · ")));
 			let toastElement = null;
 			if (toast !== null) {
-				const Icon = toast.kind === "latest" ? primitives.IconCheckOutline16 : toast.kind === "update" ? primitives.IconGlobeOutline14 : primitives.IconWarningOutline16;
+				const Icon = toast.kind === "latest" ? primitives.IconCheckOutlineRegular : toast.kind === "update" ? primitives.IconGlobeOutlineRegular : primitives.IconWarningOutlineRegular;
 				const colorClass = toast.kind === "latest" ? "dvd_toastSuccess" : toast.kind === "update" ? "dvd_toastInfo" : "dvd_toastError";
 				toastElement = h(primitives.Toast, { key: toast.seq, text: toast.text, icon: h(Icon, { size: 16, className: colorClass }), onDone: dismissToast });
 			}
-			if (!wide) return h(Fragment, null, h(primitives.Tooltip, { label: tooltip, side: "right", delayMs: 300 }, h("button", { type: "button", className: "dvd_railButton", "aria-label": "dsh-sm-version-display" }, h(primitives.IconCodeOutline16, { size: 18 }))), toastElement);
-			return h(Fragment, null, h(primitives.Tooltip, { label: tooltip, side: "right", delayMs: 300 }, h("div", { className: "dvd_versionCard" }, h("span", { className: "dvd_versionText" }, h("span", { className: "dvd_current" }, formatVersion(current)), " (", h("span", { className: "dvd_meta" }, meta), ")", h("span", { className: "dvd_sourceText" }, sourceStatuses.join(" · "))), h(primitives.Button, { variant: "primary", size: "sm", className: "dvd_refreshBtn", onClick: handleRefresh, disabled: checking, icon: checking ? h(primitives.IconLoadingOutline16, { size: 14, className: "dvd_spin" }) : h(primitives.IconRefreshOutline16, { size: 14 }) }, t("refresh")))), toastElement);
+			const tooltipText = "dsh-sm-version-display\n" + formatVersion(current) + " (" + meta + ")\n" + sourceStatuses.join(" · ");
+			if (!wide) return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "right", delayMs: 300 }, h("button", { type: "button", className: "dvd_railButton", "aria-label": "dsh-sm-version-display" }, h(primitives.IconCodeOutlineRegular, { size: 18 }))), toastElement);
+			return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "right", delayMs: 300 }, h("div", { className: "dvd_versionCard" }, h("span", { className: "dvd_versionText" }, h("span", { className: "dvd_current" }, formatVersion(current)), " (", h("span", { className: "dvd_meta" }, meta), ")", h("span", { className: "dvd_sourceText" }, sourceStatuses.join(" · "))), h(primitives.Button, { variant: "primary", size: "sm", className: "dvd_refreshBtn", onClick: handleRefresh, disabled: checking, icon: checking ? h(primitives.IconLoadingOutlineRegular, { size: 14, className: "dvd_spin" }) : h(primitives.IconRefreshOutlineRegular, { size: 14 }) }, t("refresh")))), toastElement);
 		}
 
 		function CommandBlock({ definition, onCopy, copied, copyLabel }) {

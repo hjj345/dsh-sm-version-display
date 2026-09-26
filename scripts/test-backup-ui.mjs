@@ -16,13 +16,17 @@ const react = {
   useState: (initial) => { const index = cursor++; if (!(index in states)) states[index] = initial; return [states[index], (value) => { states[index] = typeof value === "function" ? value(states[index]) : value; }]; },
   useEffect: (effect, dependencies) => { effects.push({ effect, dependencies }); },
   useRef: (initial) => ({ current: initial }),
+  useCallback: (callback) => callback,
+  useSyncExternalStore: (_subscribe, getSnapshot) => getSnapshot(),
 };
-const source = fs.readFileSync(new URL("../client/client.js", import.meta.url), "utf8").replace("exports.apply = apply;", "exports.test = { apply, UpdateConfirmModal, UpdateOutputPanel, BackupManager, DirectoryPicker, formatBytes, translate }; exports.apply = apply;");
+const source = fs.readFileSync(new URL("../client/client.js", import.meta.url), "utf8").replace("exports.apply = apply;", "exports.test = { apply, VersionCard, UpdateConfirmModal, UpdateOutputPanel, BackupManager, DirectoryPicker, formatBytes, translate }; exports.apply = apply;");
 const savedSettings = new Map();
 let profileSettings = { language: "zh", enabled: true };
 let settingsRevision = 1;
-const window = { __ModuleLoader__: { load: ({ factory }) => { api = factory((name) => name === "react" ? react : {}).test; } }, localStorage: { getItem: (key) => savedSettings.get(key) ?? null, setItem: (key, value) => savedSettings.set(key, value) }, confirm: () => true, setInterval: (callback, delay) => { interval = { callback, delay }; return 17; }, clearInterval: (id) => { clearedInterval = id; } };
-vm.runInNewContext(source, { window, console, Date, AbortSignal, fetch: (...args) => fetchImpl(...args) });
+const primitive = new Proxy({}, { get: (_target, name) => name });
+const window = { __ModuleLoader__: { load: ({ factory }) => { api = factory((name) => name === "react" ? react : primitive).test; } }, localStorage: { getItem: (key) => savedSettings.get(key) ?? null, setItem: (key, value) => savedSettings.set(key, value) }, confirm: () => true, setInterval: (callback, delay) => { interval = { callback, delay }; return 17; }, clearInterval: (id) => { clearedInterval = id; }, addEventListener() {}, removeEventListener() {} };
+const document = { visibilityState: "visible", addEventListener() {}, removeEventListener() {}, getElementById: () => null, head: { appendChild() {} }, createElement: () => ({ textContent: "" }) };
+vm.runInNewContext(source, { window, document, console, Date, AbortSignal, fetch: (...args) => fetchImpl(...args) });
 let localScope;
 api.apply({ effect() {}, locale: { bind: () => () => "", register() {} }, remote: { $on: () => () => {}, settings: { describe: async () => ({ ok: true, value: { writable: true, namespaces: [{ ns: "dsh-sm-version-display", value: profileSettings, user: {}, revision: settingsRevision }] } }), update: async (_ns, patch) => { profileSettings = { ...profileSettings, ...patch }; settingsRevision++; return { ok: true, value: { value: profileSettings, revision: settingsRevision } }; } } }, slots: { register: (entry) => entry, inject: (_name, callback) => { localScope = callback().inject().scope; } } });
 assert.equal(localScope.getSnapshot().value.enabled, true);
@@ -32,10 +36,25 @@ const t = (key, values) => api.translate("zh", key, values);
 const render = (component, props) => { cursor = 0; effects = []; return component(props); };
 const nodes = (tree) => !tree || typeof tree !== "object" ? [] : [tree, ...tree.children.flatMap(nodes)];
 const text = (tree) => typeof tree === "string" ? tree : typeof tree === "object" && tree ? tree.children.map(text).join(" ") : "";
-const button = (tree, label) => nodes(tree).find((node) => node.type === "button" && text(node) === label);
+const button = (tree, label) => nodes(tree).find((node) => (node.type === "button" || node.type === "Button") && text(node) === label);
+let tree;
+assert.equal(typeof api.VersionCard, "function");
+assert.match(source, /IconRefreshOutlineRegular/);
+assert.doesNotMatch(source, /IconRefreshOutline16|IconLoadingOutline16|IconCodeOutline16|IconCheckOutline16|IconGlobeOutline14|IconWarningOutline16/);
+const cardScope = { subscribe() { return () => {}; }, getSnapshot: () => ({ value: { enabled: true } }) };
+fetchImpl = () => Promise.resolve({ ok: true, json: async () => ({ ok: true, current: "1.2.16", npm: { status: "success", version: "1.2.16" }, github: { status: "success", version: "1.2.16" } }) });
+tree = render(api.VersionCard, { wide: true, t, scope: cardScope });
+assert.equal(tree.children[0].props.label.includes("dsh-sm-version-display"), true);
+const refresh = button(tree, t("refresh"));
+assert.equal(refresh.props.disabled, false);
+const pending = refresh.props.onClick();
+tree = render(api.VersionCard, { wide: true, t, scope: cardScope });
+assert.equal(button(tree, t("refresh")).props.disabled, true);
+await pending;
+states = [];
 const target = { installInfo: { method: "pnpm" }, item: { version: "0.1.5-rc.3", type: "rc" }, source: "npm" };
 let confirmed;
-let tree = render(api.UpdateConfirmModal, { target, t, onConfirm: (value) => { confirmed = value; } });
+tree = render(api.UpdateConfirmModal, { target, t, onConfirm: (value) => { confirmed = value; } });
 assert.equal(nodes(tree).find((node) => node.props.type === "checkbox").props.checked, true);
 assert.equal(button(tree, t("settings.confirmUpdate")).props.disabled, true);
 nodes(tree).find((node) => node.props.type === "checkbox").props.onChange({ target: { checked: false } });
