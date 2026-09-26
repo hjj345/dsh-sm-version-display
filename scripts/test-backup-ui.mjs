@@ -42,7 +42,7 @@ assert.equal(typeof api.VersionCard, "function");
 assert.match(source, /IconRefreshOutlineRegular/);
 assert.doesNotMatch(source, /IconRefreshOutline16|IconLoadingOutline16|IconCodeOutline16|IconCheckOutline16|IconGlobeOutline14|IconWarningOutline16/);
 const cardScope = { subscribe() { return () => {}; }, getSnapshot: () => ({ value: { enabled: true } }) };
-fetchImpl = () => Promise.resolve({ ok: true, json: async () => ({ ok: true, current: "1.2.16", npm: { status: "success", version: "1.2.16" }, github: { status: "success", version: "1.2.16" } }) });
+fetchImpl = () => Promise.resolve({ ok: true, json: async () => ({ ok: true, current: "1.2.17", npm: { status: "success", version: "1.2.17" }, github: { status: "success", version: "1.2.17" } }) });
 tree = render(api.VersionCard, { wide: true, t, scope: cardScope });
 assert.equal(tree.children[0].props.label.includes("dsh-sm-version-display"), true);
 const refresh = button(tree, t("refresh"));
