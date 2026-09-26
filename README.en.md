@@ -2,7 +2,7 @@
 
 [中文文档](README.md) · English documentation
 
-[![version](https://img.shields.io/badge/version-v1.2.15-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.7--rc.1-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
+[![version](https://img.shields.io/badge/version-v1.2.16-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.7--rc.1-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
 
 GitHub: [hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
@@ -11,7 +11,7 @@ npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345
   <img src="images/sm-version-display-icon-outlined.png" alt="DSH Version Checker plugin icon" width="180">
 </p>
 
-> Minimum supported DSH version: `v0.1.7-rc.1` (inclusive). Current plugin version: `v1.2.15`.
+> Minimum supported DSH version: `v0.1.7-rc.1` (inclusive). Current plugin version: `v1.2.16`.
 
 ## Introduction
 
@@ -25,7 +25,7 @@ The following names refer to different things:
 - DSH runtime plugin ID: `dsh-sm-version-display`
 - GitHub repository: `hjj345/dsh-sm-version-display`
 
-Plugin version `v1.2.15` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
+Plugin version `v1.2.16` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
 
 ## Features
 
@@ -195,7 +195,7 @@ Key files in the published package:
 | DSH | `>= v0.1.7-rc.1` |
 | Node.js | `>= 20` (host runtime) |
 | Platform | DSH Web |
-| Plugin version | `v1.2.15` |
+| Plugin version | `v1.2.16` |
 
 The plugin uses official DSH extension points: `dsh.client`, `sidebar.footer.action`, `settings.section`, `webserver/index-inject`, and `ctx.slots.inject/register`. The enabled state and language are stored in the DSH profile configuration. On upgrade, any legacy browser-local settings are migrated to the profile, while existing profile settings take precedence.
 
@@ -216,13 +216,14 @@ npm run build
 
 ## Changelog
 
-### v1.2.15 - 2026-09-26
+### v1.2.16 - 2026-09-26
 
 - Fixed compatibility with the DSH 0.1.7 settings API: the host now registers settings configuration, and the client reads and updates profile settings through the DSH Remote Settings API.
 - Added migration of legacy browser-stored preferences: enabled state and language are copied into the DSH profile only for fields not already present there; existing profile values take precedence, and legacy browser data is removed only after migration succeeds.
 - Raised the npm package's minimum DSH requirement to `>=0.1.7-rc.1` and synchronized the compatibility notes in both READMEs.
 - Added settings-migration self-tests and updated UI, route, and release-contract tests to cover profile writes, legacy-data migration, and the new settings API.
 - Fixed non-editable DSH 0.1.7 settings fields, stale update boards after restart verification, and aligned local development with schemastery 3.18.4.
+- Fixed Remote Settings response unwrapping, explicitly injected `remote.settings`, and refreshed external settings changes.
 
 ### v1.2.13 - 2026-09-25
 

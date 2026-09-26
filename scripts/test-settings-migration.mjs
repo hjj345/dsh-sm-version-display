@@ -12,9 +12,9 @@ async function run(user, write = true) {
 	const writes = [];
 	let current = { language: "zh", enabled: true, ...user };
 	let saved = JSON.stringify({ language: "en", enabled: false });
-	const remote = { settings: {
-		describe: async () => ({ writable: true, namespaces: [{ ns: "dsh-sm-version-display", revision: 3, value: current, user }] }),
-		update: async (ns, patch, revision) => { writes.push({ ns, patch, revision }); current = { ...current, ...patch }; return { revision: revision + 1, value: current }; }
+	const remote = { $on: () => () => {}, settings: {
+		describe: async () => ({ ok: true, value: { writable: true, namespaces: [{ ns: "dsh-sm-version-display", revision: 3, value: current, user }] } }),
+		update: async (ns, patch, revision) => { writes.push({ ns, patch, revision }); current = { ...current, ...patch }; return { ok: true, value: { revision: revision + 1, value: current } }; }
 	} };
 	const scope = createScope(remote, { localStorage: { getItem: () => saved, removeItem: () => { saved = null; } } }, "dsh-sm-version-display", { language: "zh", enabled: true }, decodeSettings);
 	if (write) await scope.set("enabled", true);
