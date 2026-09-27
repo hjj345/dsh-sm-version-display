@@ -43,27 +43,6 @@ const PLUGIN_VERSION = "v1.2.19";
 .dvd_seatRefresh:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary,#4c7ef3);outline-offset:2px}
 .dvd_seatRefresh:disabled{opacity:.55;cursor:not-allowed}
 .dvd_railButton{box-sizing:border-box;cursor:pointer;width:36px;height:36px;color:var(--dsw-alias-label-primary);background:0 0;border:none;border-radius:50%;flex:none;order:-1!important;justify-content:center;align-items:center;padding:0;display:inline-flex}.dvd_railButton:hover{background:var(--dsw-alias-interactive-bg-hover)}
-.dvd_spin{animation:dvd-spin .9s linear infinite}@keyframes dvd-spin{to{transform:rotate(360deg)}}
-.dvd-overlay-backdrop{position:fixed;z-index:1000;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.38);animation:dvd-overlay-fade .16s ease-out}
-.dvd-overlay-panel{width:min(400px,100%);padding:16px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.14));border-radius:16px;background:var(--dsw-alias-bg-layer-2,#fff);color:var(--dsw-alias-label-primary,#202124);box-shadow:0 18px 60px rgba(0,0,0,.22);animation:dvd-overlay-pop .16s ease-out}
-.dvd-overlay-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.dvd-overlay-title{font-size:14px;font-weight:600;overflow-wrap:anywhere}
-.dvd-overlay-close{cursor:pointer;width:26px;height:26px;flex:none;border:none;border-radius:50%;background:0 0;color:var(--dsw-alias-label-secondary,#73757a);font-size:16px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
-.dvd-overlay-close:hover{background:var(--dsw-alias-interactive-bg-hover,rgba(0,0,0,.05))}
-.dvd-overlay-versionRow{display:flex;align-items:center;gap:8px;margin-top:12px}
-.dvd-overlay-version{font-family:var(--ds-font-family-code,monospace);font-size:16px;font-weight:600}
-.dvd-overlay-meta{color:var(--dsw-alias-label-secondary,#73757a);font-size:12px}
-.dvd-overlay-sources{display:grid;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--dsw-alias-border-l4,rgba(0,0,0,.06))}
-.dvd-overlay-source{color:var(--dsw-alias-label-secondary,#73757a);font-size:12px;line-height:18px;overflow-wrap:anywhere}
-.dvd-overlay-actions{display:flex;justify-content:flex-end;margin-top:14px}
-.dvd-overlay-refresh{display:inline-flex;align-items:center;gap:6px;cursor:pointer;padding:7px 12px;border:1px solid #161719;border-radius:9px;background:#161719;color:#fff;font:inherit;font-size:12px}
-.dvd-overlay-refresh:hover:not(:disabled){background:#2c2d30;border-color:#2c2d30}
-.dvd-overlay-refresh:disabled{opacity:.45;cursor:not-allowed}
-body[data-ds-dark-theme] .dvd-overlay-refresh{background:#f1f1f3;border-color:#f1f1f3;color:#161719}
-body[data-ds-dark-theme] .dvd-overlay-refresh:hover:not(:disabled){background:#fff;border-color:#fff}
-body[data-ds-dark-theme] .dvd-overlay-panel{box-shadow:0 18px 60px rgba(0,0,0,.5)}
-@keyframes dvd-overlay-fade{from{opacity:0}}
-@keyframes dvd-overlay-pop{from{opacity:0;transform:translateY(4px) scale(.98)}}
 .dvd_toastSuccess{color:var(--dsw-alias-state-success-primary)}.dvd_toastInfo{color:var(--dsw-alias-state-business-primary)}.dvd_toastError{color:var(--dsw-alias-state-error-primary)}
 .dvd-settings-page{box-sizing:border-box;width:100%;max-width:720px;padding:8px 0 36px;color:var(--dsw-alias-label-primary,#202124)}.dvd-settings-page *,.dvd-settings-page *::before,.dvd-settings-page *::after{box-sizing:border-box}
 .dvd-settings-hero{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding:16px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.1));border-radius:16px;background:var(--dsw-alias-bg-layer-2,#fff);min-width:0}
@@ -80,7 +59,7 @@ body[data-ds-dark-theme] .dvd-overlay-panel{box-shadow:0 18px 60px rgba(0,0,0,.5
 .dvd-settings-command-box{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;min-width:0;padding:7px 7px 7px 12px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.1));border-radius:10px;background:#f3f3f4;font-size:12px}.dvd-settings-command-box code{display:block;min-width:0;color:#1a1c1f;overflow-wrap:anywhere;white-space:pre-wrap;word-break:break-word}.dvd-settings-copy{flex:none;padding:5px 9px;border:1px solid #161719;background:#161719;color:#fff;white-space:nowrap}.dvd-settings-copy:hover:not(:disabled){background:#2c2d30;border-color:#2c2d30}
 .dvd-settings-modal-backdrop{position:fixed;z-index:100;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.38)}.dvd-settings-modal{width:min(680px,100%);max-height:min(760px,calc(100vh - 40px));overflow:auto;padding:20px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.14));border-radius:16px;background:var(--dsw-alias-bg-layer-2,#fff);box-shadow:0 18px 60px rgba(0,0,0,.22);color:var(--dsw-alias-label-primary,#202124)}.dvd-settings-modal h2{margin:0;font-size:16px;line-height:24px}.dvd-settings-modal>p{margin:6px 0 14px;color:var(--dsw-alias-label-secondary,#73757a);font-size:12px;line-height:18px}.dvd-settings-command-card{margin-top:12px;padding:12px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.1));border-radius:12px}.dvd-settings-command-card h3{margin:0 0 8px;font-size:13px;line-height:20px}.dvd-settings-command-card ol{margin:9px 0 0;padding-left:20px;color:var(--dsw-alias-label-secondary,#73757a);font-size:12px;line-height:19px}.dvd-settings-modal-footer{display:flex;justify-content:flex-end;margin-top:16px}.dvd-settings-close{padding:7px 12px;border:1px solid #161719;background:#161719;color:#fff}.dvd-settings-close:hover{background:#2c2d30;border-color:#2c2d30}
 body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f1f3}body[data-ds-dark-theme] .dvd-settings-switch input:checked+span::after{background:#202124}body[data-ds-dark-theme] .dvd-settings-command-box{background:rgba(255,255,255,.08)}body[data-ds-dark-theme] .dvd-settings-command-box code{color:#f1f1f3}
-@media (max-width:760px){.dvd-settings-check-row{align-items:flex-start;flex-direction:column;gap:10px;padding:12px 0}.dvd-settings-check-actions{width:100%;justify-content:flex-end}}@media (max-width:520px){.dvd-settings-hero{align-items:flex-start;flex-wrap:wrap;gap:12px;padding:14px}.dvd-settings-icon{width:48px;height:48px}.dvd-settings-hero-copy{flex-basis:calc(100% - 60px)}.dvd-settings-switch{width:100%;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--dsw-alias-border-l4,rgba(0,0,0,.06))}.dvd-settings-card{padding:14px}.dvd-settings-about dl>div{grid-template-columns:88px minmax(0,1fr);gap:10px}.dvd-settings-modal{padding:16px}}@media (max-width:360px){.dvd-settings-language{align-items:flex-start;flex-direction:column}.dvd-settings-select{width:100%}.dvd-settings-about dl>div{grid-template-columns:minmax(0,1fr);gap:2px}.dvd-settings-command-box{align-items:start;gap:10px;padding-left:10px}.dvd-settings-check-actions{align-items:stretch;flex-direction:column}.dvd-settings-check-actions button{width:100%}}@media (prefers-reduced-motion:reduce){.dvd-settings-switch>span,.dvd-settings-switch>span::after,.dvd-settings-check-details,.dvd-overlay-backdrop,.dvd-overlay-panel{transition:none;animation:none}}
+@media (max-width:760px){.dvd-settings-check-row{align-items:flex-start;flex-direction:column;gap:10px;padding:12px 0}.dvd-settings-check-actions{width:100%;justify-content:flex-end}}@media (max-width:520px){.dvd-settings-hero{align-items:flex-start;flex-wrap:wrap;gap:12px;padding:14px}.dvd-settings-icon{width:48px;height:48px}.dvd-settings-hero-copy{flex-basis:calc(100% - 60px)}.dvd-settings-switch{width:100%;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--dsw-alias-border-l4,rgba(0,0,0,.06))}.dvd-settings-card{padding:14px}.dvd-settings-about dl>div{grid-template-columns:88px minmax(0,1fr);gap:10px}.dvd-settings-modal{padding:16px}}@media (max-width:360px){.dvd-settings-language{align-items:flex-start;flex-direction:column}.dvd-settings-select{width:100%}.dvd-settings-about dl>div{grid-template-columns:minmax(0,1fr);gap:2px}.dvd-settings-command-box{align-items:start;gap:10px;padding-left:10px}.dvd-settings-check-actions{align-items:stretch;flex-direction:column}.dvd-settings-check-actions button{width:100%}}@media (prefers-reduced-motion:reduce){.dvd-settings-switch>span,.dvd-settings-switch>span::after,.dvd-settings-check-details{transition:none;animation:none}}
 `;
 		const STYLE_ID = "dvd-settings-and-version-styles";
 		const extraCss = `.dvd-settings-version-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.dvd-settings-source-card{min-width:0;padding:12px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.1));border-radius:12px;background:var(--dsw-alias-bg-layer-2,#fff)}.dvd-settings-source-card[data-kind="update"]{border-color:var(--dsw-alias-state-business-primary,#4c7ef3)}.dvd-settings-source-card[data-kind="error"]{border-color:var(--dsw-alias-state-danger,#d93025)}.dvd-settings-source-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:13px;font-weight:600}.dvd-settings-source-badge{padding:2px 6px;border-radius:999px;background:var(--dsw-alias-bg-layer-3,rgba(0,0,0,.06));color:var(--dsw-alias-label-secondary,#73757a);font-size:11px;font-weight:500;white-space:nowrap}.dvd-settings-source-card[data-kind="update"] .dvd-settings-source-badge{background:var(--dsw-alias-state-business-primary,#4c7ef3);color:#fff}.dvd-settings-source-facts{display:grid;grid-template-columns:104px minmax(0,1fr);gap:6px 10px;margin:0;font-size:12px;line-height:18px}.dvd-settings-source-facts dt{color:var(--dsw-alias-label-secondary,#73757a)}.dvd-settings-source-facts dd{min-width:0;margin:0;overflow-wrap:anywhere}.dvd-settings-source-facts a{color:inherit}.dvd-settings-source-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.dvd-settings-source-actions button{padding:6px 9px;border:1px solid #161719;border-radius:8px;cursor:pointer;font:inherit;font-size:12px}.dvd-settings-source-actions button:disabled{cursor:not-allowed;opacity:.55}.dvd-settings-source-hint{margin:8px 0 0;color:var(--dsw-alias-label-secondary,#73757a);font-size:11px;line-height:17px}.dvd-settings-update-log{margin-top:12px;padding:12px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.1));border-radius:12px;background:#111315;color:#e7eaee}.dvd-settings-update-log h3{margin:0 0 8px;font-size:13px;line-height:20px}.dvd-settings-update-command{margin:0 0 8px;color:#aeb7c4;font-size:11px;line-height:16px;overflow-wrap:anywhere}.dvd-settings-update-output{max-height:180px;margin:0;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;color:#d7dde6;font:11px/17px var(--ds-font-family-code,monospace)}.dvd-settings-update-action{min-height:34px;padding:7px 12px;border:1px solid transparent;border-radius:9px;cursor:pointer;font:inherit;font-size:12px;font-weight:600;color:#fff;transition:filter .15s ease,opacity .15s ease}.dvd-settings-update-action:hover:not(:disabled){filter:brightness(1.12)}.dvd-settings-update-action:focus-visible{outline:2px solid #fff;outline-offset:2px}.dvd-settings-update-action:disabled{cursor:not-allowed;opacity:.5}.dvd-settings-update-action--wait{background:#2563eb;border-color:#60a5fa}.dvd-settings-update-action--repair{background:#d97706;border-color:#fbbf24}.dvd-settings-update-action--rollback{background:#dc2626;border-color:#f87171}.dvd-settings-update-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.dvd-settings-update-manual{margin-top:10px;padding:10px;border:1px solid #f59e0b;border-radius:9px;background:#2a2112;color:#fde68a;font-size:11px;line-height:17px}.dvd-settings-update-manual code{display:block;margin-top:5px;color:#fff7ed;overflow-wrap:anywhere;white-space:pre-wrap}.dvd-settings-update-manual button{margin-top:6px;padding:5px 9px;border:1px solid #fbbf24;border-radius:7px;background:#78350f;color:#fff7ed;cursor:pointer;font:inherit;font-size:11px}.dvd-settings-confirm-warning{padding:10px;border:1px solid var(--dsw-alias-state-danger,#d93025);border-radius:10px;background:rgba(217,48,37,.07);color:var(--dsw-alias-label-primary,#202124);font-size:12px;line-height:18px}.dvd-settings-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.dvd-settings-directory-form{display:flex;align-items:center;gap:8px;margin-top:16px}.dvd-settings-directory-form input{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.14));border-radius:9px;background:var(--dsw-alias-bg-layer-1,#fff);color:var(--dsw-alias-label-primary,#202124);font:inherit;font-size:12px}.dvd-settings-directory-list{display:flex;flex-wrap:wrap;gap:8px;max-height:35vh;margin:12px 0 0;padding:12px;overflow:auto;border:1px solid var(--dsw-alias-border-l4,rgba(0,0,0,.06));border-radius:12px;list-style:none}.dvd-settings-directory-pill,.dvd-settings-backup-pill{border-radius:999px!important}.dvd-settings-backup-pill{display:flex;align-items:flex-start;gap:8px;min-width:0;margin-top:8px;padding:10px 14px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.1));background:var(--dsw-alias-bg-layer-1,rgba(0,0,0,.025));overflow-wrap:anywhere}.dvd-settings-backup-pill>input{margin-top:3px;flex:none}.dvd-settings-backup-pill>span{min-width:0}.dvd-settings-backup-pill>span div{margin-top:3px;color:var(--dsw-alias-label-secondary,#73757a);font-size:11px;line-height:16px;overflow-wrap:anywhere}.dvd-settings-backup-pill strong{display:block;margin-top:4px}@media (max-width:760px){.dvd-settings-version-grid{grid-template-columns:1fr}}@media (max-width:520px){.dvd-settings-source-facts{grid-template-columns:92px minmax(0,1fr)}.dvd-settings-source-actions{flex-direction:column}.dvd-settings-source-actions button{width:100%}.dvd-settings-update-actions{flex-direction:column}.dvd-settings-update-action{width:100%}.dvd-settings-directory-form{align-items:stretch;flex-direction:column}.dvd-settings-modal-actions>*{flex:1}}`;
@@ -329,6 +308,25 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			const state = comparison === 1 ? t("update") + " " + formatVersion(item.version) : comparison === -1 ? t("settings.currentNewer") : comparison === 0 ? t("latest") + " " + formatVersion(item.version) : t("unknown");
 			return label + ": " + state;
 		}
+		function openSettingsSection(label) {
+			const pick = (panel) => {
+				const wanted = label();
+				for (const row of panel.querySelectorAll("nav button")) if (row.textContent !== null && row.textContent.includes(wanted)) {
+					row.click();
+					return true;
+				}
+				return false;
+			};
+			for (const panel of document.querySelectorAll('[role="dialog"]')) if (pick(panel)) return;
+			(document.querySelector('[data-pane="sidebar"], [class*="sidebarCol"]')?.querySelector('[class*="settingsArea"] button'))?.click();
+			let tries = 0;
+			const attempt = () => {
+				for (const panel of document.querySelectorAll('[role="dialog"]')) if (pick(panel)) return;
+				tries += 1;
+				if (tries <= 20) window.setTimeout(attempt, 50);
+			};
+			window.setTimeout(attempt, 0);
+		}
 
 		function VersionCard({ wide, t, scope }) {
 			const { settings } = useSettingsSnapshot(scope);
@@ -336,13 +334,8 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			const [checking, setChecking] = react.useState(false);
 			const [toast, setToast] = react.useState(null);
 			const dismissToast = react.useCallback(() => setToast(null), []);
-			const [overlayOpen, setOverlayOpen] = react.useState(false);
-			react.useEffect(() => {
-				if (!overlayOpen) return undefined;
-				const onKeyDown = (event) => { if (event.key === "Escape") setOverlayOpen(false); };
-				window.addEventListener("keydown", onKeyDown);
-				return () => window.removeEventListener("keydown", onKeyDown);
-			}, [overlayOpen]);
+			const cardT = react.useCallback((key, values) => translate(settings.language, key, values), [settings.language]);
+			const refreshLabel = cardT("refresh");
 			react.useEffect(() => {
 				if (!settings.enabled) return undefined;
 				requestCheck();
@@ -356,19 +349,19 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 				if (checking) return;
 				setChecking(true);
 				return requestCheck(true).then((result) => {
-					if (result === null) setToast({ kind: "error", seq: Date.now(), text: t("toast.error") });
-					else if ([result.npm, result.github].some((item) => updateComparison(result.current, item) === 1)) { const item = [result.npm, result.github].find((candidate) => updateComparison(result.current, candidate) === 1); const source = item === result.github ? t("settings.source.github") : t("settings.source.npm"); setToast({ kind: "update", seq: Date.now(), text: t("toast.update", { source, latest: formatVersion(item.version), current: formatVersion(result.current) }) }); }
-					else if (parseVersion(result?.current) === null) setToast({ kind: "error", seq: Date.now(), text: t("unknown") });
-					else setToast({ kind: "latest", seq: Date.now(), text: t("toast.latest", { version: formatVersion(result.current) }) });
+					if (result === null) setToast({ kind: "error", seq: Date.now(), text: cardT("toast.error") });
+					else if ([result.npm, result.github].some((item) => updateComparison(result.current, item) === 1)) { const item = [result.npm, result.github].find((candidate) => updateComparison(result.current, candidate) === 1); const source = item === result.github ? cardT("settings.source.github") : cardT("settings.source.npm"); setToast({ kind: "update", seq: Date.now(), text: cardT("toast.update", { source, latest: formatVersion(item.version), current: formatVersion(result.current) }) }); }
+					else if (parseVersion(result?.current) === null) setToast({ kind: "error", seq: Date.now(), text: cardT("unknown") });
+					else setToast({ kind: "latest", seq: Date.now(), text: cardT("toast.latest", { version: formatVersion(result.current) }) });
 				}).finally(() => setChecking(false));
-			}, [checking, t]);
+			}, [checking, cardT]);
 			if (!settings.enabled) return null;
 			const current = checkState.data?.current ?? getCurrentVersion();
 			const npm = checkState.data?.npm;
 			const github = checkState.data?.github;
 			const updateItem = [npm, github].find((item) => updateComparison(current, item) === 1);
-			const meta = parseVersion(current) === null ? t("unknown") : updateItem !== undefined ? t("update") + " " + formatVersion(updateItem.version) : t("latest");
-			const sourceStatuses = [sidebarSourceStatus("npm", npm, current, t), sidebarSourceStatus("github", github, current, t)];
+			const meta = parseVersion(current) === null ? cardT("unknown") : updateItem !== undefined ? cardT("update") + " " + formatVersion(updateItem.version) : cardT("latest");
+			const sourceStatuses = [sidebarSourceStatus("npm", npm, current, cardT), sidebarSourceStatus("github", github, current, cardT)];
 			let toastElement = null;
 			if (toast !== null) {
 				const Icon = toast.kind === "latest" ? primitives.IconCheckOutlineRegular : toast.kind === "update" ? primitives.IconGlobeOutlineRegular : primitives.IconWarningOutlineRegular;
@@ -377,10 +370,8 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			}
 			const tooltipText = "dsh-sm-version-display\n" + formatVersion(current) + " (" + meta + ")\n" + sourceStatuses.join(" · ");
 			const statusState = updateItem !== undefined ? "update" : parseVersion(current) === null ? "unknown" : "latest";
-			const refreshIcon = checking ? h(primitives.IconLoadingOutlineRegular, { size: 16, className: "dvd_spin" }) : h(primitives.IconRefreshOutlineRegular, { size: 16 });
-			const overlayElement = overlayOpen === false ? null : h("div", { className: "dvd-overlay-backdrop", onMouseDown: (event) => { if (event.target === event.currentTarget) setOverlayOpen(false); } }, h("div", { className: "dvd-overlay-panel", role: "dialog", "aria-modal": "true", "aria-label": "dsh-sm-version-display" }, h("div", { className: "dvd-overlay-head" }, h("span", { className: "dvd-overlay-title" }, "dsh-sm-version-display"), h("button", { type: "button", className: "dvd-overlay-close", "aria-label": t("settings.close"), onClick: () => setOverlayOpen(false) }, "×")), h("div", { className: "dvd-overlay-versionRow" }, h("span", { className: "dvd_statusDot", "data-state": statusState, "aria-hidden": "true" }), h("span", { className: "dvd-overlay-version" }, formatVersion(current)), h("span", { className: "dvd-overlay-meta" }, meta)), h("div", { className: "dvd-overlay-sources" }, sourceStatuses.map((line, index) => h("div", { key: index, className: "dvd-overlay-source" }, line))), h("div", { className: "dvd-overlay-actions" }, h("button", { type: "button", className: "dvd-overlay-refresh", onClick: handleRefresh, disabled: checking }, refreshIcon, t("refresh")))));
-			if (!wide) return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "top", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_railButton", "aria-label": "dsh-sm-version-display", onClick: () => setOverlayOpen(true) }, h(primitives.IconCodeOutlineRegular, { size: 18 }))), overlayElement, toastElement);
-			return h(Fragment, null, h("div", { className: "dvd_seatRow" }, h(primitives.Tooltip, { label: tooltipText, side: "top", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_pill", onClick: () => setOverlayOpen(true) }, h("span", { className: "dvd_statusDot", "data-state": statusState, "aria-hidden": "true" }), h("span", { className: "dvd_pillVersion" }, formatVersion(current)))), h(primitives.Tooltip, { label: t("refresh"), side: "top", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_seatRefresh", "aria-label": t("refresh"), disabled: checking, onClick: handleRefresh }, t("refresh")))), overlayElement, toastElement);
+			if (!wide) return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "top", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_railButton", "aria-label": "dsh-sm-version-display", onClick: () => openSettingsSection(() => t("settings.nav")) }, h(primitives.IconCodeOutlineRegular, { size: 18 }))), toastElement);
+			return h(Fragment, null, h("div", { className: "dvd_seatRow" }, h(primitives.Tooltip, { label: tooltipText, side: "top", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_pill", onClick: () => openSettingsSection(() => t("settings.nav")) }, h("span", { className: "dvd_statusDot", "data-state": statusState, "aria-hidden": "true" }), h("span", { className: "dvd_pillVersion" }, formatVersion(current)))), h(primitives.Tooltip, { label: refreshLabel, side: "top", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_seatRefresh", "aria-label": refreshLabel, disabled: checking, onClick: handleRefresh }, refreshLabel))), toastElement);
 		}
 
 		function CommandBlock({ definition, onCopy, copied, copyLabel }) {
