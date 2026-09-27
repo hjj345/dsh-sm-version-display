@@ -31,16 +31,17 @@ const PLUGIN_VERSION = "v1.2.19";
 
 		const css = `
 [class*="footerActions"]{flex-direction:column!important}
-.dvd_seatRow{display:flex;align-items:center;gap:6px;min-width:0;width:100%;box-sizing:border-box;flex:0 0 100%;order:-1!important;margin:2px 0 6px}
-.dvd_pill{display:inline-flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;height:28px;padding:0 10px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.14));border-radius:999px;background:var(--dsw-alias-bg-layer-2,#fff);color:var(--dsw-alias-label-secondary,#73757a);cursor:pointer;font:inherit;font-size:12px}
+.dvd_seatRow{--dvd-seat-control-height:28px;display:flex;align-items:center;gap:6px;min-width:0;width:100%;box-sizing:border-box;flex:0 0 100%;order:-1!important;margin:2px 0 6px}
+.dvd_pill{box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;height:var(--dvd-seat-control-height);padding:0 10px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.14));border-radius:999px;background:var(--dsw-alias-bg-layer-2,#fff);color:var(--dsw-alias-label-secondary,#73757a);cursor:pointer;font:inherit;font-size:12px}
 .dvd_pill:hover{background:var(--dsw-alias-interactive-bg-hover,rgba(0,0,0,.05))}
 .dvd_pillVersion{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--ds-font-family-code,monospace);color:var(--dsw-alias-label-primary,#202124);font-weight:500}
 .dvd_statusDot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--dsw-alias-state-success-primary,#188038)}
 .dvd_statusDot[data-state="update"]{background:var(--dsw-alias-state-business-primary,#4c7ef3)}
 .dvd_statusDot[data-state="unknown"]{background:var(--dsw-alias-label-tertiary,#9aa0a6)}
-.dvd_seatRefresh{box-sizing:border-box;cursor:pointer;width:28px;height:28px;color:var(--dsw-alias-label-secondary,#73757a);background:0 0;border:none;border-radius:50%;flex:none;justify-content:center;align-items:center;padding:0;display:inline-flex}
-.dvd_seatRefresh:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover,rgba(0,0,0,.05))}
-.dvd_seatRefresh:disabled{opacity:.5;cursor:not-allowed}
+.dvd_seatRefresh{box-sizing:border-box;cursor:pointer;min-width:104px;height:var(--dvd-seat-control-height);padding:0 16px;border:1px solid #171717;border-radius:11px;background:#171717;color:#fff;font:inherit;font-size:14px;font-weight:500;white-space:nowrap;flex:none;justify-content:center;align-items:center;display:inline-flex}
+.dvd_seatRefresh:hover:not(:disabled){background:#2c2d30;border-color:#2c2d30}
+.dvd_seatRefresh:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary,#4c7ef3);outline-offset:2px}
+.dvd_seatRefresh:disabled{opacity:.55;cursor:not-allowed}
 .dvd_railButton{box-sizing:border-box;cursor:pointer;width:36px;height:36px;color:var(--dsw-alias-label-primary);background:0 0;border:none;border-radius:50%;flex:none;order:-1!important;justify-content:center;align-items:center;padding:0;display:inline-flex}.dvd_railButton:hover{background:var(--dsw-alias-interactive-bg-hover)}
 .dvd_spin{animation:dvd-spin .9s linear infinite}@keyframes dvd-spin{to{transform:rotate(360deg)}}
 .dvd-overlay-backdrop{position:fixed;z-index:1000;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.38);animation:dvd-overlay-fade .16s ease-out}
@@ -376,10 +377,10 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			}
 			const tooltipText = "dsh-sm-version-display\n" + formatVersion(current) + " (" + meta + ")\n" + sourceStatuses.join(" · ");
 			const statusState = updateItem !== undefined ? "update" : parseVersion(current) === null ? "unknown" : "latest";
-			const refreshIcon = checking ? h(primitives.IconLoadingOutlineRegular, { size: 14, className: "dvd_spin" }) : h(primitives.IconRefreshOutlineRegular, { size: 14 });
+			const refreshIcon = checking ? h(primitives.IconLoadingOutlineRegular, { size: 16, className: "dvd_spin" }) : h(primitives.IconRefreshOutlineRegular, { size: 16 });
 			const overlayElement = overlayOpen === false ? null : h("div", { className: "dvd-overlay-backdrop", onMouseDown: (event) => { if (event.target === event.currentTarget) setOverlayOpen(false); } }, h("div", { className: "dvd-overlay-panel", role: "dialog", "aria-modal": "true", "aria-label": "dsh-sm-version-display" }, h("div", { className: "dvd-overlay-head" }, h("span", { className: "dvd-overlay-title" }, "dsh-sm-version-display"), h("button", { type: "button", className: "dvd-overlay-close", "aria-label": t("settings.close"), onClick: () => setOverlayOpen(false) }, "×")), h("div", { className: "dvd-overlay-versionRow" }, h("span", { className: "dvd_statusDot", "data-state": statusState, "aria-hidden": "true" }), h("span", { className: "dvd-overlay-version" }, formatVersion(current)), h("span", { className: "dvd-overlay-meta" }, meta)), h("div", { className: "dvd-overlay-sources" }, sourceStatuses.map((line, index) => h("div", { key: index, className: "dvd-overlay-source" }, line))), h("div", { className: "dvd-overlay-actions" }, h("button", { type: "button", className: "dvd-overlay-refresh", onClick: handleRefresh, disabled: checking }, refreshIcon, t("refresh")))));
 			if (!wide) return h(Fragment, null, h(primitives.Tooltip, { label: tooltipText, side: "top", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_railButton", "aria-label": "dsh-sm-version-display", onClick: () => setOverlayOpen(true) }, h(primitives.IconCodeOutlineRegular, { size: 18 }))), overlayElement, toastElement);
-			return h(Fragment, null, h("div", { className: "dvd_seatRow" }, h(primitives.Tooltip, { label: tooltipText, side: "top", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_pill", onClick: () => setOverlayOpen(true) }, h("span", { className: "dvd_statusDot", "data-state": statusState, "aria-hidden": "true" }), h("span", { className: "dvd_pillVersion" }, formatVersion(current)))), h(primitives.Tooltip, { label: t("refresh"), side: "top", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_seatRefresh", "aria-label": t("refresh"), disabled: checking, onClick: handleRefresh }, refreshIcon))), overlayElement, toastElement);
+			return h(Fragment, null, h("div", { className: "dvd_seatRow" }, h(primitives.Tooltip, { label: tooltipText, side: "top", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_pill", onClick: () => setOverlayOpen(true) }, h("span", { className: "dvd_statusDot", "data-state": statusState, "aria-hidden": "true" }), h("span", { className: "dvd_pillVersion" }, formatVersion(current)))), h(primitives.Tooltip, { label: t("refresh"), side: "top", delayMs: 300, portal: true }, h("button", { type: "button", className: "dvd_seatRefresh", "aria-label": t("refresh"), disabled: checking, onClick: handleRefresh }, t("refresh")))), overlayElement, toastElement);
 		}
 
 		function CommandBlock({ definition, onCopy, copied, copyLabel }) {
