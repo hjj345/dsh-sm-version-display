@@ -216,13 +216,13 @@ npm run build
 
 ## Changelog
 
-### v1.2.20 - 2026-09-25
+### v1.2.20 - 2026-09-27
 
 - Improved the sidebar version entry layout: fixed the top ordering and width adaptation of the version capsule, refresh button, and collapsed-rail icon so narrow sidebars no longer squeeze, clip, or overflow them.
 - Refined the refresh button styling with consistent control height, theme colors, disabled state, and localized text width for Simplified Chinese, English, and Traditional Chinese.
 - Refreshing now synchronizes the active language and can navigate directly to the DSH plugin settings page; collapsed-rail icon clicks use the same settings navigation behavior.
 - Removed the old sidebar overlay implementation in favor of lighter capsule and refresh interactions, and updated UI self-tests and CSS contract assertions.
-- Updated the package, client About page, release contract, and bilingual documentation to plugin version `v1.2.20` with release date `2026-09-25`.
+- Updated the package, client About page, release contract, and bilingual documentation to plugin version `v1.2.20` with release date `2026-09-27`.
 
 ### v1.2.19 - 2026-09-26
 
