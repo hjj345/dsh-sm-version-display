@@ -38,7 +38,7 @@ const PLUGIN_VERSION = "v1.2.19";
 .dvd_statusDot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--dsw-alias-state-success-primary,#188038)}
 .dvd_statusDot[data-state="update"]{background:var(--dsw-alias-state-business-primary,#4c7ef3)}
 .dvd_statusDot[data-state="unknown"]{background:var(--dsw-alias-label-tertiary,#9aa0a6)}
-.dvd_seatRefresh{box-sizing:border-box;cursor:pointer;min-width:104px;height:var(--dvd-seat-control-height);padding:0 16px;border:1px solid #171717;border-radius:11px;background:#171717;color:#fff;font:inherit;font-size:14px;font-weight:500;white-space:nowrap;flex:none;justify-content:center;align-items:center;display:inline-flex}
+.dvd_seatRefresh{box-sizing:border-box;cursor:pointer;min-width:0;height:var(--dvd-seat-control-height);padding:0 clamp(8px,.8em,12px);border:1px solid #171717;border-radius:11px;background:#171717;color:#fff;font:inherit;font-size:14px;font-weight:500;white-space:nowrap;flex:none;justify-content:center;align-items:center;display:inline-flex}
 .dvd_seatRefresh:hover:not(:disabled){background:#2c2d30;border-color:#2c2d30}
 .dvd_seatRefresh:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary,#4c7ef3);outline-offset:2px}
 .dvd_seatRefresh:disabled{opacity:.55;cursor:not-allowed}
