@@ -30,8 +30,8 @@ const PLUGIN_VERSION = "v1.2.19";
 		];
 
 		const css = `
-[data-slot="sidebar.footer.action"]{display:block!important;flex:1 1 0%!important;width:100%!important;max-width:100%!important;min-width:0!important;overflow:hidden}
-.dvd_seatRow{display:flex;align-items:center;gap:6px;min-width:0;margin:2px 0 6px}
+[class*="footerActions"]{flex-direction:column!important}
+.dvd_seatRow{display:flex;align-items:center;gap:6px;min-width:0;width:100%;box-sizing:border-box;flex:0 0 100%;order:-1!important;margin:2px 0 6px}
 .dvd_pill{display:inline-flex;align-items:center;gap:6px;min-width:0;flex:1 1 auto;height:28px;padding:0 10px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.14));border-radius:999px;background:var(--dsw-alias-bg-layer-2,#fff);color:var(--dsw-alias-label-secondary,#73757a);cursor:pointer;font:inherit;font-size:12px}
 .dvd_pill:hover{background:var(--dsw-alias-interactive-bg-hover,rgba(0,0,0,.05))}
 .dvd_pillVersion{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--ds-font-family-code,monospace);color:var(--dsw-alias-label-primary,#202124);font-weight:500}
@@ -41,7 +41,7 @@ const PLUGIN_VERSION = "v1.2.19";
 .dvd_seatRefresh{box-sizing:border-box;cursor:pointer;width:28px;height:28px;color:var(--dsw-alias-label-secondary,#73757a);background:0 0;border:none;border-radius:50%;flex:none;justify-content:center;align-items:center;padding:0;display:inline-flex}
 .dvd_seatRefresh:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover,rgba(0,0,0,.05))}
 .dvd_seatRefresh:disabled{opacity:.5;cursor:not-allowed}
-.dvd_railButton{box-sizing:border-box;cursor:pointer;width:36px;height:36px;color:var(--dsw-alias-label-primary);background:0 0;border:none;border-radius:50%;flex:none;justify-content:center;align-items:center;padding:0;display:inline-flex}.dvd_railButton:hover{background:var(--dsw-alias-interactive-bg-hover)}
+.dvd_railButton{box-sizing:border-box;cursor:pointer;width:36px;height:36px;color:var(--dsw-alias-label-primary);background:0 0;border:none;border-radius:50%;flex:none;order:-1!important;justify-content:center;align-items:center;padding:0;display:inline-flex}.dvd_railButton:hover{background:var(--dsw-alias-interactive-bg-hover)}
 .dvd_spin{animation:dvd-spin .9s linear infinite}@keyframes dvd-spin{to{transform:rotate(360deg)}}
 .dvd-overlay-backdrop{position:fixed;z-index:1000;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.38);animation:dvd-overlay-fade .16s ease-out}
 .dvd-overlay-panel{width:min(400px,100%);padding:16px;border:1px solid var(--dsw-alias-border-l2,rgba(0,0,0,.14));border-radius:16px;background:var(--dsw-alias-bg-layer-2,#fff);color:var(--dsw-alias-label-primary,#202124);box-shadow:0 18px 60px rgba(0,0,0,.22);animation:dvd-overlay-pop .16s ease-out}
@@ -579,7 +579,7 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			const t = ctx.locale.bind(NS);
 			const scope = remoteSettingsScope(ctx.remote);
 			ctx.effect(() => () => scope.dispose(), "dsh-sm-version-display: settings remote");
-			ctx.slots.inject("sidebar.footer.action", () => ctx.slots.register({ name: "sidebar.footer.action", id: "dsh-sm-version-display", order: 100, locale: NS, inject: () => ({ scope }) }, VersionCard));
+			ctx.slots.inject("sidebar.footer.action", () => ctx.slots.register({ name: "sidebar.footer.action", id: "dsh-sm-version-display", order: -1000, locale: NS, inject: () => ({ scope }) }, VersionCard));
 			ctx.slots.inject("settings.section", () => ctx.slots.register({ name: "settings.section", id: "dsh-sm-version-display", order: 22, label: () => t("settings.nav"), inject: () => ({ scope }) }, VersionSettingsPage));
 		}
 		exports.apply = apply;
