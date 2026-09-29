@@ -115,7 +115,7 @@ if (pkg) {
 		main: "lib/index.js",
 		license: "MIT",
 		engine: ">=20",
-		dshEngine: ">=0.1.7-rc.1",
+		dshEngine: ">=0.1.7-rc.1 || >=0.2.0-rc.1",
 		patch: "./cordis.patch.yml",
 		files: ["lib/index.js", "lib/update-worker.mjs", "lib/backup-manager.mjs", "client/client.js", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png", "images/Screenshot/", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
 	};
@@ -130,12 +130,22 @@ if (pkg) {
 	if (pkg.homepage !== "https://github.com/hjj345/dsh-sm-version-display") fail("homepage 不符合发布契约");
 	if (pkg.dsh?.bundle?.patch !== expected.patch) fail("dsh.bundle.patch 不符合发布契约: " + pkg.dsh?.bundle?.patch);
 	if (JSON.stringify(pkg.files) !== JSON.stringify(expected.files)) fail("files 发布白名单不符合预期");
-	for (const dependency of ["@deepseek-ai/dsh-client-modules", "@deepseek-ai/dsh-client-ui-slots", "@deepseek-ai/dsh-client-ui-primitives"]) {
+	for (const dependency of ["@deepseek-ai/dsh-api-remotes", "@deepseek-ai/dsh-client-modules", "@deepseek-ai/dsh-client-ui-slots", "@deepseek-ai/dsh-client-ui-primitives"]) {
 		if (!pkg.dsh?.client?.inject?.includes(dependency)) fail("dsh.client.inject 缺少依赖: " + dependency);
 	}
 	if (pkg.dsh?.client?.inject?.includes("@deepseek-ai/dsh-client-runtime")) fail("dsh.client.inject 仍包含已过时的 dsh-client-runtime");
 	for (const dependency of ["@deepseek-ai/schemastery", "react"]) {
 		if (pkg.peerDependencies?.[dependency] === undefined) fail("peerDependencies 缺少依赖: " + dependency);
+	}
+	for (const dependency of ["@deepseek-ai/dsh-api-remotes", "@deepseek-ai/dsh-settings"]) {
+		if (pkg.peerDependencies?.[dependency] !== "^0.1.7-rc.1 || ^0.2.0-rc.1") fail("settings API peerDependencies 未覆盖 DSH 0.2.0-rc.1: " + dependency);
+	}
+	for (const dependency of ["@deepseek-ai/dsh", "@deepseek-ai/dsh-api-remotes", "@deepseek-ai/dsh-api-settings-controller", "@deepseek-ai/dsh-client-locale", "@deepseek-ai/dsh-client-modules", "@deepseek-ai/dsh-client-ui-primitives", "@deepseek-ai/dsh-client-ui-sidebar", "@deepseek-ai/dsh-client-ui-slots", "@deepseek-ai/dsh-settings"]) {
+		if (pkg.devDependencies?.[dependency] !== "0.2.0-rc.1") fail("本地 DSH 开发依赖没有锁定到 0.2.0-rc.1: " + dependency);
+	}
+	const lockSrc = readFileSync(join(root, "pnpm-lock.yaml"), "utf8");
+	for (const fragment of ["@deepseek-ai/dsh@0.2.0-rc.1", "@deepseek-ai/dsh-api-remotes@0.2.0-rc.1", "@deepseek-ai/dsh-settings@0.2.0-rc.1", "@deepseek-ai/dsh-client-ui-primitives@0.2.0-rc.1", "@deepseek-ai/dsh-client-ui-sidebar@0.2.0-rc.1"]) {
+		if (!lockSrc.includes(fragment)) fail("pnpm lockfile 缺少 DSH 0.2.0-rc.1 依赖: " + fragment);
 	}
 	console.log("✔ 包信息:", pkg.name + "@" + pkg.version);
 }
@@ -146,7 +156,7 @@ if (!hostSrc.includes("state.stage = \"verification-complete\"") || !hostSrc.inc
 for (const fragment of ["const inject = [\"slots\", \"locale\", \"remote\", \"remote.settings\"]", "const unwrap = (response)", "remote.settings.describe()", "document.namespaces.find((item) => item.ns === NS)", "Object.hasOwn(user, field)", "remote.settings.update(NS, migration, revision)", "remote.settings.update(NS, { [field]: next }, revision)", "settings/document-updated"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少新版设置契约: " + fragment);
 }
-if (pkg.engines?.dsh !== ">=0.1.7-rc.1") fail("最低 DSH 版本必须声明为 >=0.1.7-rc.1");
+if (pkg.engines?.dsh !== ">=0.1.7-rc.1 || >=0.2.0-rc.1") fail("engines.dsh 必须显式兼容 DSH 0.1.7-rc.1 与 0.2.0-rc.1");
 for (const fragment of ["SETTINGS_NAMESPACE", "settingsCtx.settings.register(SETTINGS_NAMESPACE, SettingsSchema", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "GITHUB_RELEASES_URL", "GITHUB_RELEASES_FEED_URL", "fetchGithubLatestFromFeed", "github-rate-limit", "npmAvailable", "resolveVirtualStoreDir", "needsPnpmGlobalRepair", "HEARTBEAT_TIMEOUT_MS", "STATE_WRITE_RETRIES", "SharedArrayBuffer", "lastActivityAt", "heartbeatExpired", "[\"install\", \"--global\", \"--force\"]", "@deepseek-ai/dsh@"]){
 	if (fragment === "SETTINGS_NAMESPACE" || fragment.startsWith("settingsCtx.settings.register")) continue;
 	if (!hostSrc.includes(fragment)) fail("host 半区缺少功能契约: " + fragment);

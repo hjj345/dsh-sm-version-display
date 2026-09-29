@@ -24,6 +24,7 @@
     },
     "client": {
       "inject": [
+        "@deepseek-ai/dsh-api-remotes",
         "@deepseek-ai/dsh-client-modules",
         "@deepseek-ai/dsh-client-locale",
         "@deepseek-ai/dsh-client-ui-slots",
@@ -33,16 +34,27 @@
     }
   },
   "peerDependencies": {
+    "@deepseek-ai/dsh-api-remotes": "^0.1.7-rc.1 || ^0.2.0-rc.1",
+    "@deepseek-ai/dsh-settings": "^0.1.7-rc.1 || ^0.2.0-rc.1",
     "@deepseek-ai/schemastery": "~3.18.4",
     "react": "^18.2.0"
   },
   "devDependencies": {
+    "@deepseek-ai/dsh-api-remotes": "0.2.0-rc.1",
+    "@deepseek-ai/dsh-api-settings-controller": "0.2.0-rc.1",
+    "@deepseek-ai/dsh-client-locale": "0.2.0-rc.1",
+    "@deepseek-ai/dsh-client-modules": "0.2.0-rc.1",
+    "@deepseek-ai/dsh-client-ui-sidebar": "0.2.0-rc.1",
+    "@deepseek-ai/dsh-client-ui-primitives": "0.2.0-rc.1",
+    "@deepseek-ai/dsh-client-ui-slots": "0.2.0-rc.1",
+    "@deepseek-ai/dsh": "0.2.0-rc.1",
+    "@deepseek-ai/dsh-settings": "0.2.0-rc.1",
     "@deepseek-ai/schemastery": "3.18.4"
   },
   "scripts": {
     "check": "node --check lib/index.js && node --check client/client.js",
     "build": "node --check lib/index.js && node --check client/client.js && node scripts/validate.mjs",
-    "test": "node lib/update-worker.mjs --self-test && node scripts/test-backup-manager.mjs && node scripts/test-backup-ui.mjs && node scripts/test-backup-routes.mjs && node scripts/test-settings-migration.mjs"
+    "test": "node lib/update-worker.mjs --self-test && node scripts/test-backup-manager.mjs && node scripts/test-backup-ui.mjs && node scripts/test-backup-routes.mjs && node scripts/test-settings-migration.mjs && node scripts/test-dsh-0.2-contract.mjs"
   },
   "files": [
     "lib/index.js",
@@ -69,6 +81,6 @@
   "homepage": "https://github.com/hjj345/dsh-sm-version-display",
   "engines": {
     "node": ">=20",
-    "dsh": ">=0.1.7-rc.1"
+    "dsh": ">=0.1.7-rc.1 || >=0.2.0-rc.1"
   }
 }
