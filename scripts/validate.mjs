@@ -88,6 +88,7 @@ const requiredFiles = [
 	"cordis.patch.yml",
 	"lib/index.js",
 	"client/client.js",
+	"lib/update-console.ps1",
 	"LICENSE",
 	"README.md",
 	"README.en.md",
@@ -117,7 +118,7 @@ if (pkg) {
 		engine: ">=20",
 		dshEngine: ">=0.1.7-rc.1 || >=0.2.0-rc.1",
 		patch: "./cordis.patch.yml",
-		files: ["lib/index.js", "lib/update-worker.mjs", "lib/backup-manager.mjs", "client/client.js", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png", "images/Screenshot/", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
+		files: ["lib/index.js", "lib/update-worker.mjs", "lib/update-console.ps1", "lib/backup-manager.mjs", "client/client.js", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png", "images/Screenshot/", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
 	};
 	if (pkg.name !== expected.name) fail("npm 包名不符合发布契约: " + pkg.name);
 	if (pkg.version !== expected.version) fail("插件版本不符合发布契约: " + pkg.version);
@@ -273,11 +274,11 @@ if (parserStart < 0 || parserEnd <= parserStart) {
 	if (virtualStoreFailed === 0) console.log("✔ virtualStoreDir 解析: " + virtualStoreCases.length + "/" + virtualStoreCases.length + " 用例通过");
 	else fail("virtualStoreDir 解析失败: " + virtualStoreFailed + " 个用例");
 }
-for (const fragment of ["settings.section", "order: 22", "v1.2.21", "2026-09-29", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "HEARTBEAT_TIMEOUT_MS", "heartbeatExpired", "slice(-10)", "dvd-settings-version-grid", "dvd-settings-update-action", "settings.confirmTitle", "settings.updateBoard", "settings.targetVersion", "settings.updateLog", "settings.manualRepair", "settings.step.profileRepair", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
+for (const fragment of ["settings.section", "order: 22", "v1.2.21", "2026-09-29", "SETTINGS_ICON_DATA_URL", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "HEARTBEAT_TIMEOUT_MS", "heartbeatExpired", "slice(-10)", "dvd-settings-version-grid", "dvd-settings-update-action", "settings.confirmTitle", "settings.updateBoard", "settings.targetVersion", "settings.updateLog", "settings.manualRepair", "settings.autoContinue", "settings.step.profileRepair", "settings.githubRateLimited", "settings.checkChannel", "settings.feed.atom", "npm install --global", "npx --yes", "dsh-v", "settings.checkVersion"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少功能契约: " + fragment);
 }
 const workerSrc = readFileSync(join(root, "lib", "update-worker.mjs"), "utf8");
-for (const fragment of ["HEARTBEAT_TIMEOUT_MS", "STATE_WRITE_RETRIES", "SharedArrayBuffer", "lastActivityAt", "scanTree", "copyTree", "--self-test", "command timed out", "rollback-complete"]) {
+for (const fragment of ["HEARTBEAT_TIMEOUT_MS", "STATE_WRITE_RETRIES", "SharedArrayBuffer", "lastActivityAt", "appendFileSync", "armOfflineConsole", "--console", "process.exitCode", "scanTree", "copyTree", "--self-test", "command timed out", "rollback-complete"]) {
 	if (!workerSrc.includes(fragment)) fail("升级 Worker 缺少功能契约: " + fragment);
 }
 const commandStart = hostSrc.indexOf("function updateCommand");

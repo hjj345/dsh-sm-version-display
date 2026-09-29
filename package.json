@@ -59,6 +59,7 @@
   "files": [
     "lib/index.js",
     "lib/update-worker.mjs",
+    "lib/update-console.ps1",
     "lib/backup-manager.mjs",
     "client/client.js",
     "images/sm-version-display-icon-outlined.png",
