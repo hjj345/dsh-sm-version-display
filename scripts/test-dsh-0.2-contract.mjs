@@ -26,6 +26,10 @@ const fields = schema.refs[schema.uid].dict;
 for (const name of ["language", "enabled"]) assert.equal(schema.refs[fields[name]].meta.volatile, true);
 
 const client = readFileSync(join(root, "client", "client.js"), "utf8");
+const host = readFileSync(join(root, "lib", "index.js"), "utf8");
+const worker = readFileSync(join(root, "lib", "update-worker.mjs"), "utf8");
+for (const fragment of ["dsh-desktop-host", "download.deepseek.com", "desktopInstaller", "mode === \"desktop\""]) assert.match(host, new RegExp(fragment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), "desktop host support is present: " + fragment);
+for (const fragment of ["downloadDesktopInstaller", "launchDesktopInstaller", "state.mode === \"desktop\""]) assert.match(worker, new RegExp(fragment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), "desktop worker support is present: " + fragment);
 const primitive = readFileSync(join(root, "node_modules", "@deepseek-ai", "dsh-client-ui-primitives", "lib", "index.js"), "utf8");
 const exportBlock = [...primitive.matchAll(/export\s*\{([^}]+)\};/gs)].at(-1)?.[1];
 assert.ok(exportBlock, "DSH 0.2 UI primitives expose an ESM export block");
