@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, dirname } from 'node:path';
+import { join, dirname, delimiter } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn, spawnSync } from 'node:child_process';
 import { alive, claim, writeJson, readJson, prepareRuntime, powerShellCommand, launchConsole, consoleStatus, validVirtualStore } from '../lib/update-runtime.mjs';
@@ -49,7 +49,10 @@ try {
   const manager = join(root, 'manager/node_modules/pnpm/bin/pnpm.cjs'); mkdirSync(dirname(manager), { recursive: true });
   writeFileSync(manager, `const fs=require('fs'),p=require('path'),a=process.argv.slice(2);if(a[0]==='root'){console.log(${JSON.stringify(join(globalRoot, 'node_modules'))});}else if(a[0]==='view'){console.log(JSON.stringify('0.0.2'));}else if(a[0]==='install'){if(process.env.DSH_FIXTURE_FAIL){console.error('fixture failure');process.exit(9);}for(const r of ${JSON.stringify([globalRoot,dirname(profileRoot),profileRoot])})for(const n of ${JSON.stringify(names)}){const d=p.join(r,'node_modules',...n.split('/'));fs.mkdirSync(p.join(d,'lib'),{recursive:true});fs.writeFileSync(p.join(d,'package.json'),JSON.stringify({name:n,version:'0.0.2',bin:{dsh:'lib/bin.js'}}));fs.writeFileSync(p.join(d,'lib/bin.js'),'console.log("profile verified");');}console.log('fixture install output');}else process.exit(3);`);
   const makeState = (id) => ({ id, version: '0.0.2', previousVersion:'0.0.1', status:'needs-offline-repair', globalRoot, profileRoot, backup:{status:'skipped'}, backupOptions:{enabled:false}, method:'pnpm', steps:['repair','install','profile-repair','verify'].map((id)=>({id,status:'pending'})), lines:[] });
-  const env = {...process.env,PATH:join(root,'manager')+';'+process.env.PATH};
+  if (process.platform !== 'win32') {
+    writeFileSync(join(root, 'manager/pnpm'), `#!/usr/bin/env node\nrequire('./node_modules/pnpm/bin/pnpm.cjs');\n`, { mode: 0o755 });
+  }
+  const env = {...process.env,PATH:join(root,'manager')+delimiter+process.env.PATH};
   const worker = join(project,'lib/update-worker.mjs');
   const workerArgs = (id) => [worker,'--state',statePath,'--job',id,'--action','offline-repair','--console'];
   writeJson(statePath,makeState('success'));
