@@ -54,11 +54,12 @@
   "scripts": {
     "check": "node --check lib/index.js && node --check client/client.js",
     "build": "node --check lib/index.js && node --check client/client.js && node scripts/validate.mjs",
-    "test": "node lib/update-worker.mjs --self-test && node scripts/test-backup-manager.mjs && node scripts/test-backup-ui.mjs && node scripts/test-backup-routes.mjs && node scripts/test-settings-migration.mjs && node scripts/test-dsh-0.2-contract.mjs"
+    "test": "node lib/update-worker.mjs --self-test && node scripts/test-update-console.mjs && node scripts/test-backup-manager.mjs && node scripts/test-backup-ui.mjs && node scripts/test-backup-routes.mjs && node scripts/test-settings-migration.mjs && node scripts/test-dsh-0.2-contract.mjs"
   },
   "files": [
     "lib/index.js",
     "lib/update-worker.mjs",
+    "lib/update-runtime.mjs",
     "lib/update-console.ps1",
     "lib/backup-manager.mjs",
     "client/client.js",

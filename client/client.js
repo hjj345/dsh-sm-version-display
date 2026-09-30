@@ -150,12 +150,13 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 					const payload = await response.json().catch(() => ({}));
 					if (!response.ok || payload.ok !== true) throw new Error("update status failed");
 					publish(updateStore, { status: payload.job?.status ?? "error", job: payload.job ?? null, error: null });
-					if (payload.job?.status === "running" && payload.job?.heartbeatExpired !== true) window.setTimeout(poll, UPDATE_POLL_MS);
+					if ((payload.job?.status === "running" && payload.job?.heartbeatExpired !== true) || (payload.job?.status === 'needs-offline-repair' && (payload.job.autoContinue || payload.job.consoleLaunching))) window.setTimeout(poll, UPDATE_POLL_MS);
 					else updateStore.pollJobId = null;
 				} catch (error) {
 					updateStore.pollJobId = null;
 					const job = updateStore.state.job;
-					publish(updateStore, { status: "error", job: job === null ? null : { ...job, status: "error", lines: [...(job.lines ?? []), String(error.message ?? error)] }, error });
+					publish(updateStore, { status: job?.status ?? 'idle', job: job === null ? null : { ...job, connectionLost: true }, error });
+					window.setTimeout(() => { void loadUpdateState(); }, 3000);
 				}
 			};
 			void poll();
@@ -166,8 +167,8 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 				const payload = await response.json();
 				if (!response.ok || payload.ok !== true) return;
 				publish(updateStore, { status: payload.job?.status ?? "idle", job: payload.job ?? null, error: null });
-				if (payload.job?.status === "running") startUpdatePolling(payload.job.id);
-			} catch { /* The update panel stays idle when no status endpoint is available. */ }
+				if (payload.job?.status === "running" || (payload.job?.status === 'needs-offline-repair' && (payload.job.autoContinue || payload.job.consoleLaunching))) startUpdatePolling(payload.job.id);
+			} catch { if (updateStore.state.job?.connectionLost) window.setTimeout(() => { void loadUpdateState(); }, 3000); }
 		}
 		async function requestUpdateAction(action) {
 			const job = updateStore.state.job;
@@ -388,6 +389,9 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 		Object.assign(zh, { "settings.autoContinue": "已打开独立 PowerShell 更新窗口；关闭 DSH 后将自动继续。" });
 		Object.assign(en, { "settings.autoContinue": "A separate PowerShell update window is open; the update continues after DSH closes." });
 		Object.assign(zhTW, { "settings.autoContinue": "已開啟獨立 PowerShell 更新視窗；關閉 DSH 後將自動繼續。" });
+		Object.assign(zh, { 'settings.connectionLost': 'DSH 连接已断开，请查看独立更新窗口；收到完成提示后再启动 DSH。', 'settings.consoleLaunching': '正在打开独立更新窗口，请等待窗口确认就绪。', 'settings.fullLog': '完整日志', 'settings.backupSkipped': '本次已跳过备份，无法使用本任务备份回滚。' });
+		Object.assign(en, { 'settings.connectionLost': 'DSH disconnected. Follow the separate update window and restart only after completion.', 'settings.consoleLaunching': 'Opening the update window; wait for readiness.', 'settings.fullLog': 'Full log', 'settings.backupSkipped': 'Backup was skipped; no rollback backup exists for this job.' });
+		Object.assign(zhTW, { 'settings.connectionLost': 'DSH 連線已中斷，請查看獨立更新視窗；收到完成提示後再啟動 DSH。', 'settings.consoleLaunching': '正在開啟獨立更新視窗，請等待就緒確認。', 'settings.fullLog': '完整日誌', 'settings.backupSkipped': '本次已跳過備份，無法使用本任務備份回復。' });
 
 		function VersionSourceCard({ source, current, item, installInfo, installMethod, t, onUpdate, onCommands }) {
 			const label = t("settings.source." + source);
@@ -419,7 +423,13 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			const activeStep = (job.steps ?? []).find((step) => step.status === "running");
 			const currentCommand = activeStep?.command ?? t(job.status === "running" && !heartbeatExpired ? "settings.noCommand" : "settings.noActiveCommand");
 			const actions = (job.status === "error" || job.status === "restart-required" || heartbeatExpired) && Array.isArray(job.actions) ? h("div", { className: "dvd-settings-update-actions" }, job.actions.filter((action) => ["wait", "verify", "retry-backup", "repair", "rollback"].includes(action)).map((action) => h("button", { key: action, type: "button", className: "dvd-settings-update-action dvd-settings-update-action--" + (["verify", "retry-backup"].includes(action) ? "repair" : action), onClick: () => onAction(action) }, t("settings." + ({ wait: "continueWaiting", "retry-backup": "retryBackup", verify: "retryVerification" }[action] ?? action))))) : null;
-			const manual = job.manual ? h("div", { className: "dvd-settings-update-manual" }, h("strong", null, t("settings.manualRepair")), h("p", null, job.manual.stopCommand), h("code", null, job.manual.repairCommand), h("button", { type: "button", onClick: () => onCopy(job.manual.repairCommand) }, copiedCommand === job.manual.repairCommand ? t("settings.copied") : t("settings.copy")), h("p", null, job.manual.note)) : null;
+			const manual = h(Fragment, null,
+				job.consoleError ? h('p', { role: 'alert', style: { whiteSpace: 'pre-wrap' } }, job.consoleError) : null,
+				job.connectionLost ? h('p', { role: 'status' }, t('settings.connectionLost')) : null,
+				job.consoleLaunching ? h('p', { role: 'status' }, t('settings.consoleLaunching')) : null,
+				job.backup?.status === 'skipped' && job.mode !== 'desktop' ? h('p', null, t('settings.backupSkipped')) : null,
+				job.logPath ? h('p', { style: { overflowWrap: 'anywhere' } }, t('settings.fullLog') + ': ' + job.logPath, job.logError ? ' · ' + job.logError : '') : null,
+				job.manual ? h('details', { className: 'dvd-settings-update-manual', open: !job.autoContinue && !job.consoleLaunching }, h('summary', null, t('settings.updateCommand')), h('p', null, job.manual.stopCommand), h('code', null, job.manual.repairCommand), h('button', { type: 'button', onClick: () => onCopy(job.manual.repairCommand) }, copiedCommand === job.manual.repairCommand ? t('settings.copied') : t('settings.copy')), job.manual.rollbackCommand ? h(Fragment, null, h('code', null, job.manual.rollbackCommand), h('button', { type: 'button', onClick: () => onCopy(job.manual.rollbackCommand) }, t('settings.copy'))) : null, h('p', { style: { whiteSpace: 'pre-wrap' } }, job.manual.note)) : null);
 			const result = heartbeatExpired ? h("p", { className: "dvd-settings-source-hint" }, t("settings.heartbeatHelp")) : job.status === "success" ? h("p", { className: "dvd-settings-source-hint" }, job.mode === "desktop" ? t("settings.desktopUpdateSuccess") : job.stage === "rollback-complete" ? t("settings.rollbackFinished") : job.action === "repair" ? t("settings.repairFinished") : job.action === "verify" ? t("settings.verifyFinished") : t("settings.updateSuccess"), " ", job.mode === "desktop" ? null : job.restartRequired === false ? null : t("settings.restart")) : job.status === "needs-offline-repair" ? h("p", { className: "dvd-settings-source-hint" }, job.autoContinue ? t("settings.autoContinue") : t("settings.offlineHelp")) : job.status === "restart-required" ? h("p", { className: "dvd-settings-source-hint" }, t("settings.restartHelp")) : job.status === "error" ? h(Fragment, null, h("p", { className: "dvd-settings-source-hint" }, t("settings.updateFailed"))) : null;
 			return h("section", { className: "dvd-settings-update-log", "aria-live": "polite" }, h("h3", null, t("settings.updateBoard")), h("p", { className: "dvd-settings-source-hint" }, t("settings.targetVersion"), ": ", formatVersion(job.version)), h("p", null, status), job.lastActivityAt ? h("p", null, t("settings.lastActivity") + ": " + new Date(job.lastActivityAt).toLocaleString()) : null, stepList, backupInfo, backupProgress, peerWarning, h("p", { className: "dvd-settings-update-command" }, currentCommand), h("pre", { className: "dvd-settings-update-output" }, job.lines?.slice(-10).join("\n") || t(job.status === "running" && !heartbeatExpired ? "settings.waitingOutput" : "settings.noActiveCommand")), manual, actions, result);
 		}
@@ -511,7 +521,7 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			const installMethod = installMethodLabel(installInfo.method, t);
 			const write = (field, value) => { setError(null); void scope.set(field, value).catch(() => setError("settings.writeError")); };
 			react.useEffect(() => { if (settings.enabled) void requestCheck(); }, [settings.enabled]);
-			react.useEffect(() => { if (updateState.job?.status === "running" && updateState.job.id) startUpdatePolling(updateState.job.id); }, [updateState.job?.id, updateState.job?.status]);
+			react.useEffect(() => { if (updateState.job?.id && (updateState.job.status === 'running' || (updateState.job.status === 'needs-offline-repair' && (updateState.job.autoContinue || updateState.job.consoleLaunching)))) startUpdatePolling(updateState.job.id); }, [updateState.job?.id, updateState.job?.status, updateState.job?.autoContinue, updateState.job?.consoleLaunching]);
 			react.useEffect(() => {
 				if (!commandOpen) return undefined;
 				const onKeyDown = (event) => { if (event.key === "Escape") setCommandOpen(false); };

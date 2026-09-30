@@ -15,6 +15,7 @@ const fail = (message) => {
 const checks = [
 	["lib/index.js", "host 半区"],
 	["lib/update-worker.mjs", "升级 Worker"],
+	["lib/update-runtime.mjs", "独立更新协调器"],
 	["lib/backup-manager.mjs", "备份管理"],
 	["client/client.js", "client 半区 bundle"]
 ];
@@ -118,7 +119,7 @@ if (pkg) {
 		engine: ">=20",
 		dshEngine: ">=0.1.7-rc.1 || >=0.2.0-rc.1",
 		patch: "./cordis.patch.yml",
-		files: ["lib/index.js", "lib/update-worker.mjs", "lib/update-console.ps1", "lib/backup-manager.mjs", "client/client.js", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png", "images/Screenshot/", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
+		files: ["lib/index.js", "lib/update-worker.mjs", "lib/update-runtime.mjs", "lib/update-console.ps1", "lib/backup-manager.mjs", "client/client.js", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png", "images/Screenshot/", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
 	};
 	if (pkg.name !== expected.name) fail("npm 包名不符合发布契约: " + pkg.name);
 	if (pkg.version !== expected.version) fail("插件版本不符合发布契约: " + pkg.version);
@@ -153,7 +154,7 @@ if (pkg) {
 
 const hostSrc = readFileSync(join(root, "lib", "index.js"), "utf8");
 if (!hostSrc.includes("export const Config = z.object(") || !hostSrc.includes(".default(\"zh\").volatile()") || !hostSrc.includes(".default(true).volatile()") || !hostSrc.includes("settingsCtx.settings.configure({ auto: false }, ctx.fiber)")) fail("新版 DSH 设置 Config/页面策略未正确声明");
-if (!hostSrc.includes("state.stage = \"verification-complete\"") || !hostSrc.includes("state.status === \"success\" && state.restartRequired === false")) fail("重启后的更新状态未正确收敛");
+if (hostSrc.includes('state.stage = "verification-complete"') || hostSrc.includes('if (state.status === "success" && state.restartRequired === false) return { status: "idle" }')) fail('不能仅凭重启判定验证成功或隐藏更新历史');
 for (const fragment of ["const inject = [\"slots\", \"locale\", \"remote\", \"remote.settings\"]", "const unwrap = (response)", "remote.settings.describe()", "document.namespaces.find((item) => item.ns === NS)", "Object.hasOwn(user, field)", "remote.settings.update(NS, migration, revision)", "remote.settings.update(NS, { [field]: next }, revision)", "settings/document-updated"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少新版设置契约: " + fragment);
 }

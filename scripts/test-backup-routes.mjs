@@ -27,6 +27,7 @@ try {
 	source = source.replace('import { spawn } from "node:child_process";', 'const spawn = globalThis.__backupRouteSpawn;')
 		.replaceAll("import.meta.url", JSON.stringify(hostUrl))
 		.replace(/from (["'])\.\/backup-manager\.mjs\1/g, "from " + JSON.stringify(pathToFileURL(join(root, "lib/backup-manager.mjs")).href));
+	source = source.replace(/from (["'])\.\/update-runtime\.mjs\1/g, 'from ' + JSON.stringify(pathToFileURL(join(root, 'lib/update-runtime.mjs')).href));
 	// Resolve the existing peer through the project instead of resolving from the data URL.
 	const { createRequire } = await import("node:module");
 	const require = createRequire(hostUrl);
@@ -97,6 +98,22 @@ try {
 	const restarted = await request("/update/action", { method: "POST", body: { jobId: failed.id, action: "verify" } });
 	assert.equal(restarted.status, 202, "restart-required state can be verified after DSH restarts");
 	assert.equal(spawned, 2);
+	const runtimeDir = join(stateDir, 'jobs', failed.id);
+	mkdirSync(runtimeDir, { recursive: true });
+	const waiting = { ...failed, status: 'needs-offline-repair', runtimeDir, autoContinue: true, consoleLaunching: false, manual: { repairCommand: 'old invalid command' } };
+	writeFileSync(statePath, JSON.stringify(waiting));
+	writeFileSync(join(runtimeDir, 'console-state.json'), JSON.stringify({ jobId: failed.id, status: 'waiting', pid: process.pid, lastActivityAt: Date.now() }));
+	const blocked = await request('/update', { method: 'POST', body: { source: 'npm', version: failed.version } });
+	assert.equal(blocked.status, 409, 'waiting console prevents replacing its task');
+	writeFileSync(join(runtimeDir, 'console-state.json'), JSON.stringify({ jobId: failed.id, status: 'error', error: 'fixture window closed', pid: process.pid, lastActivityAt: Date.now() }));
+	const interrupted = await request('/update/status');
+	assert.equal(interrupted.job.autoContinue, false);
+	assert.match(interrupted.job.consoleError, /window closed/);
+	assert.match(interrupted.job.manual.repairCommand, /^& /, 'old invalid fallback is regenerated');
+	writeFileSync(statePath, JSON.stringify({ ...failed, status: 'success', restartRequired: false, stage: 'verification-complete', lines: ['retained output'] }));
+	const history = await request('/update/status');
+	assert.equal(history.job.status, 'success');
+	assert.deepEqual(history.job.lines, ['retained output']);
 	console.log("✔ Backup/update routes: authorization, incomplete rollback, traversal and verify-only recovery; no real workers spawned");
 } finally {
 	if (oldLocal === undefined) delete process.env.LOCALAPPDATA; else process.env.LOCALAPPDATA = oldLocal;
