@@ -2,7 +2,7 @@
 
 [中文文档](README.md) · English documentation
 
-[![version](https://img.shields.io/badge/version-v1.2.23-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.1.7--rc.1-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
+[![version](https://img.shields.io/badge/version-v1.2.24-blue?style=flat-square)](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display) [![DSH](https://img.shields.io/badge/DSH-%3E%3D%20v0.2.0--rc.1-orange?style=flat-square)](#compatibility) [![node](https://img.shields.io/badge/node-%3E%3D20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/) [![license](https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square)](LICENSE) [![platform](https://img.shields.io/badge/platform-Web-lightgrey?style=flat-square)](#compatibility)
 
 GitHub: [hjj345/dsh-sm-version-display](https://github.com/hjj345/dsh-sm-version-display)<br>
 npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345345%2Fdsh-sm-version-display)
@@ -11,7 +11,7 @@ npm: [@hjj345345/dsh-sm-version-display](https://www.npmjs.com/package/%40hjj345
   <img src="images/sm-version-display-icon-outlined.png" alt="DSH Version Checker plugin icon" width="180">
 </p>
 
-> Minimum supported DSH version: `v0.1.7-rc.1` (inclusive). Current plugin version: `v1.2.23`.
+> Minimum supported DSH version: `v0.2.0-rc.1` (inclusive). Current plugin version: `v1.2.24`.
 
 ## Introduction
 
@@ -25,7 +25,7 @@ The following names refer to different things:
 - DSH runtime plugin ID: `dsh-sm-version-display`
 - GitHub repository: `hjj345/dsh-sm-version-display`
 
-Plugin version `v1.2.23` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
+Plugin version `v1.2.24` identifies this plugin. The version shown in the card is the DSH version read at runtime; they are not the same version.
 
 ## Features
 
@@ -192,14 +192,14 @@ Key files in the published package:
 
 | Item | Requirement |
 | --- | --- |
-| DSH | `>= v0.1.7-rc.1` |
+| DSH | `>= v0.2.0-rc.1` |
 | Node.js | `>= 20` (host runtime) |
 | Platform | DSH Web |
-| Plugin version | `v1.2.23` |
+| Plugin version | `v1.2.24` |
 
 The plugin uses official DSH extension points: `dsh.client`, `sidebar.footer.action`, `settings.section`, `webserver/index-inject`, and `ctx.slots.inject/register`. The enabled state and language are stored in the DSH profile configuration. On upgrade, any legacy browser-local settings are migrated to the profile, while existing profile settings take precedence.
 
-The plugin market reads the minimum host version from the npm package's top-level `engines.dsh`; this plugin declares `>=0.1.7-rc.1`, matching the table above.
+The plugin market reads the minimum host version from the npm package's top-level `engines.dsh`; this plugin currently recommends `>=0.2.0-rc.1`, matching the table above.
 
 ## Development and local verification
 
@@ -215,6 +215,13 @@ npm run build
 `npm run build` performs host/client syntax checks, comparator self-tests, settings/update contract checks, package-integrity checks, and README checks.
 
 ## Changelog
+
+### v1.2.24 - 2026-09-30
+
+- Fixed the GitHub Actions pnpm environment so the release workflow can reliably install dependencies and run build, test, and publish steps.
+- Fixed the Linux simulation environment for update-terminal tests, covering the standalone update terminal, PowerShell commands, task recovery, and output logs.
+- Synchronized the current minimum DSH support version in both READMEs to `v0.2.0-rc.1`, including the top badges, compatibility tables, and release-contract checks.
+- Updated the package, client About page, release contract, and bilingual documentation to plugin version `v1.2.24` with release date `2026-09-30`.
 
 ### v1.2.23 - 2026-09-30
 
