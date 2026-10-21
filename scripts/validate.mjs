@@ -117,7 +117,7 @@ if (pkg) {
 		main: "lib/index.js",
 		license: "MIT",
 		engine: ">=20",
-		dshEngine: ">=0.1.7-rc.1 || >=0.2.0-rc.1",
+		dshEngine: ">=0.1.7-rc.1 || >=0.2.0-rc.1 || >=0.2.1-rc.2",
 		patch: "./cordis.patch.yml",
 		files: ["lib/index.js", "lib/update-worker.mjs", "lib/update-runtime.mjs", "lib/update-console.ps1", "lib/backup-manager.mjs", "client/client.js", "images/sm-version-display-icon-outlined.png", "images/sm-version-display-settings-icon.png", "images/Screenshot/", "cordis.patch.yml", "LICENSE", "README.md", "README.en.md"]
 	};
@@ -140,14 +140,16 @@ if (pkg) {
 		if (pkg.peerDependencies?.[dependency] === undefined) fail("peerDependencies 缺少依赖: " + dependency);
 	}
 	for (const dependency of ["@deepseek-ai/dsh-api-remotes", "@deepseek-ai/dsh-settings"]) {
-		if (pkg.peerDependencies?.[dependency] !== "^0.1.7-rc.1 || ^0.2.0-rc.1") fail("settings API peerDependencies 未覆盖 DSH 0.2.0-rc.1: " + dependency);
+		if (pkg.peerDependencies?.[dependency] !== "^0.1.7-rc.1 || ^0.2.0-rc.1 || ^0.2.1-rc.2") fail("settings API peerDependencies 未覆盖 DSH 0.2.1-rc.2: " + dependency);
 	}
 	for (const dependency of ["@deepseek-ai/dsh", "@deepseek-ai/dsh-api-remotes", "@deepseek-ai/dsh-api-settings-controller", "@deepseek-ai/dsh-client-locale", "@deepseek-ai/dsh-client-modules", "@deepseek-ai/dsh-client-ui-primitives", "@deepseek-ai/dsh-client-ui-sidebar", "@deepseek-ai/dsh-client-ui-slots", "@deepseek-ai/dsh-settings"]) {
-		if (pkg.devDependencies?.[dependency] !== "0.2.0-rc.1") fail("本地 DSH 开发依赖没有锁定到 0.2.0-rc.1: " + dependency);
+		if (pkg.devDependencies?.[dependency] !== "0.2.1-rc.2") fail("本地 DSH 开发依赖没有锁定到 0.2.1-rc.2: " + dependency);
 	}
+	if (pkg.devDependencies?.["@deepseek-ai/schemastery"] !== "3.18.5") fail("本地 schemastery 开发依赖没有对齐 DSH 0.2.1-rc.2: " + pkg.devDependencies?.["@deepseek-ai/schemastery"]);
+	if (pkg.devDependencies?.["@deepseek-ai/cordis-plugin-group"] !== "1.0.5") fail("本地 cordis-plugin-group 开发依赖没有对齐 DSH 0.2.1-rc.2: " + pkg.devDependencies?.["@deepseek-ai/cordis-plugin-group"]);
 	const lockSrc = readFileSync(join(root, "pnpm-lock.yaml"), "utf8");
-	for (const fragment of ["@deepseek-ai/dsh@0.2.0-rc.1", "@deepseek-ai/dsh-api-remotes@0.2.0-rc.1", "@deepseek-ai/dsh-settings@0.2.0-rc.1", "@deepseek-ai/dsh-client-ui-primitives@0.2.0-rc.1", "@deepseek-ai/dsh-client-ui-sidebar@0.2.0-rc.1"]) {
-		if (!lockSrc.includes(fragment)) fail("pnpm lockfile 缺少 DSH 0.2.0-rc.1 依赖: " + fragment);
+	for (const fragment of ["@deepseek-ai/dsh@0.2.1-rc.2", "@deepseek-ai/dsh-api-remotes@0.2.1-rc.2", "@deepseek-ai/dsh-settings@0.2.1-rc.2", "@deepseek-ai/dsh-client-ui-primitives@0.2.1-rc.2", "@deepseek-ai/dsh-client-ui-sidebar@0.2.1-rc.2"]) {
+		if (!lockSrc.includes(fragment)) fail("pnpm lockfile 缺少 DSH 0.2.1-rc.2 依赖: " + fragment);
 	}
 	console.log("✔ 包信息:", pkg.name + "@" + pkg.version);
 }
@@ -158,7 +160,7 @@ if (hostSrc.includes('state.stage = "verification-complete"') || hostSrc.include
 for (const fragment of ["const inject = [\"slots\", \"locale\", \"remote\", \"remote.settings\"]", "const unwrap = (response)", "remote.settings.describe()", "document.namespaces.find((item) => item.ns === NS)", "Object.hasOwn(user, field)", "remote.settings.update(NS, migration, revision)", "remote.settings.update(NS, { [field]: next }, revision)", "settings/document-updated"]) {
 	if (!clientSrc.includes(fragment)) fail("client 半区缺少新版设置契约: " + fragment);
 }
-if (pkg.engines?.dsh !== ">=0.1.7-rc.1 || >=0.2.0-rc.1") fail("engines.dsh 必须显式兼容 DSH 0.1.7-rc.1 与 0.2.0-rc.1");
+if (pkg.engines?.dsh !== ">=0.1.7-rc.1 || >=0.2.0-rc.1 || >=0.2.1-rc.2") fail("engines.dsh 必须显式兼容 DSH 0.1.7-rc.1、0.2.0-rc.1 与 0.2.1-rc.2");
 for (const fragment of ["SETTINGS_NAMESPACE", "settingsCtx.settings.register(SETTINGS_NAMESPACE, SettingsSchema", "webServer.register", "__DSH_INSTALL_INFO__", "__DSH_UPDATE_TOKEN__", "x-dsh-sm-version-display-token", "CHECK_ROUTE", "UPDATE_STATUS_ROUTE", "UPDATE_ACTION_ROUTE", "GITHUB_RELEASES_URL", "GITHUB_RELEASES_FEED_URL", "fetchGithubLatestFromFeed", "github-rate-limit", "npmAvailable", "resolveVirtualStoreDir", "needsPnpmGlobalRepair", "HEARTBEAT_TIMEOUT_MS", "STATE_WRITE_RETRIES", "SharedArrayBuffer", "lastActivityAt", "heartbeatExpired", "[\"install\", \"--global\", \"--force\"]", "@deepseek-ai/dsh@"]){
 	if (fragment === "SETTINGS_NAMESPACE" || fragment.startsWith("settingsCtx.settings.register")) continue;
 	if (!hostSrc.includes(fragment)) fail("host 半区缺少功能契约: " + fragment);

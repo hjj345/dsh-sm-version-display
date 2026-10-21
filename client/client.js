@@ -318,19 +318,43 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			return label + ": " + state;
 		}
 		function openSettingsSection(label) {
+			const wanted = label().trim();
 			const pick = (panel) => {
-				const wanted = label();
-				for (const row of panel.querySelectorAll("nav button")) if (row.textContent !== null && row.textContent.includes(wanted)) {
+				for (const row of panel.querySelectorAll("nav button")) {
+					if ((row.textContent ?? "").trim() !== wanted) continue;
 					row.click();
 					return true;
 				}
 				return false;
 			};
-			for (const panel of document.querySelectorAll('[role="dialog"]')) if (pick(panel)) return;
-			(document.querySelector('[data-pane="sidebar"], [class*="sidebarCol"]')?.querySelector('[class*="settingsArea"] button'))?.click();
+			const dialogs = () => Array.from(document.querySelectorAll('[role="dialog"]'));
+			for (const panel of dialogs()) if (pick(panel)) return;
+			if (dialogs().length) return;
+
+			const clickSettingsMenuItem = () => {
+				const menu = document.querySelector('[role="menu"]');
+				if (!menu) return false;
+				for (const item of menu.querySelectorAll('[role="menuitem"], button')) {
+					const name = (item.getAttribute("aria-label") || item.textContent || "").replace(/\s+/g, " ").trim();
+					if (!/^(?:settings|设置|設定)(?:$|\s|\(|\[)/i.test(name)) continue;
+					item.click();
+					return true;
+				}
+				return false;
+			};
+			const openMenu = document.querySelector('[role="menu"]');
+			if (openMenu) {
+				if (!clickSettingsMenuItem()) return;
+			} else {
+				(document.querySelector('[data-pane="sidebar"], [class*="sidebarCol"]')?.querySelector('[class*="settingsArea"] button'))?.click();
+			}
+
+			let settingsChosen = Boolean(openMenu);
 			let tries = 0;
 			const attempt = () => {
-				for (const panel of document.querySelectorAll('[role="dialog"]')) if (pick(panel)) return;
+				for (const panel of dialogs()) if (pick(panel)) return;
+				if (dialogs().length) return;
+				if (!settingsChosen) settingsChosen = clickSettingsMenuItem();
 				tries += 1;
 				if (tries <= 20) window.setTimeout(attempt, 50);
 			};

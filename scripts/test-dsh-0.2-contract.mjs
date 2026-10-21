@@ -9,13 +9,15 @@ import { Config } from "../lib/index.js";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
 const lock = readFileSync(join(root, "pnpm-lock.yaml"), "utf8");
-assert.equal(pkg.engines.dsh, ">=0.1.7-rc.1 || >=0.2.0-rc.1");
+assert.equal(pkg.engines.dsh, ">=0.1.7-rc.1 || >=0.2.0-rc.1 || >=0.2.1-rc.2");
 for (const name of ["@deepseek-ai/dsh-api-remotes", "@deepseek-ai/dsh-settings"]) {
-	assert.equal(pkg.peerDependencies[name], "^0.1.7-rc.1 || ^0.2.0-rc.1");
-	assert.equal(pkg.devDependencies[name], "0.2.0-rc.1");
-	assert.match(lock, new RegExp(name.replaceAll("/", "\\/") + "@0\\.2\\.0-rc\\.1"));
+	assert.equal(pkg.peerDependencies[name], "^0.1.7-rc.1 || ^0.2.0-rc.1 || ^0.2.1-rc.2");
+	assert.equal(pkg.devDependencies[name], "0.2.1-rc.2");
+	assert.match(lock, new RegExp(name.replaceAll("/", "\\/") + "@0\\.2\\.1-rc\\.2"));
 }
-for (const name of ["@deepseek-ai/dsh", "@deepseek-ai/dsh-api-settings-controller", "@deepseek-ai/dsh-client-ui-primitives", "@deepseek-ai/dsh-client-ui-sidebar"]) assert.equal(pkg.devDependencies[name], "0.2.0-rc.1");
+for (const name of ["@deepseek-ai/dsh", "@deepseek-ai/dsh-api-settings-controller", "@deepseek-ai/dsh-client-ui-primitives", "@deepseek-ai/dsh-client-ui-sidebar"]) assert.equal(pkg.devDependencies[name], "0.2.1-rc.2");
+assert.equal(pkg.devDependencies["@deepseek-ai/schemastery"], "3.18.5");
+assert.equal(pkg.devDependencies["@deepseek-ai/cordis-plugin-group"], "1.0.5");
 assert.equal(typeof SettingsForms.prototype.configure, "function");
 assert.equal(typeof SettingsForms.prototype.describe, "function");
 assert.equal(typeof SettingsController.prototype.describe, "function");
