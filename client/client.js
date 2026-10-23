@@ -334,13 +334,18 @@ body[data-ds-dark-theme] .dvd-settings-switch input:checked+span{background:#f1f
 			const clickSettingsMenuItem = () => {
 				const menu = document.querySelector('[role="menu"]');
 				if (!menu) return false;
-				for (const item of menu.querySelectorAll('[role="menuitem"], button')) {
-					const name = (item.getAttribute("aria-label") || item.textContent || "").replace(/\s+/g, " ").trim();
-					if (!/^(?:settings|设置|設定)(?:$|\s|\(|\[)/i.test(name)) continue;
-					item.click();
-					return true;
-				}
-				return false;
+				const candidates = Array.from(menu.querySelectorAll('[role="menuitem"], button')).filter((item) => {
+					if (item.disabled) return false;
+					// DSH's aria-hidden shortcut is adjacent to the label in textContent.
+					const content = item.cloneNode(true);
+					for (const hidden of content.querySelectorAll('[aria-hidden="true"]')) hidden.remove();
+					const name = (item.getAttribute("aria-label") || content.textContent || "").replace(/\s+/g, " ").trim();
+					return /^(?:settings|设置|設定)$/i.test(name);
+				});
+				const item = candidates.find((entry) => entry.getAttribute("aria-keyshortcuts")) || candidates[0];
+				if (!item) return false;
+				item.click();
+				return true;
 			};
 			const openMenu = document.querySelector('[role="menu"]');
 			if (openMenu) {

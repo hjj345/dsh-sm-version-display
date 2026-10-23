@@ -12,7 +12,7 @@ const openSettingsSection = new Function(
 	`${source.slice(start, end)}; return openSettingsSection;`,
 );
 
-function runNavigation({ mode, menuLabel = "Settings", existingDialog = false, menuInitiallyOpen = false, menuHasSettings = true, navLabel = "DSH Version Checker" }) {
+function runNavigation({ mode, menuLabel = "Settings", shortcutText = "", shortcutAria = "", ariaLabel = null, existingDialog = false, menuInitiallyOpen = false, menuHasSettings = true, navLabel = "DSH Version Checker" }) {
 	let menuOpen = menuInitiallyOpen;
 	let dialogOpen = existingDialog || false;
 	let triggerClicks = 0;
@@ -25,8 +25,23 @@ function runNavigation({ mode, menuLabel = "Settings", existingDialog = false, m
 		querySelectorAll(selector) { return selector === "nav button" ? [navButton] : []; },
 	};
 	const menuItem = {
-		textContent: menuLabel,
-		getAttribute() { return null; },
+		// DSH renders adjacent label and aria-hidden shortcut spans, with no text separator.
+		textContent: menuLabel + shortcutText,
+		getAttribute(name) {
+			if (name === "aria-label") return ariaLabel;
+			if (name === "aria-keyshortcuts") return shortcutAria || null;
+			return null;
+		},
+		cloneNode() {
+			let shortcutRemoved = false;
+			return {
+				get textContent() { return menuLabel + (shortcutRemoved ? "" : shortcutText); },
+				querySelectorAll(selector) {
+					assert.equal(selector, '[aria-hidden="true"]');
+					return shortcutText ? [{ remove() { shortcutRemoved = true; } }] : [];
+				},
+			};
+		},
 		click() { menuOpen = false; dialogOpen = true; },
 	};
 	const menu = {
@@ -59,9 +74,14 @@ function runNavigation({ mode, menuLabel = "Settings", existingDialog = false, m
 	return { selected, triggerClicks };
 }
 
-for (const menuLabel of ["Settings Ctrl + ,", "设置", "設定"]) {
+for (const menuLabel of ["Settings", "设置", "設定"]) {
 	assert.deepEqual(runNavigation({ mode: "menu", menuLabel }), { selected: 1, triggerClicks: 1 });
+	assert.deepEqual(runNavigation({ mode: "menu", menuLabel, shortcutText: "CtrlAlt,", shortcutAria: "Control+Alt+," }), { selected: 1, triggerClicks: 1 }, "adjacent shortcut text must not hide the Settings action");
+	assert.deepEqual(runNavigation({ mode: "menu", menuLabel, shortcutText: "CtrlAlt," }), { selected: 1, triggerClicks: 1 }, "hidden shortcut text is excluded even without aria-keyshortcuts");
 }
+assert.deepEqual(runNavigation({ mode: "menu", menuLabel: "Feedback", shortcutText: "CtrlAlt,", shortcutAria: "Control+Alt+," }), { selected: 0, triggerClicks: 1 }, "a shortcut alone must not select an unrelated action");
+assert.deepEqual(runNavigation({ mode: "menu", menuLabel: "Settings extension" }), { selected: 0, triggerClicks: 1 }, "partial labels must not select an unrelated action");
+assert.deepEqual(runNavigation({ mode: "menu", menuLabel: "icon text", ariaLabel: "Settings" }), { selected: 1, triggerClicks: 1 });
 assert.deepEqual(runNavigation({ mode: "menu", menuInitiallyOpen: true }), { selected: 1, triggerClicks: 0 });
 assert.deepEqual(runNavigation({ mode: "dialog" }), { selected: 1, triggerClicks: 1 });
 assert.deepEqual(runNavigation({ mode: "dialog", existingDialog: true }), { selected: 1, triggerClicks: 0 });
