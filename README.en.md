@@ -219,9 +219,10 @@ npm run build
 ### v1.2.25 - 2026-10-21
 
 - Updated the DSH development baseline to `0.2.1-rc.2`: aligned settings, Remote Settings, client modules, UI components, and `schemastery` dependencies, then regenerated the pnpm lockfile.
-- Fixed DSH settings navigation by matching localized settings labels exactly, supporting an already-open menu, and avoiding navigation attempts while another dialog is open.
-- Added settings-navigation tests for translated menu labels, an already-open menu, an existing settings dialog, and a missing navigation item; updated the DSH 0.2 contract test.
+- Fixed DSH settings navigation by exactly matching localized labels, filtering shortcut-hint text and disabled items, supporting an already-open menu, and avoiding navigation attempts while another dialog is open.
+- Added settings-navigation tests for translated labels, shortcut hints, an already-open menu, an existing settings dialog, and a missing navigation item; updated the DSH 0.2 contract test.
 - Explicitly declared DSH `v0.2.1-rc.2` compatibility in both READMEs and synchronized the top badge and compatibility table.
+- Fixed the GitHub Actions release-test dependency conflict by aligning the route-test `schemastery` version to `3.18.5`.
 - Updated the package, client About page, release contract, and bilingual documentation to plugin version `v1.2.25` with release date `2026-10-21`.
 
 ### v1.2.24 - 2026-09-30
